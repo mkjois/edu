@@ -1,0 +1,138 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{9}
+\def\title{HW \the\lecturenumber}
+\begin{document}
+\maketitle
+\section*{Due Monday November 4 at 5 pm}
+
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+
+\begin{enumerate}
+
+\item \textbf{Independence and Complements}
+Let $A$ and $B$ be independent events.
+Recall that $\overline{A}$ is the complement of $A$,
+i.e. the event that $A$ doesn't occur.
+Is each of the following true, false, or indeterminate?
+Justify your answer with proof,
+or with two examples (one for which the claim is true, 
+one for which it is false).
+\begin{enumerate}
+\item $A$ and $\overline{B}$ are independent.
+\item $\overline{A}$ and $\overline{B}$ are independent.
+\item $A$ and $\overline{A}$ are independent.
+\end{enumerate}
+
+\item \textbf{To Include or to Exclude} You have five cards numbered $1, \dots, 5$. You shuffle them, so that at the end every permutation of them is equally likely to show up. What is the probability that for no $i$, the $i$-th card after shuffling is the card numbered $i$? \\
+There are $5! = 120$ permutations possible. \\
+Using the inclusion-exclusion principle, we count the number of permutations where for at least one $i$, the $i$-th card is numbered $i$: \\
+We include permutations where at least one $i$ satisfies this. There are $\binom51$ single elements where this could happen, each of which accepts $4!$ possible permutations for the other elements: $+4!\binom51$ \\
+We then exclude permutations where at least two $i$ satisfy this. There are $\binom52$ pairs where this happens, each of which accepts $3!$ possible permutations for the other elements: $-3!\binom52$ \\
+We then reinclude permutations where at least three $i$ satisfy this: $+2!\binom53$. \\
+After alternating inclusions and exclusions, we see that the number of satisfactory permutations is $4!\binom51 - 3!\binom52 + 2!\binom53 - 1!\binom54 + 0!\binom55 = 76$ \\
+So the probability of having no $i$ such that the $i$-th card is numbered $i$ is $1-\frac{76}{120} = \frac{11}{30}$
+
+\item \textbf{Changing Ties} Suppose that the president owns exactly two ties: one red and one blue.
+On the day of his inauguration he wears his blue tie.
+On each morning while in office, he changes his tie
+with probability $p$ and wears the same tie as the day before
+with probability $1 - p$.
+
+\begin{enumerate}
+\item Using induction, prove that $t$ days after his inauguration
+the president will wear the red tie with probability $p \sum_{k = 0}^{t-1} (1 - 2p)^k$, for all $t \geq 1$.
+\item Recall that $\sum_{k = 0}^{t} \gamma^k = \frac {1 - \gamma^{t+1}}{1 - \gamma}$.
+Prove that as $t$ approaches infinity, 
+the probability that the president is wearing a red tie on day $t$
+approaches $\frac 12$ unless $p$ is exactly $0$ or $1$.
+(Ignoring the fact that the president won't remain in office forever.)
+\end{enumerate}
+
+\item \textbf{Permutations} In a meeting, $n$ people write their names on cards, then one person shuffles all the cards and distributes them back to the people, giving each person one card. Now every person has the name of another person (or possibly the name of himself/herself). Then people form groups using the following method: every person finds the one whose name s/he is holding and goes into the same group as them. So if $A$ was holding $B$'s name, $B$ was holding $C$'s name and $C$ was holding $A$'s name, then $A, B, C$ would form a group.
+
+\begin{enumerate}
+\item What is the probability that a given person $A$, ends up in a group of size $k$? Compute this for $k=1,\dots,n$.
+\item Let $B$ be the event that a group of size $k$ exists. We want to upper bound $\Pr[B]$. For each person $i$, let $A_i$ be the event that $i$ is in a group of size $k$. You computed $\Pr[A_i]$ in the previous part. What would you get by using union bound on $A_i$'s? Is the bound you get non-trivial?
+\item Union bound is very weak here. Prove that a stronger inequality holds for this special case of $A_i$'s. Prove that
+$$\Pr[B]\leq \frac{\sum{\Pr[A_i]}}{k}$$
+Now what is the upper bound you get from this inequality?
+\end{enumerate}
+
+\item \textbf{Random Message}
+Let $p$ be a large prime, and let $P(x)$ be a polynomial of degree (at most) $2$ over $GF(p)$. Suppose Alice is trying to reconstruct the message $(P(1), P(2))$. Assume that Alice has no prior information about the message, so that every pair $(i, j)$ has probability $1/p^2$.
+
+\begin{enumerate}
+\item Suppose Alice learns that $P(5) = 3$. What is the probability that the message $(P(1), P(2)) = (1,1)$?
+\item Now suppose Alice learns that $P(4) = P(5) = 1$. What is the probability that the message $(P(1), P(2)) = (1,1)$?
+\end{enumerate}
+
+\item \textbf{The Power of Choice} 
+Suppose that I have \emph{two} hash functions,
+$H_1$ and $H_2$.
+Each of these hash functions sends each key
+to a uniformly random location in a table of size $n$.
+
+To try to make my hash table smaller, I consider the following
+optimization. When I want to put a key $x$ in the table:
+\begin{itemize}
+\item First I try to put it in the location $H_1(x)$.
+\item If there is already an item in $H_1(x)$,
+I try to put $x$ in $H_2(x)$.
+\item If there is an item in both $H_1(x)$ and $H_2(x)$,
+then I give up and throw away my hash table.
+\end{itemize}
+
+I'd like to know how many keys I can add before I have to throw
+away my hash table.
+\begin{enumerate}
+\item Show that if the hash table already contains $k$ elements,
+the probability that I'm unable to put $x$
+in the hash table is at most $\frac {k^2}{n^2}$.
+\item Show that if I add $m$ elements
+to an initially empty hash table,
+one at a time,
+the probability that I have to throw away the hash table
+at any point is at most $\frac {m^3}{3 n^2}$.
+This means I can put about $n^{2/3}$ items in my hash table before I have to throw it away.\\
+Recall that $\sum_{i=1}^k i^2 = \frac{k(k+1)(2k+1)}{6}$
+\end{enumerate}
+
+\item{\bf Pairwise Independence}
+This problem illustrates that events may be pairwise independent
+but not mutually independent.
+Two fair dice are thrown.  Consider the following three events:
+$A=\hbox{\rm the first die is odd};$
+$B=\hbox{\rm the second die is odd};$
+$C=\hbox{\rm the sum of the dice is odd}.$
+\begin{enumerate}
+\item[(a)] Show by directly counting sample points
+that events $A,B$ are independent; that $B,C$ are independent; and
+that $A,C$ are independent.
+\item[(b)] Show that the three events are {\bf not} mutually
+independent.
+\end{enumerate}
+
+\item {\bf Extra Credit: Non-transitive Dice} 
+Consider three six-sided dice $A$, $B$, and $C$, whose sides
+are labeled with any numbers of your choice.
+Say that $A$ beats $B$ if $P[A\hbox{ shows a number greater than } B] > 1/2$.
+
+Choose numbers to label each of the sides of $A$, $B$ and $C$ such
+that $A$ beats $B$, $B$ beats $C$, and $C$ beats $A$. Try to
+create your labels to maximize the probabilties in each case.
+
+Notice that armed with a set of three non-transitive dice, you could
+challenge someone to a game of dice, where to ensure fairness, you
+would give your opponent first choice of die to play with!
+
+
+
+\end{enumerate}
+
+\end{document}

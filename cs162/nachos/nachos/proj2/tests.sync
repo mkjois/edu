@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Your local test/ directory
+TESTDIR="../test"
+# Your two login letters
+LOGIN="jp"
+# Where on star your test files will be placed.  
+REMOTEDIR="~/Documents/nachos/test" 
+MAKE="/usr/sww/bin/gmake" # Don't change this
+
+ssh cs162-$LOGIN@star.cs.berkeley.edu "[ -d $REMOTEDIR ] || mkdir -p $REMOTEDIR"
+
+# place the .c files on star
+scp $TESTDIR/*{c,h,a,start.s,script,script_old,Makefile} cs162-$LOGIN@star.cs.berkeley.edu:$REMOTEDIR
+
+# login to star using your key, move to the right place and run gmake; This is all one big line
+ssh cs162-$LOGIN@star.cs.berkeley.edu "cd $REMOTEDIR; export ARCHDIR='/home/ff/cs162/bin/arch/sun4v'; $MAKE; $MAKE assemble"
+
+# pull the resulting .o and .coff files down
+scp cs162-$LOGIN@star.cs.berkeley.edu:$REMOTEDIR/*{o,coff,s} $TESTDIR/

@@ -1,0 +1,118 @@
+\section{Support for Multiprogramming}
+
+\subsection{Overview}
+To implement support for multiprogramming, we need to keep a record of pages available for a userProcess in the form of a global linked list in the UserKernal. \\\\
+When a UserProcess initializes and calls loadSections(), we know both exactly the size and number of pages needed to store the process in memory given that these programs have no dynamic memory allocation capability. The UserProcess is given a local pageTable that maps each virtual page to physical page, unless the UserProcess's memory needs exceed that of available memory, in which case exec() will be called. If exec() was not called, then the UserKernal will update its global list of space to indicate the parts of memory allocated and call setPageTable, completing the mapping of virtual memory to physical memory.\\\\
+When the UserProcess calls readVirtualMemory or writeVirtualMemory, it will access its pageTable, see whether or not the operation is allowed in the TranslationEntry corresponding to the virtual page table  number, and then perform the operation or return.
+
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item A process's memory is freed upon exit and empty upon intialize
+\item No two processes will collide/overlap in physical memory.
+\item An initialized UserProcess will always have the physical address spaces given to it in its pageTable.
+\item A page in physical memory will have enough space to store $2^{o}$ bytes, where o=offset.
+\item Physical memory will be used to its fullest by allocating pages in gaps if available.
+\item When a process is killed or exits in any way, the pages allocated to it will be freed
+\item For every page written and read in a process, the TranslationEntry will reflect that with its used/dirty bits set.
+\end{itemize}
+
+\subsection{Declarations}
+\texttt{LinkedList freePages} - Global list of free pages in physical memory available for processes to allocate. \\
+\texttt{Lock pageLock} - Global static lock for when user processes manage the freePages LinkedList
+
+\subsection{Descriptions}
+
+\begin{verbatim}
+class UserKernal:
+    def initialize():
+        //Add the following
+        Lock pageLock = new Lock()
+        freePages = LinkedList()
+        for i in Machine.processor().getNumPhysPages():
+            freePages.add((i, Machine.processor().makeAddress(i, 0))
+            
+    def getFreePages():
+        return freePages
+        
+class UserProcess:
+    def UserProcess():
+        loadSections()
+    
+    def loadSection():
+        //In addition to the insufficient memory check
+
+        // load sections
+        ArrayList coffPageMappings, coffVPNs, readOnlyPages
+        UserKernel.pageLock.acquire()
+        freePages = UserKernel.getFreePages()
+        if freePages.size() < numPages:
+            don't load and exit
+        for i in range(coff.getNumSections()):
+            Coffsection section = coff.getSection(i)
+            sectionReadOnly = section.isReadOnly()
+            for j in range(section.getLength()):
+                vpn = section.getFirstVPN()+j
+                ppn = freePages.pop()
+                coffMapping = (vpn, ppn)
+                coffPageMappings.add(coffMapping)
+                coffVPNs.add(vpn)
+                if sectionReadOnly:
+                    readOnly.add(ppn)
+                section.loadPage(j, ppn)
+    
+    def writeVirtualMemory(vaddr, data, offset, length):
+        //Along with assertion check
+        currentAmount = 0
+        for i in range(length):
+            vpn = Machine.processor().pageFromAddress(vaddr+i)
+            pageOffset = Machine.processor().offsetFromAddress(vaddr+i)
+            if vpn >= pageTable.length:
+                return currentAmount //invalid
+            mapping = pageTable[vpn]
+            if mapping not valid:
+                return currentAmount
+            physAddr = Machine.processor().makeAddress(mapping.ppn, pageOffset)
+            if physAddr > physMemory.length:
+                return currentAmount
+            if mapping not readOnly:
+                copy data, set ued and dirty bits true
+                currentAmount++
+            else:
+                return currentAmount;
+
+    def readVirtualMemory(vaddr, data, offset, length):
+        //Along with assertion check
+        currentAmount = 0
+        for i in range(length):
+            vpn = Machine.processor().pageFromAddress(vaddr+i)
+            pageOffset = Machine.processor().offsetFromAddress(vaddr+i)
+            if vpn >= pageTable.length:
+                return currentAmount //invalid
+            mapping = pageTable[vpn]
+            if mapping not valid:
+                return currentAmount
+            physAddr = Machine.processor().makeAddress(mapping.ppn, pageOffset)
+            if physAddr > physMemory.length:
+                return currentAmount
+            copy data, set used bits true
+            currentAmount++
+    
+    def unloadSections():
+        pageLock.acquire()
+        get free pages from Kernel
+        for i in range(numPages):
+            freePages.add(ppn's in page table entry)
+        pageLock.release()
+    
+\end{verbatim}
+
+\subsection{Testing Plan}
+We plan to test Multiprogramming by using the shell.
+\begin{itemize}
+\item Exit out of console
+\subitem Spawning the shell uses multiprogramming so if we can press q and spawn a shell out of the console, the basic parts of it work.
+\item Write tests in c files
+\subitem Included joinTest to spawn more than one processes and if it returns correctly, we know it can handle up to its maximum allowed processes
+\item Run multiple processes in background
+\subitem Run a program and append a amphersand to make it a background process. This way we can run multiple copies of matmult and other tests designed to strain the processor.
+\end{itemize}

@@ -1,0 +1,17 @@
+1. Whatever is under the .data directive is loaded into the next available address in the "Data" section of memory. Same for the .text directive for loading instructions into the "Text" section of memory. The .word directive stores what follows as 32-bit words lined up with word boundaries.
+
+2. Check the "Bkpt" box for an instruction to set a breakpoint before that instruction is executed.
+
+3. Click "Go" to execute up to the next breakpoint or the end, or "Step" for one instruction at a time.
+
+4. Click the "Step" arrow.
+
+5. Look at the "Registers" table on the right.
+
+6. Double-click the value of a register and type the new value.
+
+7. Calculates the nth Fibonacci number.
+
+8. n is stored at address 0x10010000
+
+9. syscall is a call to an operating system procedure. Load the procedure number into $v0 and its arguments into $a0, $a1, ... as necessary and then call "syscall"

@@ -1,0 +1,78 @@
+\section{KVMessage}
+\subsection{Overview}
+\texttt{KVMessage} is simple, since its only job is to send and receive messages while serializing or deserializing them as necessary. The most challenging part of the implementation of KVMessage is simply to ensure that any error or exceptional condition is caught and managed appropriately without jeopardizing the rest of the system.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item KVMessage must not produce a malformed message
+\item KVMessage should, upon receiving a malformed message, try its best to interpret the message
+\item If a received message is completely wrong, KVMessage should notify the caller
+\item Parser errors should never reach the caller
+\end{itemize}
+\subsection{Declarations}
+\begin{itemize}
+\item \texttt{KVMessage(socket, timeout)}: parses XML given from a socket
+\item \texttt{toXML()}: spits out the XML represented by the KVMessage
+\item \texttt{sendMessage(socket)}: sends the serialized KVMessage to the socket
+\end{itemize}
+\subsection{Descriptions}
+\begin{verbatim}
+def KVMessage(socket, timeout):
+    try:
+        set socket timeout
+        open socket input stream (through NoCloseInputStream)
+        parse input into document
+        if document's root element isn't KVMessage:
+            throw KVException(ERROR_INVALID_FORMAT)
+        if attribute type isn't present:
+            throw KVException(ERROR_INVALID_FORMAT)
+        for each child of the document's root element:
+            copy into the KVMessage's appropriate field
+        switch(msgtype):
+            case "putreq":
+                if key and value were not read:
+                    throw KVException(ERROR_INVALID_FORMAT)
+            case "getreq" or "delreq":
+                if key was not read:
+                    throw KVException(ERROR_INVALID_FORMAT)
+            case "resp":
+                if neither message nor both key and value were read:
+                    throw KVException(ERROR_INVALID_FORMAT)
+            default:
+                throw KVException(ERROR_INVALID_FORMAT)
+    catch (SocketException e):
+        throw KVException(ERROR_COULD_NOT_RECEIVE_DATA)
+    catch (ParserException e):
+        throw KVException(ERROR_PARSER)
+
+def toXML():
+    if msgtype is null:
+        throw KVException(ERROR_INVALID_FORMAT)
+    switch(msgtype):
+        case "putreq":
+            if key or value are null:
+                throw KVException(ERROR_INVALID_FORMAT)
+        case "getreq" or "delreq":
+            if key is null:
+                throw KVException(ERROR_INVALID_FORMAT)
+        case "resp":
+            if both message is null and (either key is null or value is null):
+                throw KVException(ERROR_INVALID_FORMAT)
+        default:
+            throw KVException(ERROR_INVALID_FORMAT)
+    try:
+        create doc
+        make KVMessage with attribute type=msgtype as root
+        add children for appropriate fields
+    catch(ParserException e):
+        throw KVException(ERROR_PARSER)
+
+def sendMessage(socket):
+    try:
+        open socket output stream
+        send toXML() result through output stream
+        socket.shutdownOutput()
+    catch (SocketException e):
+        throw KVException(ERROR_COULD_NOT_SEND_DATA)
+\end{verbatim}
+\subsection{Testing Plan}
+To test this section, we can set up an array of dummy messages as well as sockets in different states, and then make sure that the implementation operates correctly in every situation. The dummy messages must include completely invalid messages, as well as streams that aren't even valid XML, to test every possible case

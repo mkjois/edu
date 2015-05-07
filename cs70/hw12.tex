@@ -1,0 +1,232 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{12}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday November 25 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle 
+
+\begin{enumerate}
+
+\item \textbf{True or False}
+For each of the following statements determine whether it is true or false and justify your answer (either by a proof or a counter-example).
+
+\begin{enumerate}
+\item Given a non-negative continuous random variable $X$ the following holds
+$$E[X]=\int_{0}^{\infty}\Pr[X\geq t]dt$$
+True:
+\begin{eqnarray*}
+E[X] &=& \int_{t=0}^{\infty} X\cdot \Pr[X=t]dt \\
+&=& \int_{s=0}^{\infty} \int_{t=0}^{X} \Pr[X=t]dtds \\
+&=& \int_{t=0}^{\infty} \int_{s=t}^{\infty} \Pr[X=s]dsdt \\
+&=& \int_{t=0}^{\infty} \Pr[X\geq t]dt
+\end{eqnarray*}
+\item Given two continuous random variables $X, Y$ with joint density function $f(x,y)$ the following holds
+$$\int_{t=-\infty}^{\infty}f(t,t)dt\leq 1$$
+False: Consider $f(x,y)$ to be a square pyramid of height $3$ and a base on the $xy$-plane of side-length $1$ on the square $[-0.5,0.5]\times[-0.5,0.5]$, and $0$ everywhere else. Then the area under the surface over the entire $xy$-plane is $\frac13(1^2)(3) = 1$, as needed for it to be a joint density function. \\\\
+The single integral in question, however, represents the area of the diagonal plane $x=y$ between the surface and the $xy$-plane, which would be $\frac12(\sqrt2)(3) = \frac32\sqrt2 > 1$.
+\end{enumerate}
+
+\newpage
+\item \textbf{Round the Clock}
+\begin{enumerate}
+\item At a particular bus stop, you know that $n$ buses stop during the whole day. Each bus has a consistent schedule, i.e. there is a time of the day $t$, such that each day it stops at the bus stop at time $t$. You do not know any of these times, but you do know that they were chosen independently and uniformly at random (to be a real number in the interval $[0,24)$). Suppose you get to the bus stop at time $t$ just as a bus pulls out. What is the expected length of time you will have to wait until the next bus arrives? \\\\
+Let the uniform random variable $T_i$ represent the time after you arrive at the bus stop that bus number $i$ arrives. Then each $T_i$ has the density function $f(t) = \frac1{24}$ for $t \in [0,24)$ and $0$ everywhere else. The probability that $T_i \geq t$ for a given $t$ for any bus is $\Pr[T_i \geq t] = \int_{t}^{24} \frac1{24}dt = 1-\frac t{24}$. \\\\
+Now let $T$ be the random variable $min(T_i) \forall i$. Notice that the event $[T\geq t] = \bigcap_{i=1}^{n-1} [T_i \geq t]$ (we are excluding the last bus since it's given that it will arrive at $t=24$). Therefore $\Pr[T\geq t] = \prod_{i=1}^{n-1} \Pr[T_i \geq t] = (1-\frac t{24})^{n-1}$. Now we can use the formula we proved in (1a) to calculate our expected minimum wait time, since $T$ is non-negative and continuous:
+\begin{eqnarray*}
+E[T] &=& \int_{0}^{\infty} \Pr[T\geq t]dt \\
+&=& \int_0^{24} (-\frac1{24}t+1)^{n-1}dt \\
+&=& \int_0^{24} \sum_{k=0}^{n-1} \binom{n-1}{n-k-1} (-\frac1{24}t)^k dt \\
+&=& \sum_{k=1}^{n} \frac{-24}k \binom{n-1}{n-k} (-\frac1{24}t)^k \bigg|_0^{24} \\
+&=& -24 \sum_{k=1}^{n} \frac{(-1)^k}k\binom{n-1}{n-k} \\
+&=& 24 \sum_{k=1}^{n} \frac{(-1)^{k-1}}k \frac{(n-1)!}{(k-1)!(n-k)!} \\
+&=& \frac{24}n \sum_{k=1}^{n} (-1)^{k-1} \frac{n!}{k!(n-k)!} \\
+&=& \frac{24}n \sum_{k=1}^{n} (-1)^{k-1} \binom{n}k \\
+&=& \frac{24}n \text{ hours}
+\end{eqnarray*}
+\newpage
+\item Suppose each bus has an on-time rating, which is a real number from the interval $[0,1]$. Suppose that the rating of the buses are independent and uniform random numbers from the interval $[0,1]$. What is the expected value of the minimum rating among the $n$ buses? How about the expected value of the maximum rating? (Hint: try to use the results from the previous part) \\\\
+Let $R_i$ be the uniform random variable representing the rating of each bus. Then each $R_i$ has the density function $g(r) = 1$ for $r \in [0,1)$ and $0$ everywhere else. Similar to the $T_i$ above, $\Pr[R_i \geq r] = \int_r^1 dt = 1-r$ for a given $r$. \\\\
+Again like the $T_i$, notice that $[min(R_i) \geq r] = \bigcap_{i=1}^n [R_i \geq r]$ (now we include all buses, since we don't know any of the ratings). So $\Pr[min(R_i)\geq r] = \prod_{i=1}^n \Pr[R_i \geq r] = (1-r)^n$. Again we use the equation from (1a):
+\begin{eqnarray*}
+E[min(R_i)] &=& \int_{0}^{\infty} \Pr[min(R_i)\geq r]dr \\
+&=& \int_0^1 (-r+1)^ndr \\
+&\ldots& \text{very similar calculations as in (2a)} \ldots \\
+&=& \frac1{n+1}
+\end{eqnarray*}
+Notice that $[max(R_i) \geq r] = \bigcup_{i=1}^n [R_i \geq r]$, so $\Pr[max(R_i) \geq r] = 1-\prod_{i=1}^n \Pr[R_i < r] = 1-r^n$:
+\begin{eqnarray*}
+E[max(R_i)] &=& \int_{0}^{\infty} \Pr[max(R_i)\geq r]dr \\
+&=& \int_0^1 1-r^ndr \\
+&=& r-\frac1{n+1}r^{n+1} \bigg|_0^1 \\
+&=& \frac{n}{n+1}
+\end{eqnarray*}
+\end{enumerate}
+
+\newpage
+\item \textbf{Geometric}
+\begin{enumerate}
+\item James Bond is imprisoned in a cell from which there are three possible ways to escape: an air-conditioning duct, 
+a sewer pipe and the door (which is unlocked). The air-conditioning duct
+leads him on a hour long trip whereupon he falls through a trap door onto his head, much to the
+amusement of his captors. The sewer pipe is similar and also takes an hour to traverse. Each fall
+produces temporary amnesia and he is returned to the cell immediately after each fall. Assume
+that he always immediately chooses one of the three exits from the cell with probability $\frac 1 3$. On the
+average, how long does it take before he realizes that the door is unlocked and escapes? \\\\ 
+Let $T$ be the number of hours James Bond spends for each decision, so $T=1$ with probability $\frac23$ if he chooses the air duct or sewer, and $T=0$ with probability $\frac13$ if he chooses the door (assume escaping is instant). Then $E(T) = 1(\frac23)+0(\frac13) = \frac23$ hours. \\\\
+Bond's decisions until the first time he chooses the door can also be modeled as a geometric distribution with parameter $p=\frac13$ and thus expected value $\frac1{1/3} = 3$. So Bond's expected time to escape is $3(\frac23) = 2$ hours. \\
+\item How does your answer to the question change if instead of an hour, the air-conditioning duct leads him to a half-hour long trip? \\\\
+Now $T \in \{0.5,1,0\}$ each with probability $\frac13$, so $E(T) = 0.5(\frac13)+1(\frac13)+0(\frac13) = \frac12$ hours. \\
+Bond is still expected to take 3 decisions to escape, but his expected time is now $3(\frac12) = 1.5$ hours.
+\end{enumerate}
+
+%Hint: If you are doing complicated calculations you’re taking the wrong approach.
+
+\newpage
+\item \textbf{Poisson}
+A textbook has on average one misprint per page. Model this as a Poisson random variable and calculate the probability that you see exactly 3 misprints on page 1. What is the chance that you see exactly 3 misprints on some page in a textbook of 200 pages? \\\\
+Let $X$ be the number of misprints on page 1. We can model the distribution of $X$ as a Poisson random variable with parameter $\lambda = 1$ misprint per page. So the probability that there are 3 misprints on page 1 is: $\displaystyle\Pr[X=3] = \frac{1^3}{3!\cdot e^1} = \frac1{6e} = 0.0613$ \\\\
+Assuming the number of misprints on a page is independent for each page, then let $Y$ denote the event that there is some page out of 200 pages with exactly 3 misprints: $\Pr[Y] = 1-\Pr[\bar{Y}] = 1-(\Pr[\overline{X=3}])^{200} = 1-(1-\Pr[X=3])^{200} = 1-(1-\frac1{6e})^{200} = 0.99999681$
+
+\newpage
+\item \textbf{More Poisson}
+\begin{enumerate}
+\item  It is fairly reasonable to model the number of customers entering a shop during a particular hour as a Poisson random variable. Assume that this Poisson random variable has mean $\lambda$. Suppose that whenever a customer enters the shop they leave the shop without buying anything with probability $p$. Assume that customers act independently, i.e. you can assume that they each simply flip a biased coin to decide whether to buy anything at all. Let us denote the number of customers that buy anything as $Y$ and the number of them that do not buy anything as $Z$. 
+What is the probability that $Y=k$ for a given $k$? How about $\Pr[Z=k]$? Prove that $Y$ and $Z$ are Poisson random variables themselves. Hint: you can use the identity $e^x=\sum_{k=0}^{\infty}\frac{x^k}{k!}$. \\\\
+Let's call $X$ the Poisson r.v. representing the number of people who enter the store in this particular hour. \\
+For any $n\geq 0$, $\displaystyle\Pr[X=n] = \frac{\lambda^n}{n!}e^{-\lambda}$ \\
+For any $k\leq n$, $\displaystyle\Pr[Y=k|X=n] = \binom{n}k(1-p)^kp^{n-k} = \frac{n!}{k!(n-k)!}(1-p)^kp^{n-k}$ \\\\
+Then by the total probability rule,
+\begin{eqnarray*}
+\Pr[Y=k] &=& \sum_{n=k}^{\infty} \Pr[X=n]\cdot\Pr[Y=k|X=n] \\
+&=& \sum_{n=k}^{\infty} \frac{\lambda^n}{n!}e^{-\lambda}\frac{n!}{k!(n-k)!}(1-p)^kp^{n-k} \\
+&=& \sum_{n=0}^{\infty} \frac{\lambda^{n+k}}{k!n!}e^{-\lambda}(1-p)^kp^n \\
+&=& \frac{\lambda^k (1-p)^k}{k!}e^{-\lambda} \sum_{n=0}^{\infty} \frac{(\lambda p)^n}{n!} \\
+&=& \frac{(\lambda(1-p))^k}{k!}e^{-\lambda}e^{\lambda p} \\
+&=& \frac{(\lambda(1-p))^k}{k!}e^{-\lambda(1-p)}
+\end{eqnarray*}
+Very similarly,
+\begin{eqnarray*}
+\Pr[Z=k] &=& \sum_{n=k}^{\infty} \Pr[X=n]\cdot\Pr[Z=k|X=n] \\
+&=& \sum_{n=k}^{\infty} \frac{\lambda^n}{n!}e^{-\lambda}\frac{n!}{k!(n-k)!}p^k(1-p)^{n-k} \\
+&=& \frac{(\lambda p)^k}{k!}e^{- \lambda p}
+\end{eqnarray*}
+It's clear that the respective probabilities that $Y=k$ and $Z=k$ for any $k\geq 0$ both follow the model for a Poisson distribution with parameters $\lambda_Y = \lambda(1-p)$ and $\lambda_Z = \lambda p$, so $Y$ and $Z$ are Poisson random variables. \\
+\newpage
+\item Assume that you were given two independent Poisson random variables $X_1, X_2$. Assume that the first has mean $\lambda_1$ and the second has mean $\lambda_2$. Prove that $X_1+X_2$ is a Poisson random variable with mean $\lambda_1+\lambda_2$. \\\\
+By definition, $\displaystyle\Pr[X_1 = n]_{n\geq 0} = \frac{\lambda_1^n}{n!}e^{-\lambda_1}$ and $\displaystyle\Pr[X_2 = n]_{n\geq 0} = \frac{\lambda_2^n}{n!}e^{-\lambda_2}$ \\
+We are trying to show that $\displaystyle\Pr[X_1+X_2 = n]_{n\geq 0} = \frac{(\lambda_1+\lambda_2)^n}{n!}e^{-(\lambda_1+\lambda_2)}$ \\\\
+Notice that $X_1+X_2 = n$ for all combinations of $X_1 = k \wedge X_2 = n-k$ where $0\leq k\leq n$:
+\begin{eqnarray*}
+\Pr[X_1+X_2=n]_{n\geq 0} &=& \sum_{k=0}^{n} \Pr[X_1=k]\cdot\Pr[X_2=n-k] \\
+&=& \sum_{k=0}^{n} \frac{\lambda_1^k}{k!}e^{-\lambda_1}\cdot\frac{\lambda_2^{n-k}}{(n-k)!}e^{-\lambda_2} \\
+&=& \left(\sum_{k=0}^{n} \frac1{k!(n-k)!}\lambda_1^k\lambda_2^{n-k}\right) e^{-\lambda_1}e^{-\lambda_2} \\
+&=& \left(\sum_{k=0}^{n} \frac{n!}{k!(n-k)!}\lambda_1^k\lambda_2^{n-k}\right) \frac1{n!}e^{-(\lambda_1+\lambda_2)} \\
+&=& \left(\sum_{k=0}^{n} \binom{n}k\lambda_1^k\lambda_2^{n-k}\right) \frac1{n!}e^{-(\lambda_1+\lambda_2)} \\
+&=& \frac{(\lambda_1+\lambda_2)^n}{n!}e^{-(\lambda_1+\lambda_2)}
+\end{eqnarray*}
+This is exactly what we are looking for, so $X_1+X_2$ is a Poisson random variable with parameter (and mean) $\lambda_1+\lambda_2$ (Note that the summation in the penultimate step is simplified using the definition of the binomial expansion theorem).
+\end{enumerate}
+
+\newpage
+\item \textbf{Exponential} There are two rare events that have the potential to cancel classes. One of them is a power outage and the other one is a fire on campus. Let's model the length of the time from now until the next power outage as a random variable $X$ and the length of the time until the next fire on campus as as $Y$ (they are both measured in the number of days, but can be fractional, i.e. it might take 0.3 days until the next power outage). For the sake of simplicity assume that $X$ and $Y$ are independent (in real life, they really are not independent).It is reasonable to model $X$ and $Y$ as exponential random variables. From historic measurements you conclude that the mean of $X$ is $100$, and the mean of $Y$ is $50$.
+
+\begin{enumerate}
+\item For a given $t$ what is $\Pr[X\geq t]$ and what is $\Pr[Y\geq t]$? \\\\
+An exponential distribution with mean $E[X] = 100 = \frac1{\lambda_X}$ has parameter $\lambda_X = \frac1{100}$. \\
+The probability that $X\geq t$ is just the area under the curve of the exponential distribution with parameter $\lambda_X = \frac1{100}$ from $t$ to $\infty$:
+\begin{eqnarray*}
+\Pr[X\geq t] &=& \int_{t}^{\infty} \frac1{100}e^{-\frac1{100}t}dt \\
+&=& [-e^{-\frac1{100}t}]_{t}^{\infty} \\
+&=& e^{-\frac1{100}t}
+\end{eqnarray*}
+Similarly, $E[Y] = \frac1{\lambda_Y} = 50$ and so $\lambda_Y = \frac1{50}$:
+\begin{eqnarray*}
+\Pr[Y\geq t] &=& \int_{t}^{\infty} \frac1{50}e^{-\frac1{50}t}dt \\
+&=& e^{-\frac1{50}t}
+\end{eqnarray*}
+\item You really only care about the next power outage or fire (either one will cancel the classes). The time from now until the next earliest such event is $\min(X,Y)$. Let us call this random variable $Z$. Prove that $Z$ is itself an exponential random variable. What is the expected value of $Z$? (Hint: What is $\Pr[Z\geq t]$? You can simplify this expression using the binomial theorem.) \\\\
+It is true that $Z\geq t$ iff $X\geq t \wedge Y\geq t$, since we care about the first of either occurrence. \\
+Since $X$ and $Y$ are independent, $\displaystyle\Pr[Z\geq t] = \Pr[X\geq t]\cdot\Pr[Y\geq t] = e^{-\frac1{100}t}\cdot e^{-\frac1{50}t} = e^{-\frac3{100}t}$ \\
+But for any exponential random variable $V$ with parameter $\lambda$ we can show that $\Pr[V\geq t] = e^{-\lambda t}$ (using similar basic integral calculus as in part (a)). \\
+Then $Z$ becomes an exponential random variable with parameter $\lambda_Z = \frac3{100}$ and expected value $E[Z] = \frac{100}3 = 33.3$ days.
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

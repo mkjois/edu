@@ -1,0 +1,109 @@
+Data Structures:
+
+Package dict:
+	
+	1. Entry.java : A container to map a key to a value, used in any 
+			dictionary-type data structure.
+
+		public methods:
+		
+		1.Entry (Object k, Object v): Constructs a new Entry with the given key and value.
+		2.key(): return key of this object.
+		3.value(): return value of this object. 
+	
+	2. PrimeGen.java : A class that provides some functionality involving prime numbers.
+ 		           Used in our hash table implementation.
+		
+		public methods: 
+
+		1.isPrime (int n): Determines whether or not a number is prime
+		2.primes (int a, int b): Returns all primes from a to b, inclusive
+		3.nextPrime (int n): Returns the next prime number greater than n
+	
+	3. HashTable.java : Our implementation of a Hash Table
+		
+		public methods: 
+		
+		1.HashTable (int sizeEstimate): Construct a new empty hash table intended to hold roughly sizeEstimate entries.
+		2.isEmpty(): checks to see if this table is empty.
+		3.size(): returns an int value for the size of this table.
+		4.find(Object key): finds the object in the hash table with the specified key, return null if the entry does not exist.
+	        5.insert(Object key, Object valus): creates a new entry in the table with the specified key and value.
+		6.remove(Object key): removes the Entry the the specified key and returns it, returns null of the entry does not exist 
+		  choses one entry arbitrarily if multiple entries with the same key exist.   
+		7.makeEmpty(): removes all entries from the table.
+
+Package set:
+	
+	1. DisjointedSets.java
+		
+		public methods:
+	
+		1. DisjointSets(int numElements): constructor
+		2. union(int root1, int root2): merges two dsets together.
+		3. find(int x): finds the (int) name of the set containing a given element.
+
+Package list:
+	
+	1. DListNode.java:
+	
+	2. DList.java:
+		
+		public methods:
+		
+		1.DList (): Constructs a new DList object with size 0.
+		2.DList (Object[] objArray): Constructs a new DList object with the objects in the given array.
+		3.isEmpty (): Determines whether or not there are items in this DList.
+		4.length (): Gives the length (i.e. size) of this DList.
+		5.add (Object item): Adds an object to the end of this DList. This DList is extended dynamically. 
+		6.insert (Object item, int index): Inserts an object before the given index in this DList. If the index
+                                                   doesn't exist with respect to this DList, throws an exception.
+		7.indexOf (Object item, int occurrence): Gives the index of the given occurrence of the given object in this DList.
+		                                         If given occurrence is less than 1 or the given occurrence of the object 
+                                                         is not in this DList, returns -1.
+		8.contains (Object item): Determines whether or not a given object is in this DList.
+		9.get (int index):Gives the object in this DList at the given index. If given index is not valid for this DList, throws an exception.
+		10.concat (DList other):Concatenates this DList with another DList without mutating the other one.
+		11.append (DList other)Appends the given DList to this DList in constant time, making the given one empty.
+		12.pop ()Removes and returns the last object in this DList if there is one, otherwise returns null.
+		13.remove (int index): Removes the object at the given index in this DList.
+		14.remove (Object item):Removes the given Object from this DList, or does nothing if the Object is not found.
+		15.allPairs ():enerates a DList of Object[2]'s that contain all possible pairings of any two Objects in this DList.
+
+Package graph:
+		
+	1.Vertex.java:
+		
+		public methods:
+		
+		1.Vertex(Object item, DListNode graphRef):constructs a vertex object @param item - object to be inserted 
+                                                          @param graphRef - pointer to Node in internal WUGraph DList.
+		2.reset():sets all fields in this instance to null
+		3.addEdge(Edge e):adds an Edge object to this Vertex's DList.
+		4.removeEdge(DListNode n):remove an Edge from this Vertex.
+		5.graphRef():return a DListNode that contains the reference of the DListNode in WUGraph that contains this Vertex
+		6.item(): return this.item.
+		7.degree():returns how many other Vertices are connected to this Vertex.
+
+	2. Edge.java:
+		
+		public methods:
+		
+		1.Edge(Vertex v1, Vertex v2, int weight): constructs an Edge object that is used to join two Vertex objects.
+		2.setRef(Vertex v, DListNode n):sets the reference Vertex v has of this Edge in V_refToV_ (depending on which Vertex this is)
+		3.reset(): sets all parameters in this method to null.
+		4.weight(): return the weight of this edge.
+		5.adjacentVertex(Vertex v)given a Vertex in this Edge, return the opposite Vertex.
+		6.adjacentListRef(Vertex v): return the reference the vertex has to this edge.
+		7.contains(Vertex v):checks whether this Edge contains a Vertex.
+		8.isSelfEdge() - checks to see if the two ends of this edge are to itself.
+		9.vertices():an array of the two Vertices connected to this edge.
+
+
+Design choices:	
+
+	For removeVertex, we made a Vertex and an Edge class. We had both contain pointers to each other (i.e V2refToV1, V1refToV2 in Edge.java) so that we 
+	could access them quickly without having to search for them everytime. 
+
+	For getVertices, we stored all vertices of the graph in a DList initially. In the method we create an Object array of length DList.length() and then
+	itterate over the DList, adding the elements to the array as we go. This ensures that we only need to pass over the elements once.

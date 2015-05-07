@@ -1,0 +1,163 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage{amsmath,amssymb}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{5}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday October 7 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle 
+
+\begin{enumerate}
+\item \textbf{Hierarchical secret sharing:}
+Suppose that Google's most precious asset
+was the simple algorithm at the core of Google search\footnote{Disclaimer: 
+there is no simple algorithm at the core of Google search.}.
+This secret is closely guarded,
+and indeed no single individual at Google knows the algorithm.
+In fact, no individual at Google knows anything about the algorithm,
+they just oversee the machines that run it.
+
+In the case of an emergency, Google would like to be able to recover this core algorithm.
+Google is run by its president and board of $9$ directors,
+and they would like a group including
+the president and a majority of the members of the board to be able to recover the algorithm.
+But they would also like to ensure that no other group can learn \emph{anything} about the algorithm.
+
+Describe a scheme which has the desired property.
+You should specify some data to give to the president
+and to each member of the board,
+such that the president and $5$ members of the board can recover
+the secret algorithm but such that any group which doesn't contain the president,
+or any group which has only 4 members of the board,
+can't learn anything about the algorithm.
+
+\textbf{Solution:} Let $P(x)$ be a degree-4 polynomial $\bmod N$, where $N$ is a large prime, such that $P(0)$ is the secret algorithm.
+Now add a constant offset $c$ to get a polynomial $Q(x) = P(x)+c$.
+Give the offset $c$ to the president and $Q(1),Q(2),\ldots,Q(9)$ to the nine board members.
+Any group of 5 or more board members can recover the polynomial $Q(x)$ but they need the president to give the offset $c$ to recover $P(x)$.
+The president has $c$ but has no way of recovering $Q(x)$ without a majority of his board.
+
+\newpage
+\item \textbf{Counting:}
+Consider the set of degree $\leq d$ polynomials $\bmod p$, for some prime $p$.
+Fix $k < d$, and let $0 < a_1 < a_2 < \ldots < a_k < p$ be integers.
+\begin{enumerate} 
+\item How many degree $\leq d$ polynomials $P$ are there such that $P(a_1) = P(a_2) = \cdots = P(a_k) = 0$? \\
+$P$ is of the form $P(x) = (x-a_1)(x-a_2)\cdots(x-a_k)(b_{d-k}x^{d-k} + b_{d-k-1}x^{d-k-1} + \cdots + b_0x^0)$, where $b_{d-k},\ldots,b_0$ are arbirtary constants $\bmod p$. Any constant $c$ multiplied by $P$ will factor into the arbitrary $b_i$, and this polynomial is guaranteed to be of degree $\leq d$ with roots at the $a_i$. This leaves $d-k+1$ arbitrary constants $b_i$ each with $p$ possible values, so there are $p^{d-k+1}$ possible polynomials.
+\item How many polynomials are there of the form $P(x) = x^d + Q(x)$, where $Q$ has degree $\leq d-1$,
+such that $P(a_1) = P(a_2) = \cdots = P(a_k) = 0$? \\
+Again we write $P(x)$ as in part (a) but this time we know $b_{d-k} = 1$. The only way to get an $x^d$ term in $P(x)$ is to multiply $x^{d-k}$ by all the $x$'s in the $(x-a_i)$ terms, so the coefficient of $x^{d-k}$ is 1 and the rest of the polynomial produces a $Q(x)$ of degree $\leq d-1$. There are now $d-k$ arbitrary constants $b_i$ each with $p$ possible values, so we have $p^{d-k}$ possible polynomials.
+\item How many degree $\leq d$ polynomials $P$ are there such that $P(a_1) \neq 0, P(a_2) \neq 0, \ldots, P(a_k) \neq 0$? \\
+A unique polynomial of degree $\leq d$ can be determined by a set of $d+1$ points each with $p$ possible values. But for the condition to hold, $k$ of the points can't be valued $0 \bmod p$, leaving each of those points with $p-1$ possible values. Thus there are $(p-1)^k \cdot p^{d-k+1}$ possible polynomials.
+\end{enumerate}
+(Note: in general, when we talk about a degree $d$ polynomial,
+we typically mean to include the degenerate case of a degree $d-1$ polynomial.
+This problem specifies $\leq d$ only for clarity.)
+
+\newpage
+\item \textbf{Adversarial Secret Sharing:} Suppose 
+that I want to break up a secret into shares such that any set of $k$ people can recover the secret,
+but I'm also worried that some people might be dishonest and may lie about the secrets they have 
+(in order to prevent the other people from recovering the correct secret). 
+Show that in the ordinary secret sharing scheme based on polynomials,
+any group of $k+2$ people can recover the secret even if one of them is dishonest.
+
+\textbf{Solution:} Let $P(x)$ be the polynomial that determines the secret and each of the shares, and $E(x) = (x-e)$ where $e$ is the person who is dishonest about his share $P(e)$. Let $R(x)$ be the reported value of each share where we don't know for which $x=e$ such that $P(e) \neq R(e)$, and $Q(x) = P(x)E(x)$. \\\\
+Observe that $Q(x) = P(x)E(x) = R(x)E(x)$ for all $x \in \{1,2,\ldots,k,k+1,k+2\}$ since for $x=e$, $E(x) = 0$ and for $x \neq e$, $P(x) = R(x)$.
+Also observe that if we want any set of $k$ people to recover the secret, $P(x)$ must be a polynomial of degree $k-1$ and thus have $k$ unknown coefficients. So $Q(x)$ is a degree $k$ polynomial with $k+1$ unknown coefficients. \\\\
+If we write down the equations $Q(i) = R(i)E(i)$ for all $i \in \{1,2,\ldots,k,k+1,k+2\}$, we will have a system of $k+2$ linear equations of $k+2$ unknowns, which are the coefficients of $Q(x)$ plus the unknown $e$.
+Since we constructed $Q(x)$ to be $P(x)(x-e)$, we know it has real coefficients because we can assume $P(x)$ has real coefficients in ordinary secret sharing, and $e$ must be one of $\{1,2,\ldots,k,k+1,k+2\}$. So our system of linear equations has a solution. \\\\
+Let $Q'(x)$ and $E'(x)$ be the polynomials we reconstructed from our linear equations. Then we observe that both $Q(x) = R(x)E(x)$ and $Q'(x) = R(x)E'(x)$.
+Now we consider the polynomials $Q(x)E'(x)$ and $Q'(x)E(x)$. If $E(x) = 0$, then $Q(x) = 0$ and both these polynomials are zero. If $E'(x) = 0$, then $Q'(x) = 0$ and both these polynomials are again zero. Otherwise $Q(x)E'(x) = R(x)E(x)E'(x) = Q'(x)E(x)$ and we can rearrange to get $\frac{Q'(x)}{E'(x)} = \frac{Q(x)}{E(x)} = P(x)$. So the $P(x)$ we get after polynomial division is unique and can be recovered by $k+2$ people even if one is dishonest.
+
+\newpage
+\item \textbf{Exam reprise:} For each even numbered question on the midterm,
+write up the most convincing 1 to 2 sentence answer to that question that you can.
+The midterm will be posted after Thursday.
+You are allowed to look at the solutions to the midterm;
+we want you to spend some time thinking about the solutions
+and trying to synthesize the core ideas.
+
+\textbf{2:} The algorithm originally produces pairings without any rogue couples, and the only person whose preferences change is man 1, who can move woman A a maximum of $n-1$ places down his list (from first to last). Now if there are any rogue couples, man 1 must be a part of each one since only he changed his preferences, and he can only prefer $n-1$ women at most, who may all prefer 1 to their partner, to woman A.
+
+\textbf{4:} Since $\Delta_i(i) = 1 \text{ and } \Delta_i(j) = 0 \text{ for } i \neq j$, $P(x) = \sum_{i=1}^{11} \Delta_i(x) = 1 \text{ for } 1 \leq x \leq 11$.
+There must be a unique polynomial of degree-10 or less that goes through these 11 points; but we notice that $P(x) = 1 \text{ for all } x$ fits the criteria and passes through the 11 points so it is the unique polynomial, and therefore $P(20) = 1$.
+
+\end{enumerate}
+
+\end{document}

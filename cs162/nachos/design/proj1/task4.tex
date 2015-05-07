@@ -1,0 +1,74 @@
+\documentclass{article}
+\usepackage{listings}
+\title{Task 4 Design}
+
+\author{Alexander Wang}
+
+\begin{document}
+\lstset{language=Python}
+\maketitle
+
+\section*{\underline{Task 4: Communicator}}
+
+\subsection*{Overview}
+In order to ensure that only one speaker and listener are transferring at a time, we will use a lock and a condition variable. When \texttt{listen()} gets called, it will acquire the lock, increase the number of waiting listeners, and check to see if the number of waiting speakers is greater than one. If so, \texttt{listen()} will \texttt{signal()} and then \texttt{wait()} for the speaker to transfer the word; otherwise, it will simply call \texttt{wait()}. Upon the waking up from the second \texttt{wait()}, \texttt{listen()} will release the lock and return the word. When \texttt{speak()} gets called, it will acquire the lock, increase the number of waiting speakers, and check to see if the number of waiting listeners is greater than one. If so, \texttt{speak()} will decrease the number of waiting speakers, \texttt{signal()} a listener, and release the lock.
+
+\subsection*{Correctness Constraints}
+\begin{itemize}
+\item A speaker and listener are never both waiting
+\item Exactly one listener receives a word given by any speaker
+\end{itemize}
+
+\subsection*{Declarations}
+\texttt{Lock lock} - Ensure only one communicator is modifying condition variables at any given time. \\
+\texttt{int speakersWaiting} - Allow listener to determine if a speaker is available. \\
+\texttt{int listenersWaiting} - Allow speaker to determine if a listener is available. \\
+\texttt{int currentWord} - 32-bit word that is to be replaced by the speaker in transfer. \\
+\texttt{Condition okToTransfer} - Conditional variable to let speaker send. \\
+\texttt{Condition okToReceive} - Conditional variable to let receiver receive. \\
+\texttt{Condition transferMade} - Conditional variable to transfer.
+
+\subsection*{Descriptions}
+
+\begin{lstlisting}[frame=single]
+Lock lock
+word = nil
+speakersWaiting = 0
+listenersWaiting = 0
+
+listen():
+    acquire lock
+    while speakersWaiting is 0:
+        increment listenersWaiting
+        wait on okToReceive and release lock
+        decrement listenersWaiting
+    signal okToTransfer
+    wait on transferMade and release lock again
+    return word
+
+speak(myWord):
+    acquire lock
+    while listenersWaiting is 0:
+        increment speakersWaiting
+        wait on okToTransfer and release lock
+        decrement speakersWaiting
+    word = myWord
+    signal transferMade
+    release lock
+\end{lstlisting}
+
+\subsection*{Testing Plan}
+We plan to test Communicator by including test methods.
+\begin{itemize}
+\item Initialize 4 speakers each with unique words
+\subitem Call listen one by one and see if the 4 words are returned as expected
+\subitem Check that both speakersWaiting and listenersWaiting are 0
+\item Initialize 4 listeners
+\subitem Call speak one by one with unique words and see that each is returned as expected
+\subitem Check that both speakersWaiting and listenersWaiting are 0
+\item Choose either a speaker or listener with 50 percent probability and keep track of how many of each there are.
+\subitem At the end, get the absolute value of speakers minus listeners created and ensure that it equals speakersWaiting + listenersWaiting
+\subitem Get the minimum of the two and ensure that it equals the number of words returned
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,39 @@
+Script started on Wed 13 Mar 2013 03:14:35 PM PDT
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ exit./a.outg++ amoebas.cpp amoebamain.cppexit[Kg++ amoebas.cpp amoebamain.cppexit[K./a.outg++ amoebas.cpp amoebamain.cppexit[Kg++ amoebas.cpp amoebamain.cpp./a.out[K[3Pexitg++ amoebas.cpp amoebamain.cpp./a.out[K[3Pexit[Kg++ dll.cpp selectioncpp[K[K[K.cpp
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ ./a.out
+For N=30 and K=7 :
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 
+Deleting node with value 8
+Deleting node with value 16
+Deleting node with value 24
+Deleting node with value 2
+Deleting node with value 11
+Deleting node with value 20
+Deleting node with value 29
+Deleting node with value 9
+Deleting node with value 19
+Deleting node with value 30
+Deleting node with value 12
+Deleting node with value 23
+Deleting node with value 5
+Deleting node with value 18
+Deleting node with value 3
+Deleting node with value 17
+Deleting node with value 4
+Deleting node with value 22
+Deleting node with value 10
+Deleting node with value 28
+Deleting node with value 25
+Deleting node with value 15
+Deleting node with value 14
+Deleting node with value 21
+Deleting node with value 27
+Deleting node with value 7
+Deleting node with value 6
+Deleting node with value 26
+Deleting node with value 13
+Only one person remains: 1 
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ exit
+exit
+
+Script done on Wed 13 Mar 2013 03:14:54 PM PDT

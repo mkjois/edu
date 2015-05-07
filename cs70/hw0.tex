@@ -1,0 +1,56 @@
+\documentclass[12pt]{article}
+    \usepackage{amsmath}
+    \usepackage{enumerate}
+    \usepackage{amssymb}
+    \title{CS 70 HW0 \\ Fall 2013}
+    \author{Manohar Jois}
+    \date{}
+\begin{document}
+    \maketitle
+    \begin{enumerate}[1.]
+        \item \begin{enumerate}[(a)]
+            \item $\forall x \in \mathbb{Z},\, x+1 \in \mathbb{Z}$ \\ \textbf{True}
+            \item $\forall x \in \mathbb{Z},\, \text{if } \frac{x}{2} \in \mathbb{Z}
+                \text{ then } \frac{x+1}{2} \in \mathbb{Z}$ \\ \textbf{False}
+            \item $\exists x \in \mathbb{N}\, s.t.\, 10 \cdot x = 100$ \\ \textbf{True}
+            \item $\exists x \in \mathbb{N}\, s.t.\, 10 \cdot x = -100$ \\ \textbf{False}
+            \item $\exists x \in \mathbb{Z}\, s.t.\, 10 \cdot x = \pi$ \\ \textbf{False}
+            \item $\exists x \in \mathbb{R}\, s.t.\, \forall y \in \mathbb{R},\,
+                \frac{y}{x} = y$ \\ \textbf{True}
+            \item $\forall x \in \mathbb{Z},\, \exists y \in \mathbb{Z}\,
+                s.t.\, xy = 1$ \\ \textbf{False}
+            \item $\forall x \in \mathbb{Z},\, \exists y \in \mathbb{Q}\,
+                s.t.\, xy = 1$ \\ \textbf{False}
+            \end{enumerate}
+        \item $\{2\pi,\, \frac{8}{2},\, 1\} = \{1,\, 2\pi,\, \frac{8}{2}\}$
+        \item $\{2,\, \frac{8}{2}\} \subset \{x\, |\, \frac{x}{2} \in \mathbb{N}\}$ \\
+            \textbf{(b) and (e)}
+        \item $|\{x\, |\, x < 100,\, \frac{x}{5} \in (\mathbb{N} \cup \{0\})\}|
+            = |\{x\, |\, 0 \leq x < 20,\, x \in \mathbb{Z}\}| = \textbf{20}$
+        \item \begin{eqnarray*}
+            \sum_{i=0}^{n} f(i) & = & \left(\sum_{i=0}^{n-1} f(i)\right) + f(n) \\
+            & = & f(0) + f(1) + \cdots + f(n) \\
+            & = & \sum_{i=0}^{\lfloor \frac{n}{2} \rfloor} f(i) + \sum_{j = \lfloor
+                \frac{n}{2} \rfloor +1}^{n} f(j) \\
+            & = & \sum_{i=0}^{\lfloor \frac{n}{2} \rfloor} \sum_{j=2i}^{2i+1} f(j)
+                \qquad \text{(for $n$ odd)}
+            \end{eqnarray*} \\ \textbf{(c), (d), (e) and (f)}
+        \item \begin{eqnarray*}
+            \prod_{i=0}^{n} f(i) & = & f(0) \cdot f(1) \cdot f(2) \cdots f(n-1) \cdot f(n) \\
+            & = & f(n) \prod_{i=0}^{n-1} f(i) \\
+            & = & \left(\prod_{i=0}^{n-1} f(i)\right) f(n) \\
+            & = & \prod_{i=0}^{\lfloor \frac{n}{2} \rfloor} f(i) \prod_{j= \lfloor
+                \frac{n}{2} \rfloor +1}^{n} f(j)
+            \end{eqnarray*} \\ \textbf{(a), (c), (d) and (g)}
+        \item Base case: $\displaystyle 0^3 = \frac{(0 \cdot 1)^2}{4} = 0$ \\
+            Inductive hypothesis: Assume $\displaystyle\sum\limits_{i=0}^{k} i^3
+                = \frac{(k(k+1))^2}{4}$ for an arbitrary $k$. \\
+            Inductive step: \begin{eqnarray*}
+                \sum_{i=0}^{k+1} i^3 & = & \sum_{i=0}^{k} i^3 + (k+1)^3 \\
+                & = & \frac{(k(k+1))^2}{4} + k^3 + 3k^2 + 3k + 1 \\
+                & = & \frac{k^4 + 2k^3 + k^2 + 4k^3 + 12k^2 + 12k + 4}{4} \\
+                & = & \frac{k^4 + 6k^3 + 13k^2 + 12k + 4}{4} \\
+                & = & \frac{((k+1)(k+2))^2}{4}
+            \end{eqnarray*}
+    \end{enumerate}
+\end{document}

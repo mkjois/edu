@@ -1,0 +1,47 @@
+GRADER file for Homework 8
+
+ Your Name:  Manohar Jois
+Your Login:  cs61b-mk
+
+Part III.  Running time comparisons
+
+  List size         mergesort(ms)         quicksort(ms)
+       10                1                    ~0
+      100                1                     1
+    1,000                8                     3
+   10,000               12                     7
+  100,000               62                    41
+
+Part IV.
+
+  Is mergesort stable?
+  Why or why not?
+
+  This mergesort is not stable. The method mergeSort() calls makeQueueOfQueues(),
+  which makes a queue of single-element queues with every element in the input
+  queue. At every iteration in mergeSort(), we mergeSortedQueues() the first 2
+  queues in the outer queue and enqueue it at the back. These queues are always
+  sorted because they start out as one-element queues. However, during the
+  iterations, we may come across 2 distinct cases:
+  1) Both of the first 2 queues contain elements that have been run through
+     mergeSortedQueues() an equal number of times, let's say n times.
+  2) The first of the 2 queues contains elements that have been run through
+     mergeSortedQueues() n times, while the second contains elements that have
+     been run through mergeSortedQueues() n+1 times.
+  In mergeSortedQueues(), when we come across equal front elements in both queues,
+  to keep the queue stable with regard to the original queue we have to take the
+  element in the first queue in case (1), while we have to take the element in the
+  second queue in case (2). We only get to implement one of these options for this
+  mergeSortedQueues(), and at each iteration of mergeSort() we don't know whether
+  case (1) or case (2) will occur, so we can't keep the queue stable.
+  
+  Is quicksort stable?
+  Why or why not?
+
+  This quicksort is stable. The method quickSort() calls partition(), which walks
+  down the input queue element by element in order and enqueues the elements into
+  either qSmall, qEquals, or qLarge. So at the end of the method, the relative
+  order of the elements in each of the 3 subqueues is consistent with the order
+  in the input queue. quicksort() is then called recursively on qSmall and qLarge,
+  and at each recursive step, this ordering holds for the same reason. By the end
+  of the recursive process, the relative order of identical keys is maintained.

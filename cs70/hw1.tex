@@ -1,0 +1,223 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{amsmath,amssymb}
+\lecture{1}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday September 9 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle
+
+\begin{enumerate}
+\item Suppose that $x \in \R$ such that $x + \frac 1x \in \Q$.
+Using strong induction, show that for each $n \in \N$, $a_n = x^n + \frac 1{x^n} \in \Q$.
+
+(\raisebox{0.4em}{\rotatebox{180}{Hint: consider the product of $a_1$ and $a_n$ }})
+
+\textbf{Proof}: We proceed by strong induction on $n$. 
+
+{\bf Base Case:} \begin{equation*}
+    a_0 = x^0 + \frac 1{x^0} = 2 \in \Q \\
+    a_1 = x^1 + \frac 1{x^1} \in \Q \quad \text{(given)}
+    \end{equation*}
+
+{\bf Induction Hypothesis:} $\displaystyle \forall k \leq n,\, k \in \N: a_k = x^k + \frac 1{x^k} \in \Q$
+
+{\bf Induction Step:} \begin{eqnarray*}
+    a_{k+1} & = & x^{k+1} + \frac 1{x^{k+1}} \\
+    & = & x \cdot x^k + \frac 1x \cdot \frac 1{x^k} \\
+    & = & (x + \frac 1x)(x^k + \frac 1{x^k}) - (x^{k-1} + \frac 1{x^{k-1}}) \in \Q \\
+    \text{Since } \forall a,b \in \Q, \quad ab \in \Q \, \land \, a \pm b \in \Q
+    \end{eqnarray*}
+
+\newpage
+\item Expand the following "idea of a proof" into a complete proof that $\sum_{k = 1}^{n} \frac 1{k^2} \leq 2$.
+
+Idea of proof: If $\sum_{k = 1}^{n} \frac 1{k^2} \leq 2 - \frac 1 n$ then 
+$\sum_{k = 1}^{n+1} \frac 1{k^2} \leq 2 - \frac 1 n + \frac 1 {(n+1)^2} \leq 2 - \frac 1 n + \frac 1 {n(n+1)} = 2 - \frac 1 {n+1}$
+
+$\forall n \in \N,\, n > 0: \quad 2 - \frac 1n < 2$ \\
+We prove by induction on $n$ that $\sum_{i=1}^{n} \frac 1{i^2} \leq 2 - \frac 1n < 2$
+
+{\bf Base Case:} $\frac 1{1^2} = 1 \leq 2 - \frac 1{1} = 1 < 2$
+
+{\bf Induction Hypothesis:} $\displaystyle\sum\limits_{i=1}^{n} \leq 2 - \frac 1n < 2$
+
+{\bf Induction Step:} \begin{eqnarray*}
+    \sum_{i=1}^{n+1} \frac 1{i^2} & \leq & 2 - \left(\frac 1n - \frac 1{(n+1)^2}\right) \\
+    & \leq & 2 - \left(\frac 1n - \frac 1{n(n+1)}\right) \\
+    & = & 2 - \frac 1{n+1} < 2 \\
+    \end{eqnarray*}
+
+\newpage
+\item A \emph{celebrity} at a party is someone whom everyone
+knows, yet who knows no one.
+Suppose that you are at a party with $n$ people.
+For any pair of people $A$ and $B$ at the party,
+you can ask $A$ if they know $B$ and receive 
+an honest answer.
+Show that it is possible to determine whether there is a celebrity at the party,
+and if so who, by asking at most $3n - 1$ questions.
+
+Your answer should specify your strategy for asking questions, a proof that it
+always identifies a celebrity if one exists, and a proof that the number of questions
+is at most $3n-1$. 
+
+(\raisebox{0.4em}{\rotatebox{180}{Hint: use one question to identify someone who \emph{isn't} a celebrity,
+then use recursion}})
+
+Call each person $p_1, p_2, p_3 \cdots p_n$ where all $p_i$ are in S, the set of people who may be the celebrity.
+For any $i, j \, s.t. \, p_i, p_j \in$ S, ask if $p_i$ knows $p_j$ to eliminate one of them from S (If $p_i$ knows $p_j$
+then $p_i$ is not a celebrity, otherwise $p_j$ is not a celebrity). Repeat this process, only asking people who
+are both in S, until there remains only one person, let's say $p_k$, in S. Then we ask $p_k$ if he/she knows the
+other $n-1$ people and ask the other $n-1$ people if they know $p_k$ to determine whether or not $p_k$ is a celebrity.
+This process clearly takes at most $3(n-1) < 3n-1$ questions to identify a possible celebrity within a party of $n$
+people.
+
+We prove by induction on $n$ that $Q(n)$, the maximum number of questions needed, is at most $3n-1$ for any $n \in \N$.
+
+{\bf Base Case:} For $n=1$ people you need to ask $0 < 3(1)-1 = 2$ questions, because by definition that person is
+    a celebrity. For $n=2$ people you ask one question to determine who may be the celebrity and another one to the
+    second person to confirm it, for a total of $2 < 3(2)-1 = 5$ questions.
+
+{\bf Induction Hypothesis:} Assume $Q(n) \leq 3n-1$ for some $n$.
+
+{\bf Induction Step:} With the above process of asking questions, it takes only one extra question to eliminate all
+    people except a possible celebrity. You then must ask if he/she knows one additional person and if that extra
+    person knows the candidate. A total of three extra questions must be asked: $Q(n+1) \leq 3n-1+3 = 3(n+1)-1$
+
+\newpage
+\item 
+\textbf{Claim}: If I draw $n$ straight lines on a piece of paper
+I cannot divide the piece of paper
+into more than $\frac {n(n+1)}{2} + 1$ regions.
+
+Synthesize the core idea of the following proof, and write a 2-3 line ``sketch of proof.''
+
+\textbf{Proof}: We proceed by induction. 
+
+{\bf Base Case:} If there are no lines then the plane is divided into $1 = \frac {0(0+1)}2 + 1$ regions, as desired. 
+
+{\bf Induction Hypothesis:} Suppose that any set of $n$ lines divide the plane into at most $\frac {n(n+1)}2 + 1$ regions.
+
+{\bf Induction Step:} Let $S$ be some set of $n+1$ lines.
+Let $\ell$ be an arbitrary line in $S$, 
+and let $T$ be the rest of $S$.
+Let $A$ and $B$ be the part of the sheet of paper
+on the left and right halves of $\ell$.
+By the inductive hypothesis, $T$ divides the plane into at most $\frac {n(n+1)}2 + 1$ regions,
+say $R_1, R_2, \ldots$.
+
+Observe that $\ell$ can divide each $R_i$ into at most two sub-regions,
+$R_i \cap A$ and $R_i \cap B$.
+Moreover, unless $\ell$ intersects $R_i$, one of these regions will be empty.
+Thus the number of new regions created by drawing $\ell$
+is at most the number of regions that $\ell$ intersects.
+
+Between any two regions that $\ell$ intersects, there is at least one
+line which $\ell$ intersects.
+Moreover, $\ell$ intersects each line in $T$ at most once
+(since any two lines intersect at most once), and there are $n$
+lines in $T$.
+Thus the number of new regions is at most $n+1$.
+
+Thus $S$ divides the piece of paper into at most 
+$\frac {n(n+1)}2 + 1 + (n+1) = \frac {(n+1)(n+2)}2 + 1$ regions, as desired.
+
+{\bf Sketch of Proof:} \\
+    There are $n$ lines dividing the paper into at most $\frac{n(n+1)}{2} + 1$ regions. \\
+    The $(n+1)^{\text{st}}$ line intersects at most $n$ lines and thus $n+1$ regions. \\
+    For every region it intersects it adds a new region, so there are at most $n+1$ new regions. \\
+    It follows that there are now at most $\frac{n(n+1)}{2}+1 + (n+1) = \frac{(n+1)(n+2)}{2}+1$ regions.
+
+\newpage
+\item {\bf Tower of Brahma:} This puzzle was invented by the French mathematician, Edouard Lucas, in 1883. Accompanying the puzzle is a story:
+
+In the great temple at Benares beneath the dome which marks the center of the world, rests a brass plate in which are fixed three diamond needles, each a cubit high and as thick as the body of a bee. On one of these needles, at creation, God placed sixty-four disks of pure gold, the largest disk resting on the brass plate and the others getting smaller and smaller up to the top one. This is the Tower of Brahma. Day and Night unceasingly, the priests transfer the disks from one diamond needle to another according to the fixed and immutable laws of Brahma, which require that the priest on duty must not move more than one disk at a time and that he must place this disk on a needle so that there is no smaller disk below it. When all the sixty-four disks shall have been thus transferred from the needle on which at the creation God placed them to one of the other needles, tower, temple and priests alike will crumble into dust, and with a thunderclap the world will vanish.
+
+Prove by induction the exact number of moves required to carry out this task as a function of $n$, the number of disks on the original needle. The priests are duty bound to minimize the number of moves to transfer the tower. Assuming that the priests can move a disk each second, roughly how many years does the prophecy predict before the destruction of the World? For comparison, the age of the Earth is estimated to be $4.6$ billion years. 
+
+We prove by induction on $n$, the number of disks, that for $n$ disks it takes $M(n) = 2^n - 1$ moves to transpose the Tower of Bramha to a different needle.
+
+{\bf Base Case:} For $n=1$ disk it takes $2^1 - 1 = 1$ move to transpose the tower.
+
+{\bf Induction Hypothesis:} For some $n$ disks it takes $M(n) = 2^n - 1$ moves to transpose the tower.
+
+{\bf Induction Step:} Notice that when the original tower has $n+1$ disks, the way to transpose it to another needle would be to transpose the
+    $n$-disk to another needle, move the $(n+1)^{\text{st}}$ disk, then transpose the $n$-disk tower back onto it. It follows that $M(n)$ can
+    be computed recursively with the formula $M(n) = 2 \cdot M(n-1) + 1$. It is clear that our formula for $M(n)$ satisfies this recursive
+    property: $M(n+1) = 2 \cdot M(n) + 1 = 2(2^n - 1) + 1 = 2^{n+1} - 1$
+
+\end{enumerate}
+\end{document}

@@ -1,0 +1,318 @@
+Script started on Tue 12 Feb 2013 08:38:02 PM PST
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ exit./a.out
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	9 of clubs
+Dealer dealt:	ace of clubs
+Customer dealt:	7 of hearts
+Dealer dealt:	5 of clubs
+
+Customer cards:	2
+Customer total:	16
+Customer aces as 11:	0
+
+Dealer up-card:	ace of clubs
+Dealer cards:	2
+Dealer total:	16
+Dealer aces as 11:	1
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	ace of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	17
+Customer aces as 11:	0
+
+An Ace had to be reduced from 11 to 1.
+Dealer dealt:	ace of diamonds
+
+Dealer stands.
+
+Dealer up-card:	ace of clubs
+Dealer cards:	3
+Dealer total:	17
+Dealer aces as 11:	1
+LOSS: Dealer wins 17 to 17
+We won 0 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.out[3Pexit./a.out[3Pexitjava Homework3c Homework3.java[6P Homework3exit[K./a.out[3Pexit./a.out[Kg++ blackjack.cpp cards.cpp hands.cpp
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.out
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of spades
+Dealer dealt:	7 of hearts
+Customer dealt:	10 of diamonds
+Dealer dealt:	ace of clubs
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer up-card:	7 of hearts
+Dealer cards:	2
+Dealer total:	18
+Dealer aces as 11:	1
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	7 of hearts
+Dealer cards:	2
+Dealer total:	18
+Dealer aces as 11:	1
+LOSS: Dealer wins 18 to 18
+We won 0 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.outg++ blackjack.cpp cards.cpp hands.cpp
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ g++ blackjack.cpp cards.cpp hands.cpp./a.out[K
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	5 of clubs
+Dealer dealt:	6 of diamonds
+Customer dealt:	king of clubs
+Dealer dealt:	10 of hearts
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	0
+
+Dealer up-card:	6 of diamonds
+Dealer cards:	2
+Dealer total:	16
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	0
+Dealer dealt:	3 of spades
+
+Dealer stands.
+
+Dealer up-card:	6 of diamonds
+Dealer cards:	3
+Dealer total:	19
+Dealer aces as 11:	0
+LOSS: Dealer wins 19 to 15
+We won 0 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.outg++ blackjack.cpp cards.cpp hands.cpp
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ g++ blackjack.cpp cards.cpp hands.cpp./a.out[K
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	7 of hearts
+Dealer dealt:	4 of spades
+Customer dealt:	king of clubs
+Dealer dealt:	10 of hearts
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	0
+
+Dealer up-card:	4 of spades
+Dealer cards:	2
+Dealer total:	14
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	0
+Dealer dealt:	3 of spades
+
+Dealer stands.
+
+Dealer up-card:	4 of spades
+Dealer cards:	3
+Dealer total:	17
+Dealer aces as 11:	0
+LOSS: Dealer wins 17 to 17
+We won 0 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.outg++ blackjack.cpp cards.cpp hands.cpp
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ g++ blackjack.cpp cards.cpp hands.cpp./a.out[K
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of spades
+Dealer dealt:	4 of spades
+Customer dealt:	king of clubs
+Dealer dealt:	5 of diamonds
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer up-card:	4 of spades
+Dealer cards:	2
+Dealer total:	9
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+Dealer dealt:	6 of hearts
+Dealer dealt:	3 of hearts
+
+Dealer stands.
+
+Dealer up-card:	4 of spades
+Dealer cards:	4
+Dealer total:	18
+Dealer aces as 11:	0
+LOSS: Dealer wins 18 to 18
+We won 0 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.outg++ blackjack.cpp cards.cpp hands.cpp
+^[[A^[[A]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ g++ blackjack.cpp cards.cpp hands.cpp./a.out[K
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	4 of spades
+Dealer dealt:	5 of clubs
+Customer dealt:	7 of hearts
+Dealer dealt:	ace of diamonds
+
+Customer cards:	2
+Customer total:	11
+Customer aces as 11:	0
+
+Dealer up-card:	5 of clubs
+Dealer cards:	2
+Dealer total:	16
+Dealer aces as 11:	1
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	ace of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	12
+Customer aces as 11:	0
+
+An Ace had to be reduced from 11 to 1.
+Dealer dealt:	ace of clubs
+
+Dealer stands.
+
+Dealer up-card:	5 of clubs
+Dealer cards:	3
+Dealer total:	17
+Dealer aces as 11:	1
+LOSS: Dealer wins 17 to 12
+We won 0 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.outg++ blackjack.cpp cards.cpp hands.cpp
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ g++ blackjack.cpp cards.cpp hands.cpp./a.out[K
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	7 of hearts
+Dealer dealt:	2 of diamonds
+Customer dealt:	6 of diamonds
+Dealer dealt:	2 of hearts
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	0
+
+Dealer up-card:	2 of diamonds
+Dealer cards:	2
+Dealer total:	4
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	0
+Dealer dealt:	2 of spades
+Dealer dealt:	ace of clubs
+
+Dealer stands.
+
+Dealer up-card:	2 of diamonds
+Dealer cards:	4
+Dealer total:	17
+Dealer aces as 11:	1
+LOSS: Dealer wins 17 to 13
+We won 0 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ ./a.outg++ blackjack.cpp cards.cpp hands.cpp
+^[[A]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ g++ blackjack.cpp cards.cpp hands.cpp./a.out[K
+How many games? 1
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	4 of spades
+Dealer dealt:	ace of clubs
+Customer dealt:	6 of diamonds
+Dealer dealt:	5 of diamonds
+
+Customer cards:	2
+Customer total:	10
+Customer aces as 11:	0
+
+Dealer up-card:	ace of clubs
+Dealer cards:	2
+Dealer total:	16
+Dealer aces as 11:	1
+Customer dealt:	2 of spades
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	ace of spades
+Customer dealt:	8 of diamonds
+
+Customer stands.
+
+Customer cards:	5
+Customer total:	21
+Customer aces as 11:	0
+
+An Ace had to be reduced from 11 to 1.
+Dealer dealt:	jack of clubs
+Dealer dealt:	10 of diamonds
+
+Dealer up-card:	ace of clubs
+Dealer cards:	4
+Dealer total:	26
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 26
+We won 1 out of 1
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ exit
+exit
+
+Script done on Tue 12 Feb 2013 09:01:11 PM PST

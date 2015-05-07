@@ -1,0 +1,45 @@
+\section{KVMessage, TPCLog}
+\subsection{Overview}
+KVMessage needs to be slightly modified to handle two-phase commit messages. Currently, the toXML() method treats every message type that isn't a PUT, GET, DEL, or RESP as an error, so we need to add a few more conditional checks for the 2PC messages.\\\\
+TPCLog is missing the crucial method rebuildServer()'s implementation. This method will need to rebuild a slave server based upon log entries.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item Every 2PC message type must correspond to the same message type in the XML format.
+\item The slave server rebuilt from the log entries must maintain the same state (except the cache) that the previous one had when it crashed.
+\end{itemize}
+\subsection{Declarations}
+
+\subsection{Descriptions}
+\begin{verbatim}
+class KVMessage:
+    def toXML():
+        //appended to the current if statements
+        else if (this.msgType.equals(READY)):
+            //Do nothing. Message type already set, no keys or values to add
+        else if (this.msgType.equals(ABORT) and this.message != null):
+            messageNode = new nu.xom.Element("Message")
+            messageNode.appendChild(this.message)
+            rootNode.appendChild(messageNode)
+        else if (this.msgType.equals(COMMIT)):
+            //Do nothing. Message type already set.
+        else if (this.msgType.equals(ABORT) and this.message == null):
+            //Do nothing. Message type already set.
+        else: //ack
+            //Do nothing. Message type already set.
+
+class TPCLog:
+    def rebuildServer():
+        loadFromDisk()
+        for message in entries:
+            if message.msgType.equals(PUT_REQ):
+                kvserver.put(message.key, message.value)
+            if message.msgType.equals(DEL_REQ):
+                if kvserver.hasKey(message.key):
+                    kvserver.del(message.key):
+        
+\end{verbatim}
+\subsection{Testing Plan}
+\begin{itemize}
+\item Create one of every new message type and check the XML output at the other endpoint to see if it was constructed properly
+\item Check the key-value pairs of a server before it goes down and after the new one calls rebuildServer() to make sure they match
+\end{itemize}

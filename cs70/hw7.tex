@@ -1,0 +1,279 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{7}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday October 21 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle 
+
+Throughout this assignment, feel free to leave your numbers
+in a simple form involving factorials,
+binomial coefficients, and exponentials,
+rather than simplifying to a single number.
+In fact, if you do simplify to a single number,
+you should also leave the original expression.
+
+In general for this problem set, you should explain how you
+found your answer, but as long as the explanation
+is clear you should not try to write a more rigorous proof.
+
+\begin{enumerate}
+
+\item \textbf{Practice counting:}
+Suppose that I have 10 fingers, 5 on each of my two hands.
+
+\begin{enumerate}
+\item How many ways are there for me to hold up exactly $4$ fingers? \\
+I can choose 4 out of the 10 fingers, where order doesn't matter: \\
+$\binom{10}{4} = 210$ ways.
+\item How many ways are there for me to hold up exactly $2$ fingers
+on each hand? \\
+For one hand, I can choose 2 out of 5 fingers $=\binom{5}{2}$. \\
+For each of these ways, I can choose 2 out of 5 fingers on the other hand: \\
+$\binom{5}{2} \binom{5}{2} = 100$ ways.
+\item How many ways are there for me to hold up some fingers,
+such that I'm holding up at least one finger on each hand? \\
+For one hand, I have $2^5$ possible finger combinations (each one up or down). One of these combinations has all fingers down, so we exclude it $=2^5 - 1$. \\
+For each of these combinations, I can choose the same number of combinations for the other hand: \\
+$(2^5-1)(2^5-1) = 961$ ways.
+\item Each of my hands
+has a ring finger and a pinky.
+Suppose that I can't hold up my ring finger on a hand
+without also holding up the pinky on the same hand
+(but I can hold up my pinky without holding up my ring finger).
+How many ways are there to hold up some fingers? \\
+Consider the following 3 mutually exclusive cases which span all combinations: \\
+Case 1: Both pinky fingers are down. So both ring fingers must be down. The other 6 fingers can be either up or down $=2^6$ ways. \\
+Case 2: One pinky up, one down. The ring finger corresponding to the down-pinky is also down. The other 7 fingers can be either up or down, and there are 2 ways one pinky can be up with the other down $=2(2^7)=2^8$ ways. \\
+Case 3: Both pinky fingers are up. The other 8 fingers can be up or down $=2^8$ ways. \\
+There are in total $2^6 + 2^8 + 2^8 = 576$ ways.
+\newpage
+\item Suppose I am going to wear three rings: one gold, one silver,
+and one bronze. 
+I can wear each ring on any finger,
+I can wear any number of rings on each finger,
+and I can wear the rings in any order 
+(if more than one is on the same finger). 
+How many ways
+are there to wear the rings? \\
+Consider the following 3 mutually exclusive cases which span all combinations: \\
+Case 1: 3 rings on three different fingers. I can choose 3 out of 10 fingers for this case $=\binom{10}{3}$. \\
+Case 2: 2 rings on one finger and 1 ring on another. I have 10 options to be the finger with two rings and 9 remaining options to be the finger with one ring $=10\cdot9$ \\
+Case 3: 3 rings on one finger. I can choose one of 10 fingers for this case. \\
+Total: For each combination in each case, it's easy to see that I have $3!$ possible permutations of the 3 rings: \\
+$3!(\binom{10}{3} + 10\cdot9 + 10) = 1320$ ways.
+\item Suppose I am going to wear three identical gold rings.
+How many ways are there to wear the rings? \\
+This can be modeled with a 12-bit binary string, where we start with the first finger and end with the tenth for a total of 9 finger-jumps. A 0 will represent a jump to the next finger and a 1 will represent a ring on the current finger. Each of these 12-bit strings with exactly three 1's and nine 0's represents a distinct arrangement of the 3 gold rings, and each arrangement can be modeled by a unique 12-bit string. So we reduce this problem to the number of ways to have three 1's in a 12-bit binary string: \\
+$\binom{12}{3} = 220$ ways. \\
+Alternatively, this is just the answer to part (e) except we only have 1 permutation per combination of fingers instead of $3!$.
+\end{enumerate}
+
+\newpage
+\item \textbf{Combinatorial proofs:} 
+Give combinatorial proofs of the following facts by interpreting the quantities involved as 
+"consider the number of ways of ... ". For example, in part (a) consider the number of 
+ways of picking $a$ blue marbles and $b$ green marbles from a collection of $n$ 
+blue and $m$ green marbles... 
+\begin{enumerate} 
+\item Prove that $\binom{n}{a} \binom{m}{b} \leq \binom{n+m}{a+b}$. \\
+Consider the number of ways of picking $a$ blue marbles from a bag of $n$ blue marbles along with $b$ green marbles from a bag of $m$ green marbles. We are restricted to exactly $a$ marbles chosen from the blue bag and $b$ marbles from the green bag. Now if we combine the two bags and choose $a+b$ marbles from a bag of $n+m$ marbles, we are no longer restricted to having exactly $a$ blue marbles and exactly $b$ green marbles. We can still impose this restriction as before, resulting in the same number of ways to choose marbles, but removing it clearly increases the number of ways we can choose marbles. \\
+So we have more ways of choosing $a+b$ out of $n+m$ than if we segregated the bag into collections of $n$ and $m$ and chose $a$ and $b$ marbles separately, and the claim is true.
+\item Prove that $\binom{n}{a} \binom{n-a}{b-a} = \binom{n}{b} \binom{b}{a}$ \\
+Consider the number of ways of choosing $b$ Congress members out of a body of $n$ people, and then choosing $a$ senators out of those $b$ Congress members (with $b-a$ representatives). Then the right side of the equation represents how many distinct ways (in terms of people) there are to form a bicameral Congress, since for each way we pick $b$ Congress members, there are $\binom{b}{a}$ ways to form the Senate. \\
+Using the same variables, the left side of the equation represents each way to pick $a$ senators out of a body of $n$ people and for each way picking $b-a$ representatives out of the remaining $n-a$ non-senators. This also represents the number of distinct ways to form a bicameral Congress, since for each distinct body of $a$ senators, there are $\binom{n-a}{b-a}$ ways to form the House of Representatives. Therefore the claim is true.
+\item Prove that $a(n-a) \binom{n}{a} = n(n-1) \binom{n-2}{a-1}$. \\
+The left side of the equation represents the number of ways to partition the set of $n$ elements into 2 subsets of $a$ elements and $n-a$ elements, and then for each partition the number of ways you can remove one element from each subset to put in a third subset. So in the end each subset has $a-1$, $n-a-1$, and $2$ elements, respectively. \\
+The right side of the equation just does the same thing in the reverse order, letting you pick 2 elements without replacement to put in the third subset, and then partitioning the remaining $n-2$ elements into 2 subsets of $a-1$ elements and $n-a-1$ elements. \\
+Both sides of the equation thus represent the number of ways to partition a set of $n$ elements into 3 subsets of length $a-1$, $n-a-1$, and $2$. Therefore the claim is true.
+\end{enumerate}
+
+\newpage
+\item \textbf{Counting monomials:}
+
+\begin{enumerate}
+\item Consider the expression $(1+x)(1+x)(1+x)(1+x)$.
+After expanding this expression into monomials, how many terms of the form $x^2$ are there?
+(i.e., what is the coefficient of $x^2$ in the polynomial $(1+x)^4$?) \\
+To expand the expression into monomials with coefficients of 1, consider a binary tree of depth $n=4$ (the degree of the resulting polynomial) where at each node we can multiply by 1 to go left or multiply by $x$ to go right. The expanded polynomial is just the sum of monomials that are created by all $2^4 = 16$ paths. Each path encounters 4 nodes, so to get an $x^2$ monomial we must choose a path that has two 1's and two $x$'s. Thus there are $\binom{4}{2} = 6$ monomials of $x^2$
+\item What is the coefficient of $x^i y^j$ in the expression $(x+y)^n$? \\
+Similarly, we can consider a binary tree of depth $n$ where at each node we multiply by $x$ to go left or by $y$ to go right. So each monomial is the result of multiplying $i$ $x$'s and $j$ $y$'s where $i+j=n$, the depth of the tree. \\
+If $i+j\neq n$, then the coefficient of $x^i y^j$ in $(x+y)^n$ is 0. \\
+If $i+j=n$, then we choose $i$ out of $n$ possible $x$'s for a coefficient of $\binom{n}{i}$ \\
+This is also true if we choose $j=n-i$ possible $y$'s for a coefficient of $\binom{n}{n-i} = \frac{n!}{i!(n-i)!} = \binom{n}{i}$
+\end{enumerate}
+
+\newpage
+\item \textbf{Another proof of Fermat's Little Theorem}
+\begin{enumerate}
+\item Show that $\binom {p}{k} = 0 \bmod{p}$ for $0 < k < p$. \\
+We can assume that $\binom{p}{k} \in \Z$. We also know that $\binom{p}{k} = \frac{p!}{k!(p-k)!} = \frac{p(p-1)!}{k!(p-k)!}$ \\
+Let us write $\binom{p}{k} = pq$, where $q = \frac{(p-1)!}{k!(p-k)!}$. \\
+$q$ is clearly a rational number, and if $q$ is an integer, then we are done since $\binom{p}{k} = pq \equiv 0 \bmod p$ \\
+If $q$ is not an integer, then $p$ is divisible by the denominator of the simplest form of $q$. Expanding the denominator of $q$, we find no factors greater than or equal to $p$ since both $k<p$ and $p-k<p$. And if $q$ isn't an integer then its simplest form must have a denominator greater than 1. But $p$ can't be divisible by such a denominator because it is prime, so we have a contradiction. \\
+Thus, $q$ is an integer and $\binom{p}{k} \equiv 0 \bmod p$.
+\item Show that $(x+y)^p = x^p + y^p \bmod{p}$. \\
+From part (3b) we can naturally formulate the binomial expansion theorem by stating the following: \\
+$\displaystyle (x+y)^p = \binom{p}{0}x^py^0 + \binom{p}{1}x^{p-1}y^1 + \cdots + \binom{p}{p-1}x^1y^{p-1} + \binom{p}{p}x^0y^p$ \\
+This includes all $i,j$ such that $i,j \in \{0,1,\ldots,p\}$ and $i+j=p$. \\
+But notice from part (4a) that all but the first and last terms are equivalent to $0 \bmod p$, so: \\
+$\displaystyle (x+y)^p \equiv \binom{p}{0}x^py^0 + \binom{p}{p}x^0y^p \equiv x^p + y^p \bmod p$
+\item Show that $a^p = a \bmod{p}$, by starting with the equality $0^p = 0 \bmod{p}$
+and then using induction on $a$. \\
+We are given the base case, and as the induction hypothesis let's assume that $a^p = a \bmod p$ \\
+Then for the inductive step, we can use our conclusion from part (4b) along with the hypothesis to simplify the following expression and prove the claim by induction: \\
+$(a+1)^p = a^p + 1^p = (a+1) \bmod p$
+\end{enumerate}
+
+\newpage
+\item \textbf{Poker Hands:}
+Count the number of poker hands ($5$ card hands using a standard deck of $52$ cards) of the following types:
+\begin{enumerate}
+\item Two of a kind (but not full house). i.e. hands of the type $xxyyz$, such as two kings, 2 fives, and a seven. \\
+First pair: 13 possible pairs of numbers, each with $\binom{4}{2}$ suit combinations $=13\binom{4}{2}$ \\
+Second pair: 12 possible pairs of numbers, each with $\binom{4}{2}$ suit combinations $=12\binom{4}{2}$ \\
+Order of the 2 pairs doesn't matter, since each order would result in the same hand, so we divide by $2!$. \\
+Finally, the 2 pairs can be matched up with one of $52-8=44$ possible cards to complete the hand without making a full house: \\
+$13\binom{4}{2} \cdot 12\binom{4}{2} \cdot \frac{44}{2!} = 123,552$ possible "two of a kind" hands.
+\item Full house. i.e. hands of the type $xxxyy$, such as three kings and two jacks. \\
+The triple: 13 possible triplets of numbers, each with $\binom{4}{3}$ suit combinations $=13\binom{4}{3}$ \\
+The pair: 12 possible pairs of numbers, each with $\binom{4}{2}$ suit combinations $=12\binom{4}{2}$ \\
+Order does matter, since switching the triple and the pair would result in distinct hands: \\
+$13\binom{4}{3} \cdot 12\binom{4}{2} = 3744$ possible full house hands.
+\item Flush. i.e. all five cards of the same suit. \\
+4 possible suits for a flush. \\
+Each suit has 13 cards, of which you choose 5 to make the flush, where order does not matter: \\
+$4\binom{13}{5} = 5148$ possible flush hands. 
+%\item Royal flush
+\item Straight. i.e. the cards are consecutive, such as 7, 8, 9, 10, J. Note that an Ace can be low or high. 
+So A, 2, 3, 4, 5 is a straight as is 10, J, Q, K, A. \\
+There are 10 possible sequences of 5 consecutive cards (discounting suits): A2345, 23456,\ldots,10JQKA. \\
+Given one of these sequences, I can choose one of 4 suits for each of the 5 cards $=4^5$ \\
+Each of these combinations is distinct: \\
+$10 \cdot 4^5 = 10,240$ possible straight hands.
+\end{enumerate}
+
+\newpage
+\item \textbf{Flag Signals:}
+Flag signals are used as a method of communication between ships. Let's say there are four different colored flags-
+red, green, blue and yellow. The mast of the ship can accommodate at most 8 flags. Each sequence of up to 8 colors indicates a different message. Recall that a sequence is an ordered list
+and it can have repeated elements. 
+\begin{enumerate}
+\item How many distinct messages are there? \\
+There are $4^0$ ways to place one of 4 flags in 0 slots (the no-flag mast is indeed a message). \\
+Similarly, there are $4^n$ ways to place one of 4 flags in $n$ possible slots, with repetition possible and no empty slots preceding a colored slot (if there is one, remove it and insert it onto the end, leaving the message unchanged). \\
+There is no overlap for different length messages since each message has exactly one value for length: \\
+$\displaystyle\sum\limits_{i=0}^{8} 4^i = 4^0 + 4^1 + \cdots + 4^8 = 87381$ distinct messages.
+\item You would like to buy 10 of these colored flags for your ship. How many different ways can you purchase these flags? \\
+Let's say I have 4 bins, one each to hold my assortment of the 4 colors of flags. We can ask this question as "how many ways can I place a total of 10 items into these 4 bins?" where order of placement doesn't matter. We can model this as a 13-bit binary string, where we start with the first bin and end with the last bin for a total of 3 bin-jumps. Let 0 represent a bin-jump to the next bin and 1 represent a placement of a flag into the current bin. So our binary string must have exactly three 0's and ten 1's. Each of these 13-bit binary strings represents a unique combination of the placement of the 10 flags into the 4 color bins. \\
+So the number of ways I can purchase the flags is the number of ways I can put ten 1's in a 13-bit binary string: \\
+$\binom{13}{10} = 286$ possible ways.
+\end{enumerate}
+
+%\item \textbf{Yet another proof of Fermat's Little Theorem}
+%Let $p$ be a prime, and let $k > 0$ be an integer.
+%\begin{enumerate}
+%\item Suppose we have an endless supply of beads.  The beads come in
+%$k$ different colors, and all beads of the same color are indistinguishable.  
+%Suppose we also have a piece of string, and we want to make a
+%pretty decoration by threading $p$ beads onto the string (from left
+%to right). 
+%
+%How many distinguishable sequences of beads are there?
+%\item After threading the beads, 
+%we tie the two ends of the string together, forming a circular necklace.
+%This lets us freely rotate the beads around the necklace.
+%We'll consider two necklaces indistinguishable if the sequence
+%of colors on one can be obtained by rotating the sequence of colors on the other.
+%(For instance, if we have $k=3$ colors---red (R), green (G), and
+%blue (B)---then the length $p = 5$ necklaces RGGBG, GGBGR, GBGRG, BGRGG, and GRGGB are all
+%equivalent.)
+%
+%Prove that any given necklace can either be formed in $p$ different ways or in exactly $1$ way.
+%(That is, there are either exactly $p$ or exactly $1$ distinguishable sequences of beads
+%that give rise to this necklace when the ends are tied together.)
+%
+%\item How many distingiushable necklaces are there?
+%
+%\item Use this fact to prove Fermat's little theorem directly.
+%
+%\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

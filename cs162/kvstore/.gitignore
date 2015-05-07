@@ -1,0 +1,32 @@
+*.class
+*.coff
+*.o
+*.DS_Store
+
+# Package Files #
+*.war
+*.ear
+
+# Latex Files #
+*.log
+*.aux
+*.pdf
+out.tex
+
+# VIM Files #
+*.swp
+.*.swp
+*.swo
+.*.swo
+
+# Git files #
+*.orig
+
+# Eclipse files #
+.classpath
+.project
+
+# Custom file extensions #
+*.sync
+*.test
+/bin

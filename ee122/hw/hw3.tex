@@ -1,0 +1,278 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{ee122,latexsym,epsf}
+\usepackage{rotating}
+\usepackage{amsmath,amssymb,enumerate}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{3}
+\def\title{HW \the\lecturenumber, Manohar Jois, SID 23808180}
+\begin{document}
+\maketitle
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\newcommand{\p}[1]{\left(#1\right)}
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle 
+
+\begin{enumerate}[Q1.]
+
+\item  \textbf{DNS Lookup}
+\begin{enumerate}[(a)]
+\item \textbf{\underline{74.125.239.112 to 74.125.239.116}} \\
+\textbf{Field 1:} The "name" field of the resource record. For an address record, this would be the host name we queried for. \\
+\textbf{Field 2:} The "time-to-live" field of the record. The authoritative DNS server that gave us the answer to our query tells the DNS server we queried how long it can cache the result. The TTL shows how many more seconds we have until another query for the same host name must be resolved by the authoritative server instead of from a cache. \\
+\textbf{Field 3:} This field basically says we used Internet Protocol, or IPv4 more specifically. \\
+\textbf{Field 4:} The "type" field of the record. "A" is for address, meaning the value of the record is the IP address of the host name we queried for. We can also ask for NS, CNAME, MX, etc. \\
+\textbf{Field 5:} The "value" field of the record. This is an "A" type record, so this field is the IP address of the host name we asked for.
+\begin{verbatim}
+; <<>> DiG 9.8.5-P1 <<>> www.google.com A
+
+;; QUESTION SECTION:
+;www.google.com.			IN	A
+
+;; ANSWER SECTION:
+www.google.com.		99	IN	A	74.125.239.115
+www.google.com.		99	IN	A	74.125.239.114
+www.google.com.		99	IN	A	74.125.239.116
+www.google.com.		99	IN	A	74.125.239.112
+www.google.com.		99	IN	A	74.125.239.113
+\end{verbatim}
+\item \textbf{\underline{74.125.239.112 to 74.125.239.116}} \\
+\textbf{a.root-servers.net} is responsible for the root domain, which encompasses all top-level domains. \\
+\textbf{a.gtld-servers.net} is responsible for the ".com" top-level domain. \\
+\textbf{ns1.google.com} is responsible for the ".google.com" authoritative domain.
+\begin{verbatim}
+; <<>> DiG 9.8.5-P1 <<>> @a.root-servers.net www.google.com A
+
+;; QUESTION SECTION:
+;www.google.com.			IN	A
+
+;; AUTHORITY SECTION:
+com.			172800	IN	NS	a.gtld-servers.net.
+com.			172800	IN	NS	b.gtld-servers.net.
+com.			172800	IN	NS	c.gtld-servers.net.
+com.			172800	IN	NS	d.gtld-servers.net.
+com.			172800	IN	NS	e.gtld-servers.net.
+com.			172800	IN	NS	f.gtld-servers.net.
+com.			172800	IN	NS	g.gtld-servers.net.
+com.			172800	IN	NS	h.gtld-servers.net.
+com.			172800	IN	NS	i.gtld-servers.net.
+com.			172800	IN	NS	j.gtld-servers.net.
+com.			172800	IN	NS	k.gtld-servers.net.
+com.			172800	IN	NS	l.gtld-servers.net.
+com.			172800	IN	NS	m.gtld-servers.net.
+
+
+; <<>> DiG 9.8.5-P1 <<>> @a.gtld-servers.net www.google.com A
+
+;; QUESTION SECTION:
+;www.google.com.			IN	A
+
+;; AUTHORITY SECTION:
+google.com.		172800	IN	NS	ns2.google.com.
+google.com.		172800	IN	NS	ns1.google.com.
+google.com.		172800	IN	NS	ns3.google.com.
+google.com.		172800	IN	NS	ns4.google.com.
+
+
+; <<>> DiG 9.8.5-P1 <<>> @ns1.google.com www.google.com A
+
+;; QUESTION SECTION:
+;www.google.com.			IN	A
+
+;; ANSWER SECTION:
+www.google.com.		300	IN	A	74.125.239.116
+www.google.com.		300	IN	A	74.125.239.114
+www.google.com.		300	IN	A	74.125.239.115
+www.google.com.		300	IN	A	74.125.239.112
+www.google.com.		300	IN	A	74.125.239.113
+\end{verbatim}
+\item \textbf{\underline{74.125.236.208 to 74.125.236.212 (ns1.iitkgp.ac.in)}} \\
+\textbf{\underline{173.194.45.80 to 173.194.45.84 (nsl.fujitsu.fr)}} \\
+When we query for the IP address of www.google.com using our default name server, the authoritative server we get our answer from is local and it will give a set of IP addresses that are very close to us, so our latency to them is 3.6 ms (using ping). When we query the servers in India and France, they get their answers from Google's authoritative servers in those areas, which give us sets of IP addresses for Google servers somewhere in India and France, to which our latencies are 205 ms and 150 ms, respectively, since they are across the world.
+\begin{verbatim}
+; <<>> DiG 9.8.5-P1 <<>> @ns1.iitkgp.ac.in www.google.com A
+
+;; QUESTION SECTION:
+;www.google.com.			IN	A
+
+;; ANSWER SECTION:
+www.google.com.		265	IN	A	74.125.236.212
+www.google.com.		265	IN	A	74.125.236.210
+www.google.com.		265	IN	A	74.125.236.211
+www.google.com.		265	IN	A	74.125.236.208
+www.google.com.		265	IN	A	74.125.236.209
+
+
+; <<>> DiG 9.8.5-P1 <<>> @nsl.fujitsu.fr www.google.com A
+
+;; QUESTION SECTION:
+;www.google.com.			IN	A
+
+;; ANSWER SECTION:
+www.google.com.		300	IN	A	173.194.45.80
+www.google.com.		300	IN	A	173.194.45.81
+www.google.com.		300	IN	A	173.194.45.82
+www.google.com.		300	IN	A	173.194.45.83
+www.google.com.		300	IN	A	173.194.45.84
+\end{verbatim}
+\item \textbf{\underline{www.google.com.	(large \#)	IN	A	107.20.206.69}} \\
+Using dig to query for the IP address of www.evilsearch.com, we get 107.20.206.69. Assuming people direct their queries for www.google.com's IP address to Garry's name server, Garry just needs to return an entry directing www.google.com to this IP address. He could also use a very large number for the TTL field so servers keep the entry in their caches for a long time, continuing to return to this IP address. \\
+A robust DNS server could prevent this by querying multiple name servers to look for anomalies, or imposing its own maximum TTL for any entry it receives and stores in its cache. It could also make use of digital signatures to validate the entry by comparing it to a known and trusted signature.
+\end{enumerate}
+
+\newpage
+\item  \textbf{Content Delivery with HTTP}
+\begin{enumerate}[(a)]
+\item \textbf{\underline{10R}}
+\item \textbf{\underline{6R}}
+\item \textbf{\underline{4R}}
+\item \textbf{\underline{6R}}
+\item \textbf{\underline{9R/2}}
+\item \textbf{\underline{3R}}
+\item \textbf{\underline{17R/3}}
+\item \textbf{\underline{17R/3}}
+\item \textbf{\underline{7R/2}}
+\end{enumerate}
+
+\newpage
+\item \textbf{Wireless}
+\begin{enumerate}[(a)]
+\item
+\begin{enumerate}[i.]
+\item \textbf{\underline{Case 1: Yes}}, but unsuccessfully because there will be collisions at B due to transmissions from both A and E. The original transmission is clearly impacted. \\
+\textbf{\underline{Case 2: Yes}}, and it will be successful, and the original transmission is unaffected. \\
+\textbf{\underline{Case 3: Yes}}, and it will be successful, but the original transmission will be affected because B is in range of both C and E.
+\item \textbf{\underline{Case 1: No}}, because B can't reply with a CTS to A since it is receiving data from E. \\
+\textbf{\underline{Case 2: No}}, because C can't transmit a CTS back to F since it had previously heard an unexpected CTS from B (since B is receiving from E). \\
+\textbf{\underline{Case 3: No}}, because C won't transmit an RTS due to the previously heard CTS from B.
+\end{enumerate}
+\item
+\begin{enumerate}[i.]
+\item \textbf{\underline{Case 1: No}}, because A detects a transmission from B. \\
+\textbf{\underline{Case 2: Yes}}, but unsuccessfully since there will be collisions at C due to transmissions from B and F. However, the original transmission is unaffected. \\
+\textbf{\underline{Case 3: No}}, because C detects a transmission from B.
+\item \textbf{\underline{Case 1: No}}, because B will not receive the RTS from A since it is sending data to E. \\
+\textbf{\underline{Case 2: No}}, because F will send its RTS to C, but C cannot receive it because it is already hearing B's transmission to E. \\
+\textbf{\underline{Case 3: No}}, because A can't receive the RTS from C since it is already hearing B's transmission.
+\end{enumerate}
+\item
+\begin{enumerate}[i.]
+\item \textbf{\underline{None, other than (A,B)}}
+\item \textbf{\underline{None, other than (A,B)}}
+\end{enumerate}
+\item \textbf{\underline{CS: Yes; MACA: Depends on timing}} \\
+D,E,F will send their RTS signals to A,B,C, respectively. If A,B,C all send their CTS signals out at exactly the same time (or within the propagation delay of a link between any of them), then D,E,F will all be cleared to transmit, doing so successfully. However, if one of A,B,C sends out a CTS before the other two can send out theirs, then the other two will stay quiet and not send their CTS signals. If this happens, only one pair can communicate.
+\item \textbf{\underline{Ideally, all pairs can communicate; CS: No; MACA: Depends on timing}} \\
+Let's call D,E,F "outer nodes" and A,B,C "inner nodes." If all outer nodes transmit at the same time and all inner nodes transmit at the same time (i.e. synchronization), then we can have successful communication between all pairs simultaneously, without any interference at any receivers. \\
+With Carrier Sense, the inner nodes wouldn't transmit if another inner node was transmitting, so all three could never transmit simultaneously. \\
+With MACA, it depends based on the same reasoning as in part (3d).
+\end{enumerate}
+
+\newpage
+\item \textbf{Spanning Tree Protocol and Learning Switches}
+\begin{enumerate}[(a)]
+\item
+\begin{enumerate}[i.]
+\item \textbf{\underline{Root: 0; Edges: (0,1), (1,4), (0,2), (2,3), (3,5)}}
+\item \textbf{\underline{Root: 1; Edges: (1,4), (4,5), (1,2), (2,3)}}
+\end{enumerate}
+\item
+\begin{enumerate}[1.]
+\item \textbf{\underline{All nodes except b}}
+\item \textbf{\underline{0, 1, 2, b}}
+\item \textbf{\underline{2, 3, 5, c, f}}
+\item \textbf{\underline{0, 1, b}}
+\item \textbf{\underline{All nodes except a}}
+\end{enumerate}
+\item
+\begin{enumerate}[1.]
+\item \textbf{\underline{Flood}}
+\item \textbf{\underline{Unicast}}
+\item \textbf{\underline{Flood}}
+\item \textbf{\underline{Unicast}}
+\item \textbf{\underline{Unicast}}
+\item \textbf{\underline{Flood}}
+\item \textbf{\underline{Unicast}}
+\item \textbf{\underline{Unicast}}
+\item \textbf{\underline{Flood}}
+\item \textbf{\underline{Unicast}}
+\item \textbf{\underline{Unicast}}
+\item \textbf{\underline{Flood}}
+\end{enumerate}
+\begin{enumerate}[i.]
+\item \textbf{\underline{(a,b): 0/4 flood, 4/4 unicast}} \\
+\textbf{\underline{(b,c): 1/4 flood, 3/4 unicast}} \\
+\textbf{\underline{(c,b): 4/4 flood, 0/4 unicast}}
+\item \textbf{\underline{Switch transmissions 5 and 6, as well as 11 and 12.}}
+\end{enumerate}
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

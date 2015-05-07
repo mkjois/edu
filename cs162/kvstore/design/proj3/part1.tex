@@ -1,0 +1,83 @@
+\section{KVClient}
+
+\subsection{Overview}
+\texttt{KVClient} issues requests and handles responses by interacting with \texttt{KVMessage} objects. Each \texttt{KVClient} is initialized with the server that responds to requests and the port it is listening on. To request a connection, it calls \texttt{connectHost()}, initializes a Socket to interact with the server and returns it. The methods to store, get, and remove key-value pairs on the server for \texttt{KVClient} are \texttt{put(), get(), del()} respectively. When \texttt{KVClient} is finished, it calls \texttt{closeHost()} on a best-effort to close the socket it had been using.
+
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item When KVClient puts a key-value pair, it will send it through to the KVServer connected to the other end of the socket if there is no error.
+\item If KVClient gets a key that has previously been put, it will get back the value for that key.
+\item If KVClient tries to get a key that has previously been deleted, it will not get back the value.
+\end{itemize}
+
+\subsection{Declarations}
+\begin{itemize}
+\item String server - The server the client is connecting to.
+\item int port - The port on the server the client is connecting to.
+\end{itemize}
+\subsection{Descriptions}
+
+\begin{verbatim}
+class KVClient:
+    def connectHost():
+        mySock = new Socket(server, port)
+        if error:
+            throw a KVException with appropriate string constant
+        return mySock
+
+    def closeHost(Socket sock):
+        sock.close()
+        if error:
+            Do nothing.
+
+    def put(key, value):
+        newSock = connectHost()
+        message = new KVMessage("put")
+        message.setKey(key)
+        message.setValue(value)
+        message.sendMessage(newSock)
+        returnMessage = new KVMessage(newSock)
+        retVal = returnMessage.getMessage()
+        if no error:
+            closeHost(newSock)
+        else:
+            throw KVException with appropriate string constant
+
+    def get(key):
+        newSock = connectHost()
+        message = new KVMessage("get")
+        message.setKey(key)
+        message.sendMessage(newSock)
+        returnMessage = new KVMessage(newSock)
+        if no error:
+            retVal = returnMessage.getValue()
+            closeHost(newSock)
+            return retVal
+        else:
+            throw KVException with appropriate string constant
+
+    def del(key):
+        newSock = connectHost()
+        message = new KVMessage("del")
+        message.setKey(key)
+        message.sendMessage(newSock)
+        returnMessage = new KVMessage(newSock)
+        retVal = returnMessage.getMessage()
+        if no error:
+            closeHost(newSock)
+        else:
+            throw KVException with appropriate string constant
+
+\end{verbatim}
+
+\subsection{Testing Plan}
+We plan to test task1 with the testing framework and modifying from SampleClient and SampleServer to cover different scenarios.
+\begin{itemize}
+\item Basic functionality
+\subitem Put unique key and value pair
+\subitem Get it back
+\subitem Check if they are equal
+\item Test error
+\subitem Put empty string
+\subitem Check for correct error
+\end{itemize}

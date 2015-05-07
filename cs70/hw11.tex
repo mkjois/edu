@@ -1,0 +1,202 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{11}
+\def\title{HW \the\lecturenumber}
+\begin{document}
+\maketitle
+\section*{Due Monday November 18 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\renewcommand{\E}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\Ep}[1]{\mathbb{E}_p\left[#1\right]}
+\renewcommand{\P}[1]{\mathbb{P}\p{#1}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+%%% The "real" document content comes below...
+
+\begin{enumerate}
+
+\item \textbf{Runs:}
+Suppose I have a biased coin which comes up heads with probability $p$,
+and I flip it $n$ times.
+A ``run'' is a sequence of coin flips all of the same type,
+which is not contained in any longer sequence of coin flips
+all of the same type.
+For example, the sequence ``HHHTHH'' has three runs: ``HHH,'' ``T,''
+and ``HH.''
+
+Compute the expected number of runs in a sequence of $n$ flips. 
+
+\item \textbf{Variance:}
+
+\begin{enumerate}
+\item Give a simple example to show that $E[XY] = E[X]E[Y]$ is not necessarily true when $X$
+and $Y$ are not independent.
+\item Prove that for any real number $c$ and for any r.v. $X$, we have that $Var [cX] = c^2 Var [X]$.
+Is it surprising that $c$ gets squared?
+\item Give a simple example to show that $Var [X + Y ] = Var [X]+Var [Y ]$ is not necessarily true
+when $X$ and $Y$ are not independent.
+%\item Suppose $X$ is a random variable and $E[X]$ is 
+\item Suppose $A, B$ are events, and $1_A$, $1_B$ the indicator variables for these events. Show that
+$E[1_A 1_B] = Pr[A \cap B]$. 
+\end{enumerate}
+
+\item \textbf{Cascading failures:}
+Suppose that there are $n$ processors arranged in a line.
+One by one, each processor runs a task. The first processor 
+fails with probability $0.1$. 
+If a processor succeeds, then
+the next processor fails with probability $0.1$.
+But if one processor fails, the next fails with probability $0.9$.
+
+It is particularly bad if many processors fail,
+and so we are interested in understanding
+the variance of the number of failures.
+\begin{enumerate}
+\item Prove by induction that the probability that the $n^{\text{th}}$
+processor fails is $\frac 12 \p { 1 - \p{\frac 4{5}}^n }$.
+\item Compute the expected number of processors which fail.
+\item Given that processor $i$ doesn't fail,
+what is the probability that processor $j$ fails for $j \geq i$?
+\item Given that processor $i$ does fail,
+what is the probability that processor $j$ fails for $j \geq i$?
+\item What is the probability that processor $i$ and $j$ both fail?
+\item Prove that the expectation of the square
+of the number of processors which fail is less than $\frac 14 n^2$.
+($\frac 14 n^2$ is the expected squared number of failures which would result
+if each processor failed independently with probability $\frac 12$).
+\end{enumerate}
+
+\item \textbf{Chebyshev:}
+Joe wishes to estimate the true fraction $f$ of smokers in a large population without asking each
+and every person. He plans to select $n$ people at random and then employ the estimator $F = S/n$,
+where $S$ denotes the number of people in a size-$n$ sample who are smokers. Joe would like to sample
+the minimum number of people, but also guarantee an upper bound $p$ on the probability that the
+estimator F differs from the true value $f$ by a value greater than or equal to $d$ i.e., for a given
+accuracy $d$ and given confidence $1-p$, Joe wishes to select the minimum $n$ such that
+$Pr[|F - f| \geq d] \leq p$
+For $p = 0.1$ and a particular value of $d$, Joe uses the Chebyshev inequality to conclude that $n$
+must be at least $500$. Determine the new minimum value for $n$ if:
+\begin{enumerate}
+\item The value of $d$ is reduced to half of its original value.
+\item The probability $p$ is reduced to half of its original value, or $p = .05$.
+\item Answer each of the questions above if the values are reduced to a quarter of their original values. 
+\item As we've seen, as we make $p$ or $d$ small, the number of samples Joe needs to collect increases quite rapidly, at least according to the Chebyshev bound. It turns out that this rapid increase in sample size is essential for one of the two parameters, but not the other where it is an artifact of the weakness of the Chebyshev bound (i.e., either making $p$ very small necessarily requires many samples or making $d$ very small necessarily requires a lot of samples, but not both). Which parameter do you think is the critical one for determining the sample size, and for which one is the Chebyshev bound weak, and why?
+\end{enumerate}
+
+\item \textbf{Conference attendance:}
+Suppose that a certain conference
+has a random number of attendees.
+The expected number of attendees is $100$.
+Every pair of people at the conference are introduced
+to each other, and the expected number of introductions
+is $5260$.
+
+\begin{enumerate}
+\item What is the expectation of the square of the number of attendees?
+\item What is the variance of the number of attendees?
+\item A year is a \emph{bad year} if less than $90$ people show up.
+Prove that the probability of a bad year is at most $\frac 14$.
+\end{enumerate}
+
+\iffalse
+\item \textbf{Martingalery:}
+Suppose that I play a coin-flipping game.
+Each round I flip a fair coin, and then based on all of the results
+I've seen so far I decide whether to end the game or not.
+For example, I might flip the coin exactly 7 times and then stop,
+or flip the coin until I see the sequence HTH and then stop.
+
+Let $X$ be the number of heads I get before stopping (a random variable)
+and let $Y$ be the number of tails I get (also a random variable).
+
+\begin{enumerate}
+\item Show that no matter how I decide when to stop,
+$\E{X} = \E{Y}$ (you can assume $\E{X}$ is finite).
+\item Now suppose that I flip a coin until I first get heads,
+then stop.
+What are are $\E{X}$ and $\E{Y}$? (You can use the above result
+to find one of them.)
+What is the expected number of times I flip my coin?
+\item Suppose that instead my coin has some bias,
+and comes up heads with some arbitrary probability $p$.
+How do the answers in parts (a) and (b) change?
+You don't have to prove your answer is correct.
+\end{enumerate}
+\fi
+
+\item \textbf{Extra credit:}
+Suppose you have $n$ independent measurements $X_1, \ldots , X_n$ of a 
+random variable $X$ with mean $m$ and variance $\sigma^2$. If you 
+don't know $m$ and $\sigma$, then the following random variables are 
+used as estimates: $\bar{m} = (X_1 + \cdots + X_n)/n$, and 
+$\bar{\sigma}^2 = \frac{(X_1 - \bar{m})^2 + \cdots (X_n - \bar{m})^2}{n-1}$. 
+Explain why these are the right estimates for the two quantities by showing 
+that their expected values are $m$ and $\sigma^2$. See if you can understand 
+why we divided by $n-1$ rather than $n$. 
+\end{enumerate}
+
+\end{document}

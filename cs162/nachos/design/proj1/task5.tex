@@ -1,0 +1,183 @@
+\documentclass[11pt]{article}
+\usepackage{listings}
+\title{Project 1 Task 5 Design}
+\author{A ghost}
+
+\begin{document}
+\lstset{language=Python}
+\maketitle
+
+\section{Priority Scheduler}
+
+\subsection{Overview}
+The \texttt{PriorityScheduler} determines which thread gets access to a particular resource by dequeueing the thread of highest priority in its wait queue, with ties broken on a FIFO basis. However this can lead to a problem known as \textit{priority inversion}, which is when a low-priority thread that has a resource is holding up higher priority threads by waiting among higher priority threads for another resource. We solve this using \textit{priority donation}, where threads holding a resource inherit priority from threads in that resource's wait queue.
+
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item For a given resource's wait queue, the \texttt{PriorityScheduler} should always dequeue the thread of highest effective priority, with ties being broken by FIFO.
+\item Waiting threads should donate their effective priority to the owning thread, with the recipient receiving the highest of all donations. This ensures waiting threads are not held up by the owning thread waiting among higher-priority threads in another queue.
+\item Only recalculate a thread's effective priority if it's possible for it to change. This happens when 1) a thread of higher priority than any donating to the owning thread enters a wait queue for an owning thread's resource; 2) the owning thread loses the resource whose queue contains its maximum-priority donor; or 3) a waiting thread receives a donation from elsewhere that is greater than the owning thread's effective priority.
+\end{itemize}
+
+\subsection{Declarations} % Use {\ttfamily ...} for declarations
+\textbf{PriorityQueue extends ThreadQueue:} \\
+\texttt{ThreadState controlThreadState} -- The thread state of the thread holding this queue's resource. \\
+\texttt{java.util.PriorityQueue<int> allPriorities} -- Holds just the decreasing-sorted priorities of all threads in the queue. Guaranteed to be in-sync with \texttt{allThreads}. \\
+\texttt{java.util.HashMap<int, java.util.PriorityQueue> allThreads} -- Maps priority value to a queue sorted by increasing queue-order of threads with that priority. Guaranteed to be in-sync with \texttt{allPriorities}. \\
+\texttt{boolean transferPriority} -- True if priority donations are enabled. \\
+\texttt{void waitForAccess(KThread thread)} -- Adds thread to wait queue and donates to owning thread. \\
+\texttt{void add(ThreadState threadState, boolean needsNewOrder)} -- Private method to add a thread to the queue. The boolean should only be False if we have changed the priority of a thread alreay in a queue. \\
+\texttt{void changePriority(ThreadState threadState, int oldPriority)} -- Change priority of a thread in the queue. Must be passed in the old priority. \\
+\texttt{KThread nextThread()} -- Dequeues a thread and sets it as the owning thread, while calling the recalculation procedure for the previous owning thread. \\
+\texttt{ThreadState pickNextThread()} -- Peeks to see what the next thread dequeued would be. \\
+
+\textbf{ThreadState:} \\
+\texttt{KThread thread} -- The associated thread. \\
+\texttt{int priority} -- The true priority of this thread. \\
+\texttt{int effPriority} -- The priority after taking all donations into account. \\
+\texttt{java.util.LinkedList<PriorityQueue> runners} -- A list of all queues whose resource this thread controls. \\
+\texttt{PriorityQueue waiter} -- The queue this thread is waiting in, if any, otherwise \texttt{null}. \\
+\texttt{long orderInWaiter} -- The relative timestamp of this thread in the queue it's waiting in. \\
+\texttt{void setPriority(int priority)} -- Sets the regular priority of this thread, and if as a result the effective priority changes we call the method to donate. \\
+\texttt{void waitForAccess(PriorityQueue waitQueue)} -- Sets the queue this thread is waiting in. \\
+\texttt{void acquire(PriorityQueue waitQueue)} -- Adds the queue to the list of controlled queues. \\
+\texttt{void giveDonation()} -- If this thread waits in a queue that enables donation, donate to the owning thread. \\
+\texttt{void acceptDonation(int priority)} -- Changes effective priority if necessary, and if it does, calls the donate method. \\
+\texttt{void removeAndRecalc(PriorityQueue runQueue)} -- Removes the queue from the list of running queues and recalculates effective priority based on other queues we control. \\
+
+\subsection{Descriptions} % Use \begin{verbatim} for code.
+\scriptsize
+\begin{lstlisting}[frame=single]
+class PriorityQueue(ThreadQueue):
+    QUEUE_ORDER
+    transferPriority
+    controlThreadState
+    allPriorities
+    allThreads
+    
+    def PriorityQueue(transferPriority):
+        allPriorities = PriorityQueue<int>()
+        allThreads = HashMap<int, PriorityQueue<ThreadState>>()
+        this.transferPriority = transferPriority
+        controlThreadState = null
+        
+    def waitForAccess(thread):
+        threadState = getThreadState(thread)
+        if transferPriority:
+            controlThreadState.acceptDonation(threadState.effPriority)
+        this.add(threadState, True)
+        threadState.waitForAccess(this)
+    
+    def add(threadState, needsNewOrder):
+        priority = threadState.getEffectivePriority()
+        allPriorities.enqueue(priority)
+        if needsNewOrder:
+            threadState.orderInWaiter = QUEUE_ORDER
+            QUEUE_ORDER += 1
+        entry = allThreads.find(priority)
+        if entry == null:
+            newQueue = PriorityQueue().add(threadState)
+            allThreads.add(priority, newQueue)
+        else:
+            entry.value().add(threadState)
+    
+    def changePriority(threadState, oldPriority):
+        allPriorities.remove(oldPriority)
+        entry = allThreads.find(oldPriority)
+        if entry != null:
+            entry.value().remove(threadState)
+        this.add(threadState, False)
+    
+    def nextThread():
+        priority = allPriorities.dequeue()
+        if priority == null:
+            return null
+        queue = allThreads.find(priority).value()
+        oldThreadState = controlThreadState
+        controlThreadState = queue.dequeue()
+        oldThreadState.removeAndRecalc(this)
+        controlThreadState.acquire(this)
+        return controlThreadState
+        
+    def pickNextThread():
+        priority = allPriorities.peek()
+        if priority == null:
+            return null
+        queue = allThreads.find(priority).value()
+        return queue.peek()
+    
+    
+class ThreadState:
+    thread
+    priority
+    effPriority
+    runners
+    waiter
+    orderInWaiter
+    
+    def ThreadState(thread):
+        this.thread = thread
+        orderInWaiter = -1
+        thread.schedulingState = this
+        waiter = null
+        runners = LinkedList<PriorityQueue>()
+        effPriority = priorityDefault
+        setPriority(priorityDefault)
+        
+    def setPriority(priority):
+        this.priority = priority
+        effPriority = max(priority, effPriority)
+        if effPriority > priority:
+            this.giveDonation()
+    
+    def waitForAccess(waitQueue):
+        this.waiter = waitQueue
+    
+    def acquire(waitQueue):
+        runners.add(waitQueue)
+    
+    def giveDonation():
+        if waiter != null and waiter.transferPriority:
+            waiter.controlThreadState.acceptDonation(effPriority)
+    
+    def acceptDonation(priority):
+        newEff = max(priority, effPriority)
+        if newEff > effPriority:
+            oldEff = effPriority
+            effPriority = newEff
+            waiter.changePriority(this, oldEff)
+            this.giveDonation()
+    
+    def removeAndRecalc(runQueue):
+        runners.remove(runQueue)
+        maxPriority = priority
+        for queue in runners:
+            if queue.transferPriority:
+                maxOfQueue = queue.allPriorities.peek()
+                if maxOfQueue > maxPriority:
+                    maxPriority = maxOfQueue
+        effPriority = maxPriority
+\end{lstlisting}
+\normalsize
+
+\subsection{Testing Plan}
+We plan to initialize a test user to create and schedule multiple threads to exercise many possibilities of execution. \\\\
+\textbf{Basic Scheduling:}
+\begin{itemize}
+\item Create threads with priority (and relative time) 1a, 1b, 2a, 3a, 3b, 4a, 6a, 3c, 4b, 7a
+\item Enqueue these threads and dequeue five threads: 7a, 6a, 4a, 4b, 3a
+\item Enqueue 4d, 5a, 4e, 7b, 7c and dequeue all: 7b, 7c, 5a, 4d, 4e, 3b, 3c, 2a, 1a, 1b
+\item Repeat similar test for multiple concurrent queues.
+\end{itemize}
+
+\textbf{Donations:}
+\begin{itemize}
+\item Create resource queues (and owning threads) R1(1a), R2(2a), R3(3a)
+\item Enqueue thread 1a into R2, now 2a.eff = 2
+\item Enqueue thread 3a into R1, now 1a.eff = 3 and 2a.eff = 3
+\item Enqueue thread 5a into R2, now 2a.eff = 5
+\item Enqueue thread 7a into R3, now 3a.eff = 7 and 1a.eff = 7 and 2a.eff = 7
+\item 1a loses R1, which goes to 3a, now 1a.eff = 1 and 2a.eff = 5
+\end{itemize}
+After this we plan to do much random fuzz testing with random number of threads, random enqueue and dequeue times, random priorities, etc. all the while tracking the changing priorities--one operation at a time--to see if they have the correct behavior.
+\end{document}

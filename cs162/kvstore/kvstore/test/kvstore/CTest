@@ -1,0 +1,62 @@
+package kvstore;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import java.net.Socket;
+
+import org.junit.Test;
+
+import java.nio.charset.StandardCharsets;
+import java.io.*;
+
+public class CTest extends TPCEndToEndTemplate{
+	
+	//@Test(timeout = 150)
+	public void test() throws KVException {
+		client.put("one", "1");
+		client.put("two", "2");
+		client.put("three", "3");
+		client.put("four", "4");
+		client.put("five", "5");
+		client.put("six", "6");
+		client.put("seven", "7");
+		
+		for (int i=0; i < 5; i++){
+			
+			Thread T = new Thread(){
+				@Override
+				public void run(){
+					try{
+					client.put("one", "1");
+					client.put("two", "2");
+					client.put("three", "3");
+					client.put("four", "4");
+					client.put("five", "5");
+					client.put("six", "6");
+					client.put("seven", "7");
+					assert client.get("one") == "1";
+					assert client.get("two") == "2";
+					assert client.get("three") == "3";
+					assert client.get("four") == "4";
+					assert client.get("five") == "5";
+					assert client.get("six") == "6";
+					assert client.get("seven") == "7";
+					client.del("one");
+					client.del("two");
+					client.del("three");
+					client.del("four");
+					client.del("five");
+					client.del("six");
+					client.del("seven");
+					} catch (KVException e){
+						
+					}
+				}
+			};
+			T.start();
+				
+			}
+			
+		}
+	}

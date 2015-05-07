@@ -1,0 +1,29 @@
+Name: Manohar Jois
+Login: cs61c-bm
+
+1. Number:
+a. Fill in the bit pattern for the following 4-bit numbers. If there are 
+multiple bit patterns for a number, write them all. 
+
+If no bit pattern exists, write "N/A" in the box. DO NOT LEAVE IT BLANK!
+DO NOT CHANGE THE FORMAT OF THE FILE:
+
+    |   Unsigned    |   Sign and Magnitude  |   One's complement    |   Two's complement    |
+0   | 0000          | 0000, 1000            | 0000, 1111            | 0000                  |
+7   | 0111          | 0111                  | 0111                  | 0111                  |
+-1  | N/A           | 1001                  | 1110                  | 1111                  |
+15  | 1111          | N/A                   | N/A                   | N/A                   |
+8   | 1000          | N/A                   | N/A                   | N/A                   |
+
+
+b. In the system of quarternary (Base 4) numbers, how many numbers can be represented with n digits?
+Answer: 4^n
+
+c. For an n-digit 2's complement binary number (n > 1), what is the number of positive integers?
+Answer: 2^(n-1)-1
+
+d. For an n-digit 1's complement binary number (n > 1), how many zeros are there?
+Answer: 2
+
+e. For a 4-digit 2's complement binary number, what is the representation of -3?
+Answer: 1101

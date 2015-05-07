@@ -1,0 +1,117 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{hyperref}
+\lecture{13}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday December 9 at 5 pm}
+
+\begin{enumerate}
+
+\item {\bf Normal Distribution}
+
+If a set of grades on a Discrete Math examination in an inferior school
+(not UC!) are approximately normally distributed with a mean of 64 and a
+standard deviation of 7.1, find:
+\begin{enumerate}
+\item the lowest passing grade if the bottom $5\%$ of the
+students fail the class; \\\\
+The normal distribution is symmetric about the mean, so for a given value of $\frac{\alpha-\mu}{\sigma}$, we have $\Pr[X \leq \frac{\alpha-\mu}{\sigma}] = \Pr[X \geq -\frac{\alpha-\mu}{\sigma}]$. \\\\
+We must find the $\alpha$ such that $\Pr[X \leq \frac{\alpha-\mu}{\sigma}] = 0.05$:
+\begin{eqnarray*}
+0.05 &=& \Pr[X \leq \frac{\alpha-\mu}{\sigma}] \\
+0.95 &=& \Pr[X \geq \frac{\alpha-\mu}{\sigma}] \\
+&=& \Pr[X \leq -\frac{\alpha-\mu}{\sigma}] \\
+&=& \Pr[X \leq 1.65] \\
+-\frac{\alpha-\mu}{\sigma} &=& 1.65 \\
+\alpha &=& -1.65\sigma + \mu \\
+&=& -1.65(7.1)+64 \\
+&=& 52.285
+\end{eqnarray*}
+\item the highest B if the top $10\%$ of the students are given A's.
+\begin{eqnarray*}
+0.1 &=& \Pr[X \geq \frac{\alpha-\mu}{\sigma}] \\
+0.9 &=& \Pr[X \leq \frac{\alpha-\mu}{\sigma}] \\
+&=& \Pr[X \leq 1.3] \\
+\frac{\alpha-\mu}{\sigma} &=& 1.3 \\
+\alpha &=& 1.3\sigma + \mu \\
+&=& 1.3(7.1)+64 \\
+&=& 73.23
+\end{eqnarray*}
+\end{enumerate}
+{\sc Note}: You may assume that if $X$ is normal with mean $0$ and
+variance $1$, then $\Pr[X \leq 1.3] \approx 0.9$ and $\Pr[X \leq 1.65] \approx 0.95$.
+
+\newpage
+\item {\bf Polynomials}
+
+For each of these sets, determine whether they are countable or uncountable and prove that your answer is correct:
+\begin{enumerate}
+\item $S = \{p(x) : p(x) = a_2 x^2 +a_1 x+a_0$, where $a_0,a_1,a_2 \in Z\}$ (the set of all polynomials of degree at most 2 with integer coefficients) \\\\
+We can use the fact that every positive natural number can be represented by exactly 1 unique binary string (assuming no leading zeros). Then let $0$ be represented by the binary string $0$. Now we can introduce a representation for any integer. For all $n \in \Z$ let's define $f: \Z \rightarrow \{0,1\}^*$ as follows:
+\[
+ f(n) =
+  \begin{cases}
+   0d_1d_2d_3\ldots  & \text{for } n \geq 0 \\
+   1d_1d_2d_3\ldots  & \text{for } n < 0
+  \end{cases}
+\]
+where $d_1d_2d_3\ldots$ is the binary string representation of the magnitude of $n$. Every integer has a unique representation and for a given valid string we can recover the integer it represents. So $f$ is an injection. \\\\
+We know there is an injection from $\N \rightarrow S$, since each natural number $n$ can be represented uniquely by $a_2=0,a_1=0,a_0=n$. Now we must show an injection from $S \rightarrow \N$. Note 18 shows that the set of all ternary strings $\{0,1,2\}^*$ is countable. That reduces our problem to showing an injection from $S \rightarrow \{0,1,2\}^*$. \\\\
+Similar to what was done in Note 18, we can represent a polynomial $p(x)$ by it's binary integer coefficients $(f(a_2),f(a_1),f(a_0))$ and insert a 2 between each one (e.g. $5x^2 -3x + 2 \rightarrow$ 010121112010). Now each polynomial in $S$ can be represented by a unique ternary string, and a given valid ternary string has a unique pre-image in $S$. So there is a series of injections from $S \rightarrow \{0,1,2\}^* \rightarrow \N$. Therefore $S$ and $\N$ have the same cardinality, so $S$ is countable.
+\item $S = \{\frac{p(x)}{q(x)} : p(x) = a_2 x^2 +a_1 x+a_0, ~and~ q(x) = b_2 x^2 +b_1 x+b_0, ~where ~a_0, a_1, a_2, b_0, b_1, b_2 \in Z\}$ (the set of all ratios of two polynomials of degree at most 2 with integer coefficients) \\\\
+Similar to part (a), we can represent each pair $(p(x), q(x)) \in S$ by their binary integer coefficients $(f(a_2),f(a_1),f(a_0),f(b_2),f(b_1),f(b_0))$ and insert a 2 between each one. Again each element in $S$ is represented by a unique ternary string, and a given valid ternary string has a unique pre-image in $S$, even if that pre-image isn't in lowest terms or $q(x) = 0$. Injections from $S \rightarrow \{0,1,2\}^* \rightarrow \N$ and from $\N \rightarrow S$ (because $n \rightarrow p(x)=n,q(x)=1$) show that $S$ is countable.
+\item $T=\{\frac{p(x)}{q(x)}:p(x)=a_n x^n+ \cdots +a_1 x+a_0, ~q(x)=b_n x^n+ \cdots +b_1 x+b_0$,~~where $n \in N$ and \\
+$a_0,a_1, \ldots ,a_n, b_0,b_1, \ldots ,b_n \in Z\}$(the set of ratios of polynomials with integer coefficients, of any degree. These are the so-called rational functions we saw in the Berlekamp-Welsh decoding algorithm) \\\\
+We must slightly tweak our representation of elements in $T$ as ternary strings, since we currently can't tell where $p$'s coefficients end are $q$'s coefficients begin in our string. To solve this, instead of separating the last $p_i$ and the first $q_j$ with a 2, we separate them with a 202 string. This works since the string 0 does not represent a valid integer in our binary representation, since all integers must have one sign bit and at least one magnitude bit. Thus this break won't be interpreted as an ambiguous coefficient. Similar reasoning as above shows that $T$ is countable.
+\end{enumerate}
+
+\newpage
+\item {\bf Rationality}
+
+A real number which is not a rational number is said to be \emph{irrational}.
+Prove or disprove: the set of irrational numbers is countable. \\\\
+
+Let $P$ be the set of all irrational numbers. Then by definition, $\R = P \cup \Q$. \\
+From Note 18 we know that $\Q$ is countable, but $\R$ is not. \\
+Therefore, if we can prove that the union of two countable, infinite sets is also countable, we disprove the claim above. \\\\
+Let $A = \{a_1,a_2,\ldots\}$ and $B = \{b_1,b_2,\ldots\}$ be two countable, infinite sets represented by the bijections $\alpha: \N \rightarrow A$ and $\beta: \N \rightarrow B$ defined as follows: $\forall x \in \N, \alpha(x) = a_x \text{ and } \beta(x) = b_x$ \\\\
+Then the following mapping $f: \N \rightarrow A \cup B$ is also a bijection:
+\[
+ f(x) =
+  \begin{cases}
+   b_{\frac x2}     & \text{for } x \text{ even} \\
+   a_{\frac{x+1}2}  & \text{for } x \text{ odd}
+  \end{cases}
+\]
+It's clear that $f$ is one-to-one, since if $x=y$ they share the same parity and thus map to exactly the same element (in one of $A$ or $B$). Every $a_i$ has a pre-image, which is $2i-1$, and every $b_i$ has a pre-image, which is $2i$. Thus $f$ is onto and therefore a bijection, making the union of two countable and infinite sets also countable. \\\\
+Since this is true, the set $P$ of all irrational numbers cannot be countable, because $\R$ is not countable.
+
+\newpage
+\item  {\bf Computable or Uncomputable}
+
+\begin{enumerate}
+\item Suppose $f$ is an increasing function from $\mathbb{N} \rightarrow \mathbb{N}$ (i.e., if $x \geq y$, then $f(x) \geq f(y)$). Is there necessarily a program which computes $f$?
+\item Suppose $f$ is an decreasing function from $\mathbb{N} \rightarrow \mathbb{N}$ (i.e., if $x \geq y$, then $f(x) \leq f(y)$). Is there necessarily a program which computes $f$?
+\end{enumerate}
+
+\newpage
+\item  {\bf Halting and Looping}
+
+We say that a program P is simple if there is some y such that if P halts it always outputs y. That is, for every x, either P(x) = y or P(x) goes into an infinite loop. 
+
+\begin{enumerate}
+\item Is there a program T such that T(P) outputs $1$ if P is simple and $0$ if it is not? 
+\item Is there a program T such that T(P) loops forever if and only if P is simple? 
+\item Is there a program T such that T(P) halts if and only if P is simple?
+\end{enumerate}
+Prove that your answer is correct.
+Hint: One possible way to show that there is no program T is by proving that you can use T to solve the halting problem. 
+
+
+\end{enumerate}
+
+\end{document}

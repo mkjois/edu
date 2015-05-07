@@ -1,0 +1,115 @@
+\section{KVServer, KVStore}
+\subsection{Overview}
+We implement the server part of the project, which maintains a store and a cache and accesses them in such a way that accesses within the same set are sequential and accesses in different sets are parallel.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item Accesses in any one set must not wait until completion of any access in another set.
+\item No two accesses shall occur simultaneously in any one set.
+\item The store must not be accessed if the value to get is in the cache.
+\item The {\ttfamily put} command must use write-through.
+\item The {\ttfamily get} command must return the most recent value for a given key.
+\item The {\ttfamily put} command must throw appropriate exceptions if the key or value are too long.
+\item The {\ttfamily get} and {\ttfamily del} commands must throw the appropriate exception if the key is not in the store.
+\end{itemize}
+\subsection{Declarations}
+\begin{itemize}
+\item {\ttfamily private void writeXMLToStream(OutputStream stream)} - Writes an XML representation of the current dataStore to the given OutputStream.
+\end{itemize}
+\subsection{Descriptions}
+Exception-handling and throwing were added in the final versions of the methods below.
+\begin{verbatim}
+get(key):
+    if key is null or "":
+        throw KVException(ERROR_INVALID_KEY)
+    lock = dataCache.getLock(key)
+    lock.lock()
+    try:
+        result = dataCache.get(key)
+        if result is null:
+            result = dataStore.get(key)
+    finally:
+        lock.unlock()
+    return result
+
+put(key, value):
+    if key.length > 256:
+        throw KVException(ERROR_OVERSIZED_KEY)
+    if value.length > 256 * 1024:
+        throw KVException(ERROR_OVERSIZED_VALUE)
+    lock = dataCache.getLock(key)
+    lock.lock()
+    dataCache.put(key, value)
+    dataStore.put(key, value)
+    lock.unlock()
+
+del(key):
+    if key is null or "":
+        throw KVException(ERROR_INVALID_KEY)
+    lock = dataCache.getLock(key)
+    lock.lock()
+    try:
+        dataCache.del(key)
+        dataStore.del(key)
+    finally:
+        lock.unlock()
+
+hasKey(key):
+    lock = dataCache.getLock(key)
+    lock.lock()
+    try:
+        result = dataCache.get(key)
+        if result is null:
+            result = dataStore.get(key)
+    finally:
+        lock.unlock()
+    return (result is not null)
+
+writeXMLToStream(stream):
+    serializer = new Serializer(stream, "UTF-8")
+    root = new Element("KVStore")
+    for key in store:
+        curr = new Element("KVPair")
+        k = new Element("Key")
+        v = new Element("Value")
+        k.appendChild(key)
+        v.appendChild(store[key])
+        curr.appendChild(k)
+        curr.appendChild(v)
+        root.appendChild(curr)
+    serializer.setIndent(0)
+    doc = new Document(root)
+    serializer.write(doc)
+
+toXML():
+    output = new ByteArrayOutputStream()
+    writeXMLToStream(output)
+    return output.toString("UTF-8")
+
+dumpToFile(fileName):
+    try:
+        out = FileOutputStream(fileName)
+        writeXMLToStream(out)
+    except:
+        pass
+
+restoreFromFile(fileName):
+    resetStore()
+    try:
+        parser = new Builder()
+        doc = parser.build(fileName)
+        root = doc.getRootElement()
+        elems = root.getChildElements()
+        for elem in elems:
+            k = elem.getChildElements().get(0)
+            v = elem.getChildElements().get(1)
+            put(k.getChildElements().get(0),
+                v.getChildElements().get(0))
+    except:
+        pass
+
+\end{verbatim}
+\subsection{Testing Plan}
+\begin{itemize}
+\item We first add five pre-selected keys and values into the store. We write the store to disk, then add five more keys and values. We check that each of the keys and values has been added correctly. We then reload from the disk and check that the first five keys are in the store with the correct values, but the next five are not in the store at all.
+\item We add ten pre-selected keys and values into the store. We check that they have been added correctly. We then update the values of five of them. We check to make sure the five we have not changed have their original values and that the five we changed have their updated values.
+\end{itemize}

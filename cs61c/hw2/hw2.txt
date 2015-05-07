@@ -1,0 +1,34 @@
+CS61C Fa13 HW2
+Name: Manohar Jois 
+Login: cs61c-bm
+
+
+Problem 1
+
+  paste your pointer-based shift.c code below:
+
+  void shift(int *a, int n) {
+      int *i;
+      for(i = a; i < a+n; i++) {
+         *i = *(i+1);
+      }
+  }
+
+
+Problem 2
+
+ #   Line #        Corrected Code 
+ -   ------        ---------------
+ 1.  09             int total = 0;
+ 
+ 2.  10     		total += (*my_node)->var1 + (*my_node)->var2;
+
+ 3.	 16             point pt1 = {1,2};
+
+ 4.  17     		arr[0] =  &pt1;
+
+ 5.
+
+ 6.
+
+

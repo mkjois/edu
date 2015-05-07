@@ -1,0 +1,19 @@
+update bread 289
+update butter 7
+update juice 49
+update fruit -18
+update vegetable 824
+update milk 0
+update eggs -172
+list names
+list quantities
+update bread -289
+update juice 27
+update JUICE 5
+update Fruit 8
+update fruit 75
+update vEgEtAbLe 26
+update 2adfjk 92
+update 6AjfDw -43
+list names
+list quantities

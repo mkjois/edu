@@ -1,0 +1,246 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage{amsmath,amssymb}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{10}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday November 11 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\renewcommand{\E}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\Ep}[1]{\mathbb{E}_p\left[#1\right]}
+\renewcommand{\P}[1]{\mathbb{P}\p{#1}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+%%% The "real" document content comes below...
+
+\begin{enumerate}
+
+\item \textbf{Balls and bins, again:}
+Suppose that I throw $n$ balls into $n$ bins.
+\begin{enumerate}
+\item What is the probability that I throw the $i^{\text{th}}$
+ball into the same bin as the $j^{\text{th}}$ ball? \\\\
+Whichever ball I throw first establishes which bin I need for the second ball, which is 1 out of $n$ bins: $P = \frac1n$ \\
+\item Suppose that every time I throw a ball into a bin,
+I lose \$1 for every ball that was already in the bin.
+How much money should I expect to lose?\\
+Hint: Note that when you throw ball $i$ in the bin, you can only pay because of the presence of balls numbered $j < i$. 
+Define an indicator random variable $X_{i,j}$ for all $j < i$ and express the total money you lose in terms of the $X_{i,j}$. \\\\
+For a given $i > j > k > 0$, the probability of ball $i$ landing in the same bin as $j$ is independent of the probability of it landing in the same bin as $k$, before the balls are thrown, since the destination bins of all 3 are chosen independently. \\
+For $i > j > 0$, let $X_{i,j}$ be the number of dollars lost when throwing ball $i$ after having thrown $j$. \\
+The expected value is $E(X_{i,j}) = \$1\cdot P(\text{same bin}) + \$0\cdot P(\text{different bins}) = \$\frac1n$. \\
+So the total expected loss when throwing ball $i$ is $\displaystyle\sum\limits_{j=1}^{i-1} \frac1n = \frac{i-1}n$. \\
+The total expected loss is $\displaystyle\sum\limits_{i=1}^{n} \frac{i-1}n = \frac{n(n-1)}{2n} = \frac{n-1}2$ in dollars.
+\end{enumerate}
+
+\newpage
+\item \textbf{Elevator:} Ten people get into an empty elevator on the ground floor, G. There are 10 floors labeled 1 through 10. Each
+person gets off at a randomly selected floor. Each person's destination is independent of everyone else's
+destination.
+\begin{enumerate}
+\item What is the probability that the elevator stops at floor 3? \\\\
+Let $A$ be the event that the elevator stops at floor 3. Then $\bar{A}$ is the probability that no one selected floor 3. \\
+$P(\bar{A}) = (\frac9{10})^{10}$, so $P(A) = 1-0.9^{10} = 0.651$ \\
+\item Let X be the number of floors the elevator stops on. What is E[X]? (Hint: Use linearity of expectation.
+Create indicator random variables variables $X_i$ which indicate whether the elevator stops on the $i$-th floor.) \\\\
+Let $X_i$ be the number of floors stopped at when the elevator reaches the $i$-th floor. \\
+For any $i \in [1,10]$, the expected value $E(X_i) = 1\cdot(1-0.9^{10}) + 0\cdot0.9^{10} = 0.651$. \\
+Since all $X_i$ are in the same probability space, then by linearity of expectation: \\
+$\displaystyle E(X) = \sum\limits_{i=1}^{10} E(X_i) = 10(1-0.9^{10}) = 6.5$ \\
+\item Now 10 people still get in the elevator but it has n floors instead of 10. Create an expression for E(X)
+in terms of n. \\\\
+Let $A$ be the event that the elevator stops at floor $i$, so $P(\bar{A}) = (\frac{n-1}n)^{10}$ \\
+Now $E(X_i) = 1\cdot P(A) + 0\cdot P(\bar{A}) = 1-(1-\frac1n)^{10}$. \\
+So $\displaystyle E(X) = \sum\limits_{i=1}^n E(X_i) = n\left(1-\left(1-\frac1n\right)^{10}\right)$
+\end{enumerate}
+
+\newpage
+\item \textbf{Random graphs:} Suppose that $G$ is a random undirected graph with $n$ vertices,
+in which each possible edge appears independently with probability $1/2$. i.e. 
+for every pair of vertices $u, v$, you flip a fair coin to decide whether to place an 
+edge between $u$ and $v$. 
+
+\begin{enumerate}
+
+\item What is the expected number of edges in $G$?\\
+Hint: Define an indicator random variable $X_{u,v}$ for every pair of vertices and express the total number of edges in terms of the $X_{u,v}$'s. \\\\
+Let $X$ be the \# of edges in $G$ and $X_{u,v}$ be the \# of edges between vertices $u$ and $v$. \\
+Then $E(X_{u,v}) = 1\cdot\frac12 + 0\cdot\frac12 = \frac12$. \\
+There are $\binom{n}2$ distinct pairs of vertices in $G$ and for each pair an edge between the vertices may appear independently of other edges, so by linearity of expectation: \\
+$E(X) = \sum E(X_{u,v}) = \frac12 \binom{n}2$ \\
+
+\item A triangle in $G$
+is a set of vertices $u, v, w$
+such that $\{u, v\}$, $\{v, w\}$, and $\{w, u\}$
+are all edges in $G$.
+What is the expected number of triangles in $G$?\\
+Hint: Express the number of triangles as a sum of suitably defined indicator random variables $X_{u,v,w}$. \\\\
+Let $Y$ be the \# of triangles in $G$ and $Y_{u,v,w}$ be the \# of triangles among vertices $u,v,w$. \\
+Notice that $P(Y_{u,v,w}) = P(X_{u,v} \cap X_{v,w} \cap X_{u,w}) = P(X_{u,v})P(X_{v,w})P(X_{u,w}) = (\frac12)^3 = \frac18$. \\
+So $E(Y_{u,v,w}) = 1\cdot\frac18 + 0\cdot\frac78 = \frac18$. \\
+There are $\binom{n}3$ distinct trios of vertices in $G$, and by linearity of expectation: \\
+$E(Y) = \sum E(Y_{u,v,w}) = \frac18 \binom{n}3$
+
+\end{enumerate}
+
+\newpage
+\item \textbf{A very slow bus:} Suppose that there is a single bus
+traveling back and forth on a long street.
+It takes the bus one hour to travel the length of the street,
+and when it reaches either end it immediately turns around and travels
+back the way it came.
+Suppose the bus spends a negligible amount of time stopped.
+
+My house is $25\%$ of the way from one end of the street,
+and my office is $25\%$ of the way from the other end.
+Suppose I wake up at a random time, and catch the next bus
+that passes by my house.
+I get off the bus the next time it passes by my office.\\
+Hint: Think about the location, $X$, of the bus when I wake up,
+and the direction it is traveling.
+\begin{enumerate}
+\item
+In expectation, how long will it be between when
+I wake up and when I arrive at my office? \\\\
+Let $T(x)$ be the amount of time in minutes elapsed between when I wake up and when the bus reaches the office (with at least one stop at the house in between for me to board) $x$ minutes after the bus last passed my house going towards the office. If I wake up just as $x$ resets to $0$, then $T=30$. If I wake up just after, then $T=150$ since it takes 120 minutes for the bus to get back to $x=0$. Since the bus moves at constant speed, $T(x)$ decreases linearly from 150 to 30 as $x$ increases from 0 to 120. Since I have equal chance of waking up for any $x \in [0,120)$, then $E(T(x))$ is just the average value of $T(x)$ over $0 \leq x < 120$, so $E(T(x)) = (150+30)/2 = 90$ minutes. \\
+\item
+Suppose that after I wake up it takes me 20 minutes to shower
+before I can leave home.
+Show that it will take me 20 minutes longer to get to the office
+in expectation. \\\\
+This is analogous to starting my wait for the bus 20 minutes after waking up. In part (a), we essentially showed that the expected amount of time between starting my wait for the bus and arriving at the office was 90 minutes. Now since I wake up 20 minutes before starting my wait for the bus, by linearity of expectation my expected total time is my expected shower time (20 minutes) plus my expected wait/travel time (90 minutes): $E(T) = 90+20 = 110$ minutes. \\
+\item 
+Suppose that I still need to shower for 20 minutes before starting work,
+but I can shower either at home or at my office.
+I don't know where the bus is when I wake up,
+but I can see it when it passes my house (and I can tell what direction
+it is traveling).
+Prove that it is possible for me to get to my office \emph{and}
+shower using only 5 extra minutes (in expectation)
+beyond what would be required to get to my office without showering. \\\\
+Let A be the state where the next time the bus goes past the house, it's traveling towards the office. The bus is only in state A when it's in the 30-minute stretch between the house and the near end of the street and back, so $P(A) = 30/120 = 0.25$. Let the strategy be to take the bus and shower at work if we first see it coming from state A, otherwise shower at home. If we shower at home after realizing the bus isn't coming from state A, we actually don't spend extra time because we only need 20 minutes to shower instead of spending 30 minutes traveling on the bus to the end of the street and back. Thus the expected extra time is $E(T_{\text{extra}}) = t_{\text{shower\_at\_work}} \cdot P(A) = 20(0.25) = 5$ minutes. \\
+\newpage
+\item
+Suppose that I need to do a more complicated task for 20 minutes
+before starting work, but I can do the task either at home or at my office.
+However, if the task is interrupted,
+I need to start over again from the beginning
+(i.e., I can't start the task at home and finish it at my office).
+Prove that it is possible for me to get to my office \emph{and}
+finish my task using only 3 minutes and 20 seconds more time (in expectation)
+than would be required to get to my office without doing the task. \\\\
+Let the strategy be to start the task as soon as possible and take the bus if and only if we see it coming from state A (as defined in part (c)). Let X be the amount of time between when I start the task and when the bus gets to my house coming from state A. Clearly $0 \leq X < 120$ minutes, the round-trip time of the bus. Notice we only get interrupted when $X<20$, in which case we must restart the 20-minute task at the office. This happens with probability $\frac16$, and the other $\frac56$ of the time, we don't spend any extra time since we would just be waiting for the bus anyway. So the expected extra time is $E(T_{\text{extra}}) = t_{\text{task\_at\_work}} \cdot P(\text{interrupted}) = 20(\frac16) =$ 3 minutes and 20 seconds.
+\end{enumerate}
+
+\newpage
+\item \textbf{Exam reprise} Write up solutions to questions 2, 3 and 4 on the midterm. The midterm will be posted 
+by Thursday. You are allowed to look at the posted solutions to the midterm; we want you to spend some time thinking about the
+solutions and trying to synthesize the core ideas. \\
+\textbf{Problem 2:} \\
+Base Case: $n=1$ flips requires 0 heads for $P(E_1)$ to be true. $P(E_1) = \frac12+\frac{1-2p}2 = 1-p$, which is what we want (probability of tails). \\
+Hypothesis: Assume $P(E_n) = \frac{1+(1-2p)^n}2$ for some $n \geq 1$ \\
+Step: We must prove that $P(E_{n+1}) = \frac{1+(1-2p)^{n+1}}2$. Observe that the probability of even heads on the $(n+1)$-th is the sum of the probabilities of even heads on the $n$-th flip followed by a tails and that of odd heads on the $n$-th flip followed by a heads. More formally:
+\begin{align*}
+P(E_{n+1}) &= P(E_n)(1-p) + (1-P(E_n))p \\
+&= (1-p)(\frac{1+(1-2p)^n}2) + p(\frac{1-(1-2p)^n}2) \\
+&\ldots \text{simple algebra} \ldots \\
+&= \frac{1+(1-2p)^{n+1}}2
+\end{align*}
+\textbf{Problem 3a:} \\
+By property 2, if Alice has 3 unique points, she can find a unique degree-2 polynomial. But Alice only has information about 2 points, $P(5)$ and $P(4)$. For any possible value of $P(4)$, we could have a unique polynomial for each of the 11 possible values of $P(0)$, one of which results from $P(0)=3$, so the probability is $\frac1{11}$. \\
+\textbf{Problem 3b:} \\
+Property 2 lets us use Lagrange Interpolation on the set $\{P'(2)=4,\,P'(4)=10,\,P'(5)=2\}$ to get a hypothetical polynomial $P'(x)$, and we find that $P'(0)=9$, so the probability is not zero. Since the pairings between possible values of $P(4)$ and $P(0)$ represent a bijection, each of the 10 remaining possible values of $P(4)$ will produce a different value of $P(0) \bmod 11$, one of which is $3$, so the probability is $\frac1{10}$. \\
+\textbf{Problem 4a:} \\
+Along our trace path, every vertex must be entered and exited every time it is encountered (including the starting vertex, since we return to it to end our trace). The only way to do this with an odd-degree vertex is to retrace at least one edge incident upon it. Each retraced edge is incident upon at most 2 odd-degree vertices, so we must retrace at least $\frac{m}2$ edges to cover all edges in a trace with $m$ odd-degree vertices. \\
+\textbf{Problem 4b:} \\
+This graph has 4 odd-degree vertices A,B,C,D. A trace path would be ABDCADBCA, where edges BD and CA are traced twice.
+\begin{verbatim}
+A----B
+|\  /|
+| \/ |
+| /\ |
+|/  \|
+C----D
+\end{verbatim}
+
+\newpage
+\item \textbf{Extra credit.} There are two pouches, one containing exactly twice as much gold as the other. 
+You select one of these pouches at random and find $x$ amount of gold in it. You do a quick calculation
+and figure that the expected amount of gold in the other package is $1/2 \cdot \frac 12 x + 1/2 \cdot 2x = 1.25 x$,
+and wish you had picked the other pouch. But then your friend reminds you that you chose the pouch at random 
+and you would have had the same thought if you had picked the other pouch. You are not convinced, so
+your friend points out that if you were allowed to repeatedly exchange the pouch, by your reasoning your expected reward 
+would increase by a factor of $1.25$ with each exchange, which is absurd. Can you explain the flaw in 
+your reasoning. \\\\
+
+You can say the following about the situation: if you were to repeat this experiment with several pairs of pouches and ended up switching to the second pouch for half of those selections, you should expect to have 1.25 times the amount of gold you would've had if you never switched for any selection. \\
+The expected value really doesn't increase by a factor of 1.25 every exchange. Each exchange is a separate run of the experiment and what's true is that the expected value of the pouch you didn't select in each experiment is 1.25 times the value $x$ of the pouch you did select. But in successive experiments we don't set $x$ to be $1.25x$, but rather set it to the value of the pouch we select, which can never exceed $2x$ for any run of the experiment.
+
+\end{enumerate}
+
+\end{document}

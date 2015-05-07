@@ -1,0 +1,831 @@
+package nachos.threads;
+
+import nachos.machine.*;
+
+import java.util.LinkedList;
+import java.util.Comparator;
+import java.util.Collections;
+
+/**
+ * A scheduler that chooses threads based on their priorities.
+ *
+ * <p>
+ * A priority scheduler associates a priority with each thread. The next thread
+ * to be dequeued is always a thread with priority no less than any other
+ * waiting thread's priority. Like a round-robin scheduler, the thread that is
+ * dequeued is, among all the threads of the same (highest) priority, the
+ * thread that has been waiting longest.
+ *
+ * <p>
+ * Essentially, a priority scheduler gives access in a round-robin fassion to
+ * all the highest-priority threads, and ignores all other threads. This has
+ * the potential to
+ * starve a thread if there's always a thread waiting with higher priority.
+ *
+ * <p>
+ * A priority scheduler must partially solve the priority inversion problem; in
+ * particular, priority must be donated through locks, and through joins.
+ */
+public class PriorityScheduler extends Scheduler {  
+    /**
+     * The default priority for a new thread. Do not change this value.
+     */
+    public static final int priorityDefault = 1;
+    /**
+     * The minimum priority that a thread can have. Do not change this value.
+     */
+    public static final int priorityMinimum = 0;
+    /**
+     * The maximum priority that a thread can have. Do not change this value.
+     */
+    public static final int priorityMaximum = 7;
+    
+    /**
+     * Allocate a new priority scheduler.
+     */
+    public PriorityScheduler() {
+    }
+    
+    /**
+     * Allocate a new priority thread queue.
+     *
+     * @param	transferPriority	<tt>true</tt> if this queue should
+     *					transfer priority from waiting threads
+     *					to the owning thread.
+     * @return	a new priority thread queue.
+     */
+    public ThreadQueue newThreadQueue(boolean transferPriority) {
+	return new PriorityQueue(transferPriority);
+    }
+
+    public int getPriority(KThread thread) {
+	Lib.assertTrue(Machine.interrupt().disabled());
+		       
+	return getThreadState(thread).getPriority();
+    }
+
+    public int getEffectivePriority(KThread thread) {
+	Lib.assertTrue(Machine.interrupt().disabled());
+		       
+	return getThreadState(thread).getEffectivePriority();
+    }
+
+    public void setPriority(KThread thread, int priority) {
+	Lib.assertTrue(Machine.interrupt().disabled());
+		       
+	Lib.assertTrue(priority >= priorityMinimum &&
+		   priority <= priorityMaximum);
+	
+	getThreadState(thread).setPriority(priority);
+    }
+
+    public boolean increasePriority() {
+	boolean intStatus = Machine.interrupt().disable();
+		       
+	KThread thread = KThread.currentThread();
+
+	int priority = getPriority(thread);
+	if (priority == priorityMaximum)
+	    return false;
+
+	setPriority(thread, priority+1);
+
+	Machine.interrupt().restore(intStatus);
+	return true;
+    }
+
+    public boolean decreasePriority() {
+	boolean intStatus = Machine.interrupt().disable();
+		       
+	KThread thread = KThread.currentThread();
+
+	int priority = getPriority(thread);
+	if (priority == priorityMinimum)
+	    return false;
+
+	setPriority(thread, priority-1);
+
+	Machine.interrupt().restore(intStatus);
+	return true;
+    }
+
+    /**
+     * Return the scheduling state of the specified thread.
+     *
+     * @param	thread	the thread whose scheduling state to return.
+     * @return	the scheduling state of the specified thread.
+     */
+    protected ThreadState getThreadState(KThread thread) {
+	if (thread.schedulingState == null)
+	    thread.schedulingState = new ThreadState(thread);
+
+	return (ThreadState) thread.schedulingState;
+    }    
+    
+    /** Custom comparator for sorting <tt>ThreadState</tt> objects by effPriority, then FIFO. */
+    protected static Comparator<ThreadState> TS_COMP_EFF = new Comparator<ThreadState>() {
+	public int compare(ThreadState o1, ThreadState o2) {
+	    int priorityComparison = Integer.compare(o2.effPriority, o1.effPriority);
+	    if (priorityComparison == 0) {
+		return Long.compare(o1.waitQueueOrder, o2.waitQueueOrder);
+	    } else {
+		return priorityComparison;
+	    }
+	}
+    };
+    
+    /** Custom comparator for sorting <tt>ThreadState</tt> objects by priority, then FIFO. */
+    protected static Comparator<ThreadState> TS_COMP_REG = new Comparator<ThreadState>() {
+	public int compare(ThreadState o1, ThreadState o2) {
+	    int priorityComparison = Integer.compare(o2.priority, o1.priority);
+	    if (priorityComparison == 0) {
+		return Long.compare(o1.waitQueueOrder, o2.waitQueueOrder);
+	    } else {
+		return priorityComparison;
+	    }
+	}
+    };
+
+    /**
+     * A <tt>ThreadQueue</tt> that sorts threads by priority.
+     */
+    protected class PriorityQueue extends ThreadQueue {
+	/**
+	 * <tt>true</tt> if this queue should transfer priority from waiting
+	 * threads to the owning thread.
+	 */
+	public boolean transferPriority;
+	/**
+	 * Maintained counter of threads that have joined the queue. When a new
+	 * thread is enqueued, its order is set to this, then this is incremented.
+	 * Initialized to 0.
+	 */
+	protected long queueOrder;
+	/** The thread that holds the resource protected by this queue. */
+	protected ThreadState holder;
+	/**
+	 * Java priority queue used to sort and dequeue threads according to our
+	 * custom comparator.
+	 */
+	protected java.util.PriorityQueue<ThreadState> realQueue;
+	
+	PriorityQueue(boolean transferPriority) {
+	    this.transferPriority = transferPriority;
+	    int defaultSize = 11; // java.util.PriorityQueue default size
+	    Comparator<ThreadState> comparator = transferPriority ? TS_COMP_EFF : TS_COMP_REG;
+	    this.realQueue = new java.util.PriorityQueue<ThreadState>(defaultSize, comparator);
+	}
+
+	public void waitForAccess(KThread thread) {
+	    Lib.assertTrue(Machine.interrupt().disabled());
+	    ThreadState threadState = getThreadState(thread);
+	    threadState.waitForAccess(this);
+	    this.addThread(threadState, true);
+	    if (this.holder != null && this.transferPriority) {
+		this.holder.notifyPriorityIncrease(threadState.getEffectivePriority());
+	    }
+	}
+
+	public void acquire(KThread thread) {
+	    Lib.assertTrue(Machine.interrupt().disabled());
+	    this.holder = getThreadState(thread);
+	    this.holder.acquire(this);
+	}
+
+	public KThread nextThread() {
+	    Lib.assertTrue(Machine.interrupt().disabled());
+	    ThreadState threadState = this.realQueue.poll(),
+		    	oldHolder = this.holder;
+	    this.holder = threadState;
+	    if (this.holder == null) {
+		return null;
+	    }
+	    this.holder.acquire(this);
+	    if (oldHolder != null) {
+		oldHolder.release(this);
+	    }
+	    if (!this.realQueue.isEmpty() && this.transferPriority) {
+		this.holder.notifyPriorityIncrease(this.realQueue.peek().getEffectivePriority());
+	    }
+	    return this.holder.thread;
+	}
+
+	/**
+	 * Return the next thread that <tt>nextThread()</tt> would return,
+	 * without modifying the state of this queue.
+	 *
+	 * @return	the next thread that <tt>nextThread()</tt> would
+	 *		return.
+	 */
+	protected ThreadState pickNextThread() {
+	    return this.realQueue.peek();
+	}
+	
+	/**
+	 * Adds a thread to this priority queue and gives it an order number if it
+	 * doesn't already have one.
+	 * 
+	 * @param threadState		Encapsulates the thread to add.
+	 * @param needsQueueOrder 	<tt>False</tt> if doesn't have one with respect
+	 * 				to this queue yet.
+	 */
+	protected void addThread(ThreadState threadState, boolean needsQueueOrder) {
+	    if (needsQueueOrder) {
+		threadState.waitQueueOrder = this.queueOrder;
+		this.queueOrder++;
+	    }
+	    this.realQueue.add(threadState);
+	}
+	
+	/**
+	 * Called when a thread in this queue has changed effective priority. Simply
+	 * removes and re-adds the thread with a new priority.
+	 * 
+	 * @param threadState	Encapsulates the thread to change.
+	 */
+	protected void changePriority(ThreadState threadState) {
+	    this.realQueue.remove(threadState);
+	    this.addThread(threadState, false);
+	}
+	
+	/**
+	 * Warning: do not call this method often!
+	 * It is O(n log n) where n is the size of the queue.
+	 */
+	public void print() {
+	    Lib.assertTrue(Machine.interrupt().disabled());
+	    if (this.holder == null) {
+		System.out.println("No love for this queue.");
+	    }
+	    System.out.println("Holder:");
+	    System.out.println(this.holder);
+	    System.out.println("Waiting:");
+	    if (this.realQueue.isEmpty()) {
+		System.out.println("Queue is empty.");
+	    } else {
+		Comparator<ThreadState> comparator = transferPriority ? TS_COMP_EFF : TS_COMP_REG;
+		java.util.PriorityQueue<ThreadState> buffer = 
+			new java.util.PriorityQueue<ThreadState>(this.realQueue.size(), comparator);
+		while (!this.realQueue.isEmpty()) {
+		    ThreadState ts = this.realQueue.poll();
+		    System.out.println(ts);
+		    buffer.add(ts);
+		}
+		this.realQueue = buffer;
+	    }
+	    System.out.println();
+	}
+    }
+
+    /**
+     * The scheduling state of a thread. This should include the thread's
+     * priority, its effective priority, any objects it owns, and the queue
+     * it's waiting for, if any.
+     *
+     * @see	nachos.threads.KThread#schedulingState
+     */
+    protected class ThreadState {
+
+	/** The thread with which this object is associated. */	   
+	protected KThread thread;
+	/** The priority of the associated thread. */
+	protected int priority;
+	/** The effective priority of the associated thread. */
+	protected int effPriority;
+	/** A list of all queues whose resource this thread holds. */
+	protected LinkedList<PriorityQueue> heldQueues;
+	/**
+	 * The queue this thread is waiting in.
+	 * If no queue, this is <tt>null</tt>.
+	 */
+	protected PriorityQueue waitQueue;
+	/**
+	 * The relative order of this thread in the queue it waits in. If not
+	 * waiting in a queue, this number is invalid (cannot be trusted).
+	 * Note that knowing only this number guarantees nothing about the order
+	 * in the queue, since it is relative to other threads in the queue.
+	 */
+	protected long waitQueueOrder;
+	
+	/**
+	 * Allocate a new <tt>ThreadState</tt> object and associate it with the
+	 * specified thread.
+	 *
+	 * @param	thread	the thread this state belongs to.
+	 */
+	public ThreadState(KThread thread) {
+	    this.thread = thread;
+	    this.heldQueues = new LinkedList<PriorityQueue>();
+	    this.effPriority = priorityDefault;
+	    setPriority(priorityDefault);
+	}
+
+	/**
+	 * Return the priority of the associated thread.
+	 *
+	 * @return	the priority of the associated thread.
+	 */
+	public int getPriority() {
+	    return priority;
+	}
+
+	/**
+	 * Return the effective priority of the associated thread.
+	 *
+	 * @return	the effective priority of the associated thread.
+	 */
+	public int getEffectivePriority() {
+	    return effPriority;
+	}
+
+	/**
+	 * Set the priority of the associated thread to the specified value.
+	 *
+	 * @param	priority	the new priority.
+	 */
+	public void setPriority(int priority) {
+	    if (this.priority == priority) {
+		return;
+	    }
+	    int oldEff = this.priority;
+	    this.priority = priority;
+	    if (priority > oldEff) {
+		this.notifyPriorityIncrease(priority);
+	    } else {
+		this.notifyPriorityDecrease(oldEff, priority);
+	    }
+	}
+
+	/**
+	 * Called when <tt>waitForAccess(thread)</tt> (where <tt>thread</tt> is
+	 * the associated thread) is invoked on the specified priority queue.
+	 * The associated thread is therefore waiting for access to the
+	 * resource guarded by <tt>waitQueue</tt>. This method is only called
+	 * if the associated thread cannot immediately obtain access.
+	 *
+	 * @param	waitQueue	the queue that the associated thread is
+	 *				now waiting on.
+	 *
+	 * @see	nachos.threads.ThreadQueue#waitForAccess
+	 */
+	public void waitForAccess(PriorityQueue waitQueue) {
+	    this.waitQueue = waitQueue;
+	}
+
+	/**
+	 * Called when the associated thread has acquired access to whatever is
+	 * guarded by <tt>waitQueue</tt>. This can occur either as a result of
+	 * <tt>acquire(thread)</tt> being invoked on <tt>waitQueue</tt> (where
+	 * <tt>thread</tt> is the associated thread), or as a result of
+	 * <tt>nextThread()</tt> being invoked on <tt>waitQueue</tt>.
+	 *
+	 * @see	nachos.threads.ThreadQueue#acquire
+	 * @see	nachos.threads.ThreadQueue#nextThread
+	 */
+	public void acquire(PriorityQueue waitQueue) {
+	    this.waitQueue = null;
+	    this.heldQueues.add(waitQueue);
+	}
+	
+	/**
+	 * Removes <tt>heldQueue</tt> from the list of held queues, recalculates
+	 * effective priority, and notifies the thread it waits for, if any, if
+	 * effective priority has decreased.
+	 * 
+	 * @param heldQueue 	A queue whose resource this thread controls.
+	 */
+	protected void release(PriorityQueue heldQueue) {
+	    this.heldQueues.remove(heldQueue);
+	    int oldEff = this.effPriority;
+	    this.effPriority = this.recalculate();
+	    if (this.effPriority < oldEff) {
+		this.notifyPriorityChange(false, oldEff);
+	    }
+	}
+	
+	/**
+	 * Notify the thread this one waits for of an effective priority increase or
+	 * decrease. MUST be called only when <tt>waitQueue</tt> is not null.
+	 * 
+	 * @param incVsDec	Pass in true if priority increased, false if decreased.
+	 */
+	protected void notifyPriorityChange(boolean incVsDec, int oldEff) {
+	    if (this.waitQueue != null && this.waitQueue.holder != null && this.waitQueue.transferPriority) {
+		if (incVsDec) {
+		    this.waitQueue.holder.notifyPriorityIncrease(this.effPriority);
+		} else {
+		    this.waitQueue.holder.notifyPriorityDecrease(oldEff, this.effPriority);
+		}
+	    }
+	}
+	
+	/**
+	 * Inherit priority from another thread. If as a result this thread's
+	 * effective priority increases, we must notify <tt>waitQueue</tt> as well
+	 * as send out another donation.
+	 * 
+	 * @param newEff 	The inherited effective priority.
+	 */
+	protected void notifyPriorityIncrease(int newEff) {
+	    if (newEff > this.effPriority) {
+		int oldEff = this.effPriority;
+		this.effPriority = newEff;
+		if (this.waitQueue != null) {
+		    this.waitQueue.changePriority(this);
+		    this.notifyPriorityChange(true, oldEff);
+		}
+	    }
+	}
+	
+	/**
+	 * Called when another thread takes back (partially or fully) a donation
+	 * to this thread. If effective priority decreases, we must notify
+	 * <tt>waitQueue</tt> and any thread we wait for, if any.
+	 * 
+	 * @param oldEff	The donating thread's old effective priority.
+	 * @param newEff	Its new effective priority. Must be < oldEff.
+	 */
+	protected void notifyPriorityDecrease(int oldEff, int newEff) {
+	    if (oldEff < this.effPriority) {
+		return;
+	    }
+	    oldEff = this.effPriority;
+	    this.effPriority = this.recalculate();
+	    if (this.waitQueue != null) {
+		this.waitQueue.changePriority(this);
+		this.notifyPriorityChange(false, oldEff);
+	    }
+	}
+	
+	/**
+	 * Recalculates effective priorities based on all donations coming in from
+	 * queues this thread holds. Does not modify any state.
+	 * 
+	 * @return The true effective priority.
+	 */
+	protected int recalculate() {
+	    int maxPriority = this.priority;
+	    for (PriorityQueue queue : this.heldQueues) {
+		if (queue.transferPriority) {
+		    ThreadState threadState = queue.realQueue.peek();
+		    if (threadState != null) {
+			int maxOfQueue = threadState.getEffectivePriority();
+			if (maxOfQueue > maxPriority) {
+			    maxPriority = maxOfQueue;
+			}
+		    }
+		}
+	    }
+	    return maxPriority;
+	}
+	
+	/**
+	 * For testing purposes.
+	 */
+	public String toString() {
+	    return this.thread.toString()+", pr="+this.priority+", epr="+this.effPriority
+		    +", ord="+this.waitQueueOrder;
+	}
+    }
+    
+    /**
+     * ALL TESTING SUITES BEGIN AT THIS POINT IN THE SOURCE CODE.
+     * WHEN WRITING BLACK BOX TESTS, PRETEND LIKE YOU ARE IN A
+     * DIFFERENT PACKAGE AND ONLY HAVE ACCESS TO PUBLIC API METHODS.
+     * WHEN WRITING GLASS BOX TESTS, PLEASE SPECIFY THAT YOU ARE
+     * DOING SO.
+     */
+    
+    /**
+     * The method to encapsulate all tests on <tt>PriorityScheduler</tt> written
+     * by Manohar Jois (cs162-jp).
+     */
+    public static void selfTestMJ() {
+	boolean runBasicSchedulingTest = true;
+	boolean runBasicDonationTest = true;
+	boolean runAutograderSimulationTest = false;
+	boolean runIntegrationTest = true;
+	int integrationTestIterations = 7;
+	if (runBasicSchedulingTest) {
+	    basicSchedulingTest();
+	}
+	if (runBasicDonationTest) {
+	    basicDonationTest();
+	}
+	if (runAutograderSimulationTest) {
+	    autograderSimulationTest();
+	}
+	if (runIntegrationTest) {
+	    int numPassed = 0, numFailed = 0;
+	    for (int i=0; i < integrationTestIterations; i++) {
+		if (integrationTest()) {
+		    numPassed++;
+		} else {
+		    numFailed++;
+		}
+	    }
+	    System.out.println("Integration test passed "+numPassed+" times, "
+		    			       +"failed "+numFailed+" times.");
+	}
+    }
+    
+    private static boolean integrationTest() {
+	java.util.Random random = new java.util.Random();
+	Communicator comm = new Communicator();
+	Alarm alarm = new Alarm();
+<<<<<<< HEAD
+	int numThreads = random.nextInt(50) + 2;
+=======
+	int numThreads = random.nextInt(100) + 2;
+>>>>>>> 738d12acba0201f71bfbe4f918b117ed6cbcec23
+	int numSpeakers = random.nextInt(numThreads/2) + 1;
+	//String[] greek = {"alpha", "beta",    "gamma",   "delta", "epsilon", "zeta",
+	//		  "eta",   "theta",   "iota",    "kappa", "lambda",  "mu",
+	//		  "nu",    "xi",      "omicron", "pi",    "rho",     "sigma",
+	//		  "tau",   "upsilon", "phi",     "chi",   "psi",     "omega"};
+	KThread[] karr = new KThread[numThreads];
+	Runnable[] rarr = new Runnable[numThreads];
+	int[] priorities = new int[numThreads];
+	for (int i=0; i < numThreads; i++) {
+	    if (random.nextBoolean()) {
+		// random priorities in range of possible priorities
+		priorities[i] = random.nextInt(priorityMaximum+1);
+	    } else {
+		// priorities by index modulo 8 (i.e. thread1 is 1, thread2 is 2, etc.)
+		priorities[i] = i % (priorityMaximum+1);
+	    }
+	    karr[i] = new KThread();
+	    Machine.interrupt().disable();
+	    ThreadedKernel.scheduler.setPriority(karr[i], priorities[i]);
+	    Machine.interrupt().enable();
+	}
+	for (int i=0; i < numThreads; i++) {
+	    if (i < numSpeakers) {
+		rarr[i] = new SpeakRunnable(comm, alarm, priorities[i]);
+	    } else {
+		rarr[i] = new ListenRunnable(comm, alarm, priorities[i]);
+	    }
+	    karr[i].setTarget(rarr[i]);
+	    karr[i].fork();
+	}
+	for (int i=numSpeakers; i < numThreads; i++) {
+	    karr[i].join(); // wait until all listeners finish
+	}
+	LinkedList<Integer> spokenWords = new LinkedList<Integer>();
+	LinkedList<Integer> receivedWords = new LinkedList<Integer>();
+	for (int i=0; i < numThreads; i++) {
+	    if (i < numSpeakers) {
+		spokenWords.addAll(((SpeakRunnable)(rarr[i])).history);
+	    } else {
+		receivedWords.add(((ListenRunnable)(rarr[i])).heard);
+	    }
+	}
+	Collections.sort(spokenWords);
+	Collections.sort(receivedWords);
+	boolean passed = spokenWords.equals(receivedWords);
+	if (!passed) {
+	    System.out.println("Failed following test!");
+	    System.out.println("numSpeakers: "+numSpeakers);
+	    System.out.println("numListeners: "+(numThreads-numSpeakers));
+	    //System.out.println("spoken words: "+spokenWords.toString());
+	    for (int i=0; i < numSpeakers; i++) {
+		SpeakRunnable sr = (SpeakRunnable)(rarr[i]);
+		System.out.println("p="+sr.priority+", spoken words: "+sr.history.toString());
+	    }
+	    System.out.println("received words: "+receivedWords.toString());
+	}
+	return passed;
+    }
+    
+    /**
+     * MJ's attempt at emulating public autograder's priority donation test.
+     */
+    private static void autograderSimulationTest() {
+	boolean correct = true;
+	Scheduler s = ThreadedKernel.scheduler;
+	KThread forked = new KThread(new PSRunnable(5));
+	Machine.interrupt().disable();
+	s.setPriority(1);
+	s.setPriority(forked, 5);
+	Machine.interrupt().enable();
+	forked.fork();
+	System.out.println("Forking and yielding to thread 5...");
+	KThread.yield();
+	System.out.println("After fork.");
+    }
+    
+    /**
+     * MJ's basic priority donation test.
+     */
+    private static void basicDonationTest() {
+	ThreadQueue q1 = ThreadedKernel.scheduler.newThreadQueue(true),
+		    q2 = ThreadedKernel.scheduler.newThreadQueue(true),
+		    q3 = ThreadedKernel.scheduler.newThreadQueue(true);
+	KThread[] tArray = new KThread[7];
+	boolean correct = true;
+	for (int i=0; i < tArray.length; i++) {
+	    tArray[i] = new KThread(new PSRunnable(i+1)).setName("real priority: "+(i+1));
+	    Machine.interrupt().disable();
+	    ThreadedKernel.scheduler.setPriority(tArray[i], i+1);
+	    Machine.interrupt().enable();
+	}
+	Machine.interrupt().disable();
+	q1.acquire(tArray[0]);
+	q2.acquire(tArray[1]);
+	q3.acquire(tArray[2]);
+	int[] correct0 = {1,2,3,4,5,6,7};
+	for (int i=0; i < tArray.length; i++) {
+	    if (ThreadedKernel.scheduler.getEffectivePriority(tArray[i]) != correct0[i]) {
+		correct = false;
+	    }
+	}
+	//Enqueueing thread 1 into Q2
+	q2.waitForAccess(tArray[0]);
+	int[] correct1 = {1,2,3,4,5,6,7};
+	for (int i=0; i < tArray.length; i++) {
+	    if (ThreadedKernel.scheduler.getEffectivePriority(tArray[i]) != correct1[i]) {
+		correct = false;
+	    }
+	}
+	//Enqueueing thread 3 into Q1
+	q1.waitForAccess(tArray[2]);
+	int[] correct2 = {3,3,3,4,5,6,7};
+	for (int i=0; i < tArray.length; i++) {
+	    if (ThreadedKernel.scheduler.getEffectivePriority(tArray[i]) != correct2[i]) {
+		correct = false;
+	    }
+	}
+	//Enqueueing thread 5 into Q2
+	q2.waitForAccess(tArray[4]);
+	int[] correct3 = {3,5,3,4,5,6,7};
+	for (int i=0; i < tArray.length; i++) {
+	    if (ThreadedKernel.scheduler.getEffectivePriority(tArray[i]) != correct3[i]) {
+		correct = false;
+	    }
+	}
+	//Enqueueing thread 7 into Q3
+	q3.waitForAccess(tArray[6]);
+	int[] correct4 = {7,7,7,4,5,6,7};
+	for (int i=0; i < tArray.length; i++) {
+	    if (ThreadedKernel.scheduler.getEffectivePriority(tArray[i]) != correct4[i]) {
+		correct = false;
+	    }
+	}
+	//Popping thread 1 from Q1
+	q1.nextThread();
+	int[] correct5 = {1,2,7,4,5,6,7};
+	for (int i=0; i < tArray.length; i++) {
+	    if (ThreadedKernel.scheduler.getEffectivePriority(tArray[i]) != correct5[i]) {
+		correct = false;
+	    }
+	}
+	Machine.interrupt().enable();
+	if (correct) {
+	    System.out.println("Basic donation test passed.");
+	} else {
+	    System.out.println("Basic donation test failed.");
+	}
+    }
+    
+    /**
+     * MJ's basic dequeue order test.
+     */
+    private static void basicSchedulingTest() {
+	ThreadQueue q = ThreadedKernel.scheduler.newThreadQueue(false);
+	int[] priorities1 = {5,3,2,1,4,3,6,3,4,7,1},
+	      priorities2 = {5,4,7,4,7};
+	LinkedList<Integer> list = new LinkedList<Integer>();
+	boolean correct = true;
+	for (int i = 0; i < priorities1.length; i++) {
+	    PSRunnable psr = new PSRunnable(priorities1[i]);
+	    KThread t = new KThread(psr);
+	    Machine.interrupt().disable();
+	    ThreadedKernel.scheduler.setPriority(t, priorities1[i]);
+	    if (i==0) {
+		q.acquire(t);
+	    } else {
+		list.add(priorities1[i]);
+		q.waitForAccess(t);
+	    }
+	    Machine.interrupt().enable();
+	}
+	Collections.sort(list);
+	for (int i=0; i<5; i++) {
+	    Machine.interrupt().disable();
+	    KThread t = q.nextThread();
+	    int ep = ThreadedKernel.scheduler.getPriority(t),
+		listNum = list.pollLast();
+	    Machine.interrupt().enable();
+	    if (ep != listNum) {
+		correct = false;
+	    }
+	}
+	for (int i = 0; i < priorities2.length; i++) {
+	    PSRunnable psr = new PSRunnable(priorities2[i]);
+	    KThread t = new KThread(psr);
+	    Machine.interrupt().disable();
+	    ThreadedKernel.scheduler.setPriority(t, priorities2[i]);
+	    list.add(priorities2[i]);
+	    q.waitForAccess(t);
+	    Machine.interrupt().enable();
+	}
+	Collections.sort(list);
+	Machine.interrupt().disable();
+	for (KThread t = q.nextThread(); t != null; t = q.nextThread()) {
+	    int ep = ThreadedKernel.scheduler.getPriority(t),
+		listNum = list.pollLast();
+	    if (ep != listNum) {
+		correct = false;
+	    }
+	}
+	Machine.interrupt().enable();
+	if (correct) {
+	    System.out.println("Basic scheduling test passed.");
+	} else {
+	    System.out.println("Basic scheduling test failed.");
+	}
+    }
+    
+    /**
+     * The method to encapsulate all tests on <tt>PriorityScheduler</tt> written
+     * by Shrayus Gupta (cs162-jq). The separation is to ensure whatever code we
+     * write passes tests conceived by both people working concurrently on the
+     * same module.
+     */
+    public static void selfTestSG() {
+	System.out.println();
+	System.out.println("Begin SG's PriorityScheduler tests.");
+	System.out.println();
+	// TODO: Shrayus write your tests!
+	System.out.println();
+	System.out.println("End SG's PriorityScheduler tests.");
+	System.out.println();
+    }
+}
+
+/**
+ * For unit-testing purposes.
+ * 
+ * @author mj
+ */
+class PSRunnable implements Runnable {
+    private static long ORDER = 0;
+    private String pAndO;
+    public PSRunnable(int priority) {
+	this.pAndO = "priority=" + String.valueOf(priority) + ", order=" + ORDER;
+	ORDER++;
+    }
+    public void run() {
+	System.out.println(this.pAndO);
+    }
+}
+
+/**
+ * For integration-testing purposes.
+ * 
+ * @author mj
+ */
+class SpeakRunnable implements Runnable {
+    Communicator comm;
+    Alarm alarm;
+    int priority;
+    java.util.Random random;
+    int spoken;
+    LinkedList<Integer> history;
+    public SpeakRunnable(Communicator comm, Alarm alarm, int priority) {
+	this.comm = comm;
+	this.alarm = alarm;
+	this.priority = priority;
+	this.random = new java.util.Random();
+	this.history = new LinkedList<Integer>();
+    }
+    public void run() {
+	while (true) {
+	    this.spoken = this.random.nextInt(10000);
+	    this.comm.speak(this.spoken);
+	    this.history.add(this.spoken);
+	    //this.alarm.waitUntil(this.random.nextInt(10000));
+	}
+    }
+}
+
+/**
+ * For integration-testing purposes.
+ * 
+ * @author mj
+ */
+class ListenRunnable implements Runnable {
+    Communicator comm;
+    Alarm alarm;
+    int priority;
+    int heard;
+    public ListenRunnable(Communicator comm, Alarm alarm, int priority) {
+	this.comm = comm;
+	this.alarm = alarm;
+	this.priority = priority;
+	this.heard = -1;
+    }
+    public void run() {
+	this.heard = this.comm.listen();
+    }
+}

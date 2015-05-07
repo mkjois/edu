@@ -1,0 +1,66 @@
+\section{Registration Logic}
+\subsection{Overview}
+In order to implement the registration logic, we use the class TPCRegistrationHandler as the NetworkHandler for a SocketServer that gets passed to TPCMasterHandler. This way, when we want to register a slave, we call TPCMasterHandler.registerWithMaster which now has a way to give it to RPCRegistrationHandler to parse and check for success. TPCRegistrationHandler does this by parsing the message in the socket that was created by TPCMasterHandler and creating a TPCSlaveInfo object, an object that has all the relevant information for a master to register a slave. It calls a runnable inner class called RegistrationHandler that does most of the work specified above.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item If successfully registered, RPCRegistrationHandler.handle will throw no error and include in the socket the correct slave info along with a success message.
+\item If unsuccessful, there should be no crashes and the correct error message will propogate to let the TPCMasterHandler know that it was unsuccessful.
+\end{itemize}
+\subsection{Declarations}
+\subsection{Descriptions}
+\begin{verbatim}
+import nu.xom.*
+class TPCRegistrationHandler:
+    def handle(Socket slave):
+        // put this in a try
+        runnableHandler = new RegistrationHandler(slave)
+        threadPool.addJob(runnableHandler)
+
+    class RegistrationHandler:
+        def run():
+            try:
+                convert KVMessage(slave) and get the message
+                slaveInfo = new TPCSlaveInfo(message from stream)
+                master.registerSlave(slaveInfo)
+                send KVMessage(slave) with a success message
+            except some exceptions:
+                put an error message into slave socket
+
+class TPCSlaveInfo:
+    def TPCSlaveInfo(String info):
+        try:
+            slaveID = info.substring(0, indexof('@'))
+            hostname = info.substring(indexof('@')+1, indexof(':'))
+            port = info.substring(indexof(':')+1, info.length)
+        except character not found:
+            throw new KVException(ERROR_INVALID_FORMAT)
+
+    def Socket connectHost(int timeout):
+        try:
+            sock = new Socket(hostname, port)
+            sock.setSoTimeout(timeout)
+            return sock
+        except something
+            something
+
+    def void closeHost(Socket sock):
+        sock.close()
+
+class TPCMasterHandler:
+    def registerWithMaster:
+        try:
+            masterSock = new Socket(masterHostname, 9090)
+            create KVMessage with type REGISTER and message slaveID+'@'+server.hostname+':'+server.port
+            send it with sendMessage(masterSock)
+            make new KVMessage(masterSock) to get response
+            if response is no good, throw invalid format KVException
+        except some socket error:
+            throw new KVException with appropriate message
+
+\end{verbatim}
+\subsection{Testing Plan}
+\begin{itemize}
+\item Construct a slave server and check that its unique parameters match that of one of the master's slaves after it has registered.
+\item Construct a slave server with some fauly parameters and make sure that an error message is properly received when we try to register.
+\item Construct and register a few concurrently and make sure it still works as defined.
+\end{itemize}

@@ -1,0 +1,111 @@
+\section{TPCMaster 2PC Logic}
+\subsection{Overview}
+We will implement the bulk of the 2 Phase Commit logic in the \texttt{handleGet()} and \texttt{handleTPCRequest()} methods in TPCMaster.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item \texttt{handleGet()} follows the procedure outlined in the specifications (cache $\rightarrow$ primary $\rightarrow$ secondary $\rightarrow$ die)
+\item TPCMaster should allow multiple concurrent GET requests.
+\item TPCMaster should block requests if there is a PUT/DEL request being handled (with a lock)
+\item TPCMaster should not take any requests until all slaves are registered
+\item TPCMaster should throw an exception in the case that both slaves fail
+\end{itemize}
+\subsection{Declarations}
+\begin{itemize}
+\item readers - tracks the number of GET requests in progress
+\item writers - tracks the number of PUT/DEL requests in progress
+\end{itemize}
+\subsection{Descriptions}
+\begin{verbatim}
+def handleTPCRequest(KVMessage msg, boolean isPutReq):
+    while (numSlaves < slavePool.size()):
+        wait()
+    while (writers >= 0 || readers >= 0):
+        wait()
+
+    writers +=1
+    rep1 = findFirstReplica(key)
+    rep2 = findSuccessor(first)
+    sock1 = rep1.connectHost(TIMEOUT)
+    sock2 = rep2.connectHost(TIMEOUT)
+    msg.sendMessage(sock1)
+    msg.sendMessage(sock2)
+    abortmsg = new KVMessage()
+    abortmsg.type = KVConstants.ABORT
+    commitmsg = new KVMessage()
+    commitmsg.type = KVConstants.COMMIT
+    abort = false
+
+    try:
+        reply1 = new KVMessage(sock1, TIMEOUT)
+        reply2 = new KVMessage(sock2, TIMEOUT)
+        if (reply1.type is abort or reply2.type is abort):
+            abort = true
+    catch (KVException e):
+        abort = true
+
+    if (abort):
+        abortmsg.sendMessage(sock1)
+        abortmsg.sendMessage(sock2)
+    else:
+        commitmsg.sendMessage(sock1)
+        commitmsg.sendMessage(sock2)
+
+    // throws exception if we don't receive ACK's
+    try:
+        ack1 = new KVMessage(sock1, TIMEOUT)
+        ack2 = new KVMessage(sock2, TIMEOUT)
+    catch(KVException e):
+        throw new KVException(KVConstants.ERROR_INVALID_FORMAT);
+    
+    writers -= 1
+    notify()
+
+def handlGet(KVMessage msg)
+    while (numSlaves < slavePool.size()):
+        wait()
+    while (writers != 0):
+        wait()
+
+    readers +=1
+    val = cache.get(msg.key)
+    if (val != null)
+         return val
+    rep1 = findFirstReplica(msg.key)
+    sock1 = rep1.connectHost(TIMEOUT)
+    msg.sendMessage(sock1)
+    
+    try:
+        reply1 = new KVMessage(sock1, TIMEOUT)
+        if (reply1.type == KVConstants.RESP):
+            if (reply1.message == null):
+                readers -=1 
+                notify()
+                return reply1.value 
+    catch(KVException e):
+    
+    rep2 = findSuccessor(first)
+    sock2 = rep2.connectHost(TIMEOUT) 
+    msg.sendMessage(sock2)
+     
+    try:      
+        reply2 = new KVMessage(sock2, TIMEOUT)
+        readers -=1
+        notify()
+        if (reply2.type == KVMessage.resp):
+            if (reply2.message != null):
+                throw new KVException(KVConstants.ERROR_NO_SUCH_KEY)                  
+            return reply2.value 
+    catch(KVException e):
+        throw new KVException(KVConstants.ERROR_COULD_NOT_CONNECT)
+    
+      
+    
+\end{verbatim}
+\subsection{Testing Plan}
+We will try all the ways our system can fail and make sure we recover/handle correctly.
+\begin{itemize}
+\item Try lookups in the midst of a slave failure
+\item Try with cache hits and misses
+\item Try with slaves that simply don't respond or respond late
+\item Try calling without registering all slaves
+\end{itemize}

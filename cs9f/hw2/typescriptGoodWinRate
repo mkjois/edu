@@ -1,0 +1,1543 @@
+Script started on Tue 12 Feb 2013 09:24:25 PM PST
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ exit./a.out
+How many games? 50
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	9 of spades
+Dealer dealt:	6 of spades
+Customer dealt:	2 of diamonds
+Dealer dealt:	4 of diamonds
+
+Customer cards:	2
+Customer total:	11
+Customer aces as 11:	0
+
+Dealer up-card:	6 of spades
+Dealer cards:	2
+Dealer total:	10
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	20
+Customer aces as 11:	0
+Dealer dealt:	queen of hearts
+
+Dealer stands.
+
+Dealer up-card:	6 of spades
+Dealer cards:	3
+Dealer total:	20
+Dealer aces as 11:	0
+LOSS: Dealer wins 20 to 20
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	7 of hearts
+Dealer dealt:	4 of clubs
+Customer dealt:	ace of diamonds
+Dealer dealt:	queen of hearts
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	1
+
+Dealer up-card:	4 of clubs
+Dealer cards:	2
+Dealer total:	14
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	1
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	4 of clubs
+Dealer cards:	3
+Dealer total:	23
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 23
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of hearts
+Dealer dealt:	ace of spades
+Customer dealt:	2 of diamonds
+Dealer dealt:	2 of spades
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	1
+
+Dealer up-card:	ace of spades
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	1
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	9 of hearts
+Customer dealt:	queen of hearts
+
+Customer cards:	4
+Customer total:	22
+Customer aces as 11:	0
+
+LOSS: Customer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	10 of spades
+Dealer dealt:	ace of clubs
+Customer dealt:	ace of hearts
+Dealer dealt:	2 of spades
+
+Customer cards:	2
+Customer total:	21
+Customer aces as 11:	1
+
+Dealer up-card:	ace of clubs
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	1
+WIN:  We have blackjack
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of diamonds
+Dealer dealt:	2 of diamonds
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	ace of clubs
+Dealer dealt:	3 of clubs
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	1
+
+Dealer up-card:	2 of diamonds
+Dealer cards:	2
+Dealer total:	5
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	1
+Dealer dealt:	9 of hearts
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	2 of diamonds
+Dealer cards:	4
+Dealer total:	24
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 24
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	king of hearts
+Dealer dealt:	4 of clubs
+Customer dealt:	3 of clubs
+Dealer dealt:	5 of diamonds
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	0
+
+Dealer up-card:	4 of clubs
+Dealer cards:	2
+Dealer total:	9
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	4 of clubs
+Dealer cards:	3
+Dealer total:	18
+Dealer aces as 11:	0
+LOSS: Dealer wins 18 to 13
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	2 of spades
+Dealer dealt:	queen of clubs
+Customer dealt:	10 of clubs
+Dealer dealt:	3 of diamonds
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	0
+
+Dealer up-card:	queen of clubs
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	21
+Customer aces as 11:	0
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	queen of clubs
+Dealer cards:	3
+Dealer total:	23
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 23
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of spades
+Dealer dealt:	king of spades
+Customer dealt:	6 of clubs
+Dealer dealt:	ace of hearts
+
+Customer cards:	2
+Customer total:	14
+Customer aces as 11:	0
+
+Dealer up-card:	king of spades
+Dealer cards:	2
+Dealer total:	21
+Dealer aces as 11:	1
+LOSS: Dealer has blackjack
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	6 of spades
+Dealer dealt:	10 of spades
+Customer dealt:	5 of hearts
+Dealer dealt:	2 of clubs
+
+Customer cards:	2
+Customer total:	11
+Customer aces as 11:	0
+
+Dealer up-card:	10 of spades
+Dealer cards:	2
+Dealer total:	12
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	20
+Customer aces as 11:	0
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	10 of spades
+Dealer cards:	3
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	5 of hearts
+Dealer dealt:	9 of clubs
+Customer dealt:	10 of spades
+Dealer dealt:	ace of clubs
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	0
+
+Dealer up-card:	9 of clubs
+Dealer cards:	2
+Dealer total:	20
+Dealer aces as 11:	1
+Customer dealt:	9 of hearts
+
+Customer cards:	3
+Customer total:	24
+Customer aces as 11:	0
+
+LOSS: Customer busts with 24
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	jack of diamonds
+Dealer dealt:	9 of hearts
+Customer dealt:	king of diamonds
+Dealer dealt:	10 of diamonds
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer up-card:	9 of hearts
+Dealer cards:	2
+Dealer total:	19
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	9 of hearts
+Dealer cards:	2
+Dealer total:	19
+Dealer aces as 11:	0
+WIN: Customer wins 20 to 19
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	3 of hearts
+Dealer dealt:	ace of spades
+Customer dealt:	6 of spades
+Dealer dealt:	jack of diamonds
+
+Customer cards:	2
+Customer total:	9
+Customer aces as 11:	0
+
+Dealer up-card:	ace of spades
+Dealer cards:	2
+Dealer total:	21
+Dealer aces as 11:	1
+LOSS: Dealer has blackjack
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	7 of spades
+Dealer dealt:	3 of hearts
+Customer dealt:	8 of spades
+Dealer dealt:	queen of clubs
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	0
+
+Dealer up-card:	3 of hearts
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	3 of hearts
+Dealer cards:	3
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	jack of spades
+Dealer dealt:	7 of hearts
+Customer dealt:	king of spades
+Dealer dealt:	ace of hearts
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer up-card:	7 of hearts
+Dealer cards:	2
+Dealer total:	18
+Dealer aces as 11:	1
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	7 of hearts
+Dealer cards:	2
+Dealer total:	18
+Dealer aces as 11:	1
+WIN: Customer wins 20 to 18
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	king of diamonds
+Dealer dealt:	10 of hearts
+Customer dealt:	2 of spades
+Dealer dealt:	9 of clubs
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	0
+
+Dealer up-card:	10 of hearts
+Dealer cards:	2
+Dealer total:	19
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	21
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	10 of hearts
+Dealer cards:	2
+Dealer total:	19
+Dealer aces as 11:	0
+WIN: Customer wins 21 to 19
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	10 of spades
+Dealer dealt:	9 of diamonds
+Customer dealt:	queen of hearts
+Dealer dealt:	4 of spades
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer up-card:	9 of diamonds
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	9 of diamonds
+Dealer cards:	3
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	7 of spades
+Dealer dealt:	3 of diamonds
+Customer dealt:	ace of diamonds
+Dealer dealt:	queen of hearts
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	1
+
+Dealer up-card:	3 of diamonds
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	1
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	3 of diamonds
+Dealer cards:	3
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of clubs
+Dealer dealt:	3 of clubs
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	ace of spades
+Dealer dealt:	3 of diamonds
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	1
+
+Dealer up-card:	3 of clubs
+Dealer cards:	2
+Dealer total:	6
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	1
+Dealer dealt:	9 of hearts
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	3 of clubs
+Dealer cards:	4
+Dealer total:	25
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 25
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of clubs
+Dealer dealt:	king of clubs
+Customer dealt:	2 of hearts
+Dealer dealt:	8 of diamonds
+
+Customer cards:	2
+Customer total:	10
+Customer aces as 11:	0
+
+Dealer up-card:	king of clubs
+Dealer cards:	2
+Dealer total:	18
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	19
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	king of clubs
+Dealer cards:	2
+Dealer total:	18
+Dealer aces as 11:	0
+WIN: Customer wins 19 to 18
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	9 of clubs
+Dealer dealt:	3 of diamonds
+Customer dealt:	3 of hearts
+Dealer dealt:	3 of clubs
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	0
+
+Dealer up-card:	3 of diamonds
+Dealer cards:	2
+Dealer total:	6
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	3 of diamonds
+Dealer cards:	4
+Dealer total:	25
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 25
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	king of clubs
+Dealer dealt:	6 of spades
+Customer dealt:	6 of diamonds
+Dealer dealt:	2 of spades
+
+Customer cards:	2
+Customer total:	16
+Customer aces as 11:	0
+
+Dealer up-card:	6 of spades
+Dealer cards:	2
+Dealer total:	8
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	16
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	6 of spades
+Dealer cards:	3
+Dealer total:	17
+Dealer aces as 11:	0
+LOSS: Dealer wins 17 to 16
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of clubs
+Dealer dealt:	3 of hearts
+Customer dealt:	queen of diamonds
+Dealer dealt:	10 of hearts
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer up-card:	3 of hearts
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	3 of hearts
+Dealer cards:	3
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	9 of clubs
+Dealer dealt:	queen of spades
+Customer dealt:	ace of clubs
+Dealer dealt:	ace of diamonds
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	1
+
+Dealer up-card:	queen of spades
+Dealer cards:	2
+Dealer total:	21
+Dealer aces as 11:	1
+LOSS: Dealer has blackjack
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	4 of clubs
+Dealer dealt:	7 of clubs
+Customer dealt:	ace of clubs
+Dealer dealt:	ace of diamonds
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	1
+
+Dealer up-card:	7 of clubs
+Dealer cards:	2
+Dealer total:	18
+Dealer aces as 11:	1
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	9 of hearts
+Customer dealt:	queen of hearts
+
+Customer cards:	4
+Customer total:	24
+Customer aces as 11:	0
+
+LOSS: Customer busts with 24
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	jack of hearts
+Dealer dealt:	8 of hearts
+Customer dealt:	10 of clubs
+Dealer dealt:	3 of clubs
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer up-card:	8 of hearts
+Dealer cards:	2
+Dealer total:	11
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	8 of hearts
+Dealer cards:	3
+Dealer total:	20
+Dealer aces as 11:	0
+LOSS: Dealer wins 20 to 20
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	king of clubs
+Dealer dealt:	5 of spades
+Customer dealt:	jack of spades
+Dealer dealt:	3 of hearts
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer up-card:	5 of spades
+Dealer cards:	2
+Dealer total:	8
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	5 of spades
+Dealer cards:	3
+Dealer total:	17
+Dealer aces as 11:	0
+WIN: Customer wins 20 to 17
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of diamonds
+Dealer dealt:	king of spades
+Customer dealt:	king of clubs
+Dealer dealt:	4 of diamonds
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer up-card:	king of spades
+Dealer cards:	2
+Dealer total:	14
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	king of spades
+Dealer cards:	3
+Dealer total:	23
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 23
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	10 of clubs
+Dealer dealt:	2 of clubs
+Customer dealt:	7 of diamonds
+Dealer dealt:	4 of spades
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	0
+
+Dealer up-card:	2 of clubs
+Dealer cards:	2
+Dealer total:	6
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	2 of clubs
+Dealer cards:	4
+Dealer total:	25
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 25
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of clubs
+Dealer dealt:	7 of spades
+Customer dealt:	2 of diamonds
+Dealer dealt:	jack of diamonds
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	1
+
+Dealer up-card:	7 of spades
+Dealer cards:	2
+Dealer total:	17
+Dealer aces as 11:	0
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	9 of hearts
+Customer dealt:	queen of hearts
+
+Customer cards:	4
+Customer total:	22
+Customer aces as 11:	0
+
+LOSS: Customer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of clubs
+Dealer dealt:	queen of spades
+Customer dealt:	jack of hearts
+Dealer dealt:	3 of clubs
+
+Customer cards:	2
+Customer total:	21
+Customer aces as 11:	1
+
+Dealer up-card:	queen of spades
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+WIN:  We have blackjack
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	queen of diamonds
+Dealer dealt:	ace of spades
+Customer dealt:	9 of hearts
+Dealer dealt:	4 of hearts
+
+Customer cards:	2
+Customer total:	19
+Customer aces as 11:	0
+
+Dealer up-card:	ace of spades
+Dealer cards:	2
+Dealer total:	15
+Dealer aces as 11:	1
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	19
+Customer aces as 11:	0
+
+An Ace had to be reduced from 11 to 1.
+Dealer dealt:	9 of hearts
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	ace of spades
+Dealer cards:	4
+Dealer total:	24
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 24
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	6 of diamonds
+Dealer dealt:	3 of spades
+Customer dealt:	jack of clubs
+Dealer dealt:	6 of hearts
+
+Customer cards:	2
+Customer total:	16
+Customer aces as 11:	0
+
+Dealer up-card:	3 of spades
+Dealer cards:	2
+Dealer total:	9
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	16
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	3 of spades
+Dealer cards:	3
+Dealer total:	18
+Dealer aces as 11:	0
+LOSS: Dealer wins 18 to 16
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	5 of spades
+Dealer dealt:	9 of clubs
+Customer dealt:	4 of clubs
+Dealer dealt:	8 of spades
+
+Customer cards:	2
+Customer total:	9
+Customer aces as 11:	0
+
+Dealer up-card:	9 of clubs
+Dealer cards:	2
+Dealer total:	17
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	9 of clubs
+Dealer cards:	2
+Dealer total:	17
+Dealer aces as 11:	0
+WIN: Customer wins 18 to 17
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	7 of diamonds
+Dealer dealt:	5 of hearts
+Customer dealt:	king of clubs
+Dealer dealt:	4 of spades
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	0
+
+Dealer up-card:	5 of hearts
+Dealer cards:	2
+Dealer total:	9
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	5 of hearts
+Dealer cards:	3
+Dealer total:	18
+Dealer aces as 11:	0
+LOSS: Dealer wins 18 to 17
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	3 of clubs
+Dealer dealt:	jack of diamonds
+Customer dealt:	9 of spades
+Dealer dealt:	10 of clubs
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	0
+
+Dealer up-card:	jack of diamonds
+Dealer cards:	2
+Dealer total:	20
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	21
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	jack of diamonds
+Dealer cards:	2
+Dealer total:	20
+Dealer aces as 11:	0
+WIN: Customer wins 21 to 20
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	3 of spades
+Dealer dealt:	6 of hearts
+Customer dealt:	8 of spades
+Dealer dealt:	9 of spades
+
+Customer cards:	2
+Customer total:	11
+Customer aces as 11:	0
+
+Dealer up-card:	6 of hearts
+Dealer cards:	2
+Dealer total:	15
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	20
+Customer aces as 11:	0
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	6 of hearts
+Dealer cards:	3
+Dealer total:	25
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 25
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	7 of diamonds
+Dealer dealt:	jack of hearts
+Customer dealt:	5 of hearts
+Dealer dealt:	jack of spades
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	0
+
+Dealer up-card:	jack of hearts
+Dealer cards:	2
+Dealer total:	20
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	21
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	jack of hearts
+Dealer cards:	2
+Dealer total:	20
+Dealer aces as 11:	0
+WIN: Customer wins 21 to 20
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	jack of diamonds
+Dealer dealt:	2 of spades
+Customer dealt:	8 of hearts
+Dealer dealt:	2 of diamonds
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer up-card:	2 of spades
+Dealer cards:	2
+Dealer total:	4
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	2 of spades
+Dealer cards:	4
+Dealer total:	23
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 23
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of clubs
+Dealer dealt:	2 of clubs
+Customer dealt:	queen of diamonds
+Dealer dealt:	10 of spades
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer up-card:	2 of clubs
+Dealer cards:	2
+Dealer total:	12
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	2 of clubs
+Dealer cards:	3
+Dealer total:	21
+Dealer aces as 11:	0
+LOSS: Dealer wins 21 to 18
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	3 of clubs
+Dealer dealt:	jack of hearts
+Customer dealt:	8 of hearts
+Dealer dealt:	7 of spades
+
+Customer cards:	2
+Customer total:	11
+Customer aces as 11:	0
+
+Dealer up-card:	jack of hearts
+Dealer cards:	2
+Dealer total:	17
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	jack of hearts
+Dealer cards:	2
+Dealer total:	17
+Dealer aces as 11:	0
+WIN: Customer wins 20 to 17
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	6 of hearts
+Dealer dealt:	9 of spades
+Customer dealt:	6 of clubs
+Dealer dealt:	2 of clubs
+
+Customer cards:	2
+Customer total:	12
+Customer aces as 11:	0
+
+Dealer up-card:	9 of spades
+Dealer cards:	2
+Dealer total:	11
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer stands.
+
+Customer cards:	3
+Customer total:	21
+Customer aces as 11:	0
+Dealer dealt:	queen of hearts
+
+Dealer stands.
+
+Dealer up-card:	9 of spades
+Dealer cards:	3
+Dealer total:	21
+Dealer aces as 11:	0
+LOSS: Dealer wins 21 to 21
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	10 of hearts
+Dealer dealt:	10 of spades
+Customer dealt:	10 of clubs
+Dealer dealt:	king of spades
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer up-card:	10 of spades
+Dealer cards:	2
+Dealer total:	20
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	20
+Customer aces as 11:	0
+
+Dealer stands.
+
+Dealer up-card:	10 of spades
+Dealer cards:	2
+Dealer total:	20
+Dealer aces as 11:	0
+LOSS: Dealer wins 20 to 20
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	jack of spades
+Dealer dealt:	2 of hearts
+Customer dealt:	3 of hearts
+Dealer dealt:	ace of spades
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	0
+
+Dealer up-card:	2 of hearts
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	1
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	0
+
+An Ace had to be reduced from 11 to 1.
+Dealer dealt:	9 of hearts
+Dealer dealt:	queen of hearts
+
+Dealer up-card:	2 of hearts
+Dealer cards:	4
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of diamonds
+Dealer dealt:	6 of clubs
+Customer dealt:	6 of hearts
+Dealer dealt:	9 of spades
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	1
+
+Dealer up-card:	6 of clubs
+Dealer cards:	2
+Dealer total:	15
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	1
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	6 of clubs
+Dealer cards:	3
+Dealer total:	24
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 24
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	2 of spades
+Dealer dealt:	8 of hearts
+Customer dealt:	4 of clubs
+Dealer dealt:	9 of spades
+
+Customer cards:	2
+Customer total:	6
+Customer aces as 11:	0
+
+Dealer up-card:	8 of hearts
+Dealer cards:	2
+Dealer total:	17
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+Customer dealt:	queen of hearts
+
+Customer cards:	4
+Customer total:	25
+Customer aces as 11:	0
+
+LOSS: Customer busts with 25
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	4 of spades
+Dealer dealt:	jack of diamonds
+Customer dealt:	9 of hearts
+Dealer dealt:	2 of hearts
+
+Customer cards:	2
+Customer total:	13
+Customer aces as 11:	0
+
+Dealer up-card:	jack of diamonds
+Dealer cards:	2
+Dealer total:	12
+Dealer aces as 11:	0
+Customer dealt:	9 of hearts
+
+Customer cards:	3
+Customer total:	22
+Customer aces as 11:	0
+
+LOSS: Customer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	6 of clubs
+Dealer dealt:	5 of hearts
+Customer dealt:	9 of diamonds
+Dealer dealt:	8 of hearts
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	0
+
+Dealer up-card:	5 of hearts
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	15
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	5 of hearts
+Dealer cards:	3
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of spades
+Dealer dealt:	3 of hearts
+Customer dealt:	6 of spades
+Dealer dealt:	8 of diamonds
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	1
+
+Dealer up-card:	3 of hearts
+Dealer cards:	2
+Dealer total:	11
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	17
+Customer aces as 11:	1
+Dealer dealt:	9 of hearts
+
+Dealer stands.
+
+Dealer up-card:	3 of hearts
+Dealer cards:	3
+Dealer total:	20
+Dealer aces as 11:	0
+LOSS: Dealer wins 20 to 17
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	8 of clubs
+Dealer dealt:	6 of spades
+Customer dealt:	10 of spades
+Dealer dealt:	7 of diamonds
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+
+Dealer up-card:	6 of spades
+Dealer cards:	2
+Dealer total:	13
+Dealer aces as 11:	0
+
+Customer stands.
+
+Customer cards:	2
+Customer total:	18
+Customer aces as 11:	0
+Dealer dealt:	9 of hearts
+
+Dealer up-card:	6 of spades
+Dealer cards:	3
+Dealer total:	22
+Dealer aces as 11:	0
+
+WIN: Dealer busts with 22
+
+The hands have been reset.
+The deck has been shuffled.
+It's game time.
+
+Customer dealt:	ace of spades
+Dealer dealt:	queen of diamonds
+Customer dealt:	5 of clubs
+Dealer dealt:	2 of hearts
+
+Customer cards:	2
+Customer total:	16
+Customer aces as 11:	1
+
+Dealer up-card:	queen of diamonds
+Dealer cards:	2
+Dealer total:	12
+Dealer aces as 11:	0
+
+An Ace had to be reduced from 11 to 1.
+Customer dealt:	9 of hearts
+Customer dealt:	queen of hearts
+
+Customer cards:	4
+Customer total:	25
+Customer aces as 11:	0
+
+LOSS: Customer busts with 25
+We won 32 out of 50
+]0;manohar@ubuntu: ~/Documents/CS9F/prog2manohar@ubuntu:~/Documents/CS9F/prog2$ exit
+exit
+
+Script done on Tue 12 Feb 2013 09:24:44 PM PST

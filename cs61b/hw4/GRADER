@@ -1,0 +1,19 @@
+Manohar Jois
+cs61b-mk
+
+The following code and code similar to this could violate invariant 4 and/or 5 of DList:
+
+    DList d = new DList();
+    d.insertBack(1);
+    d.insertBack(2);
+    DListNode n = d.front();
+    d.remove(n);
+    d.insertAfter(3, n);
+
+This would make the node containing 3 connected to the node containing 1 (its prev),
+which was removed from the DList, and to the node containing 2 (its next). But after
+the node containing 1 was removed, head.next was reset to the node containing 2.
+So after this code executes, head.next == node2 (the node with 2),
+but node2.prev == node3 != head. Also, n.prev == head, but head.next == node2 != n
+
+This violates invariant 4 and 5 of the DList ADT.

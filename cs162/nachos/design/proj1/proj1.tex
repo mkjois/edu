@@ -1,0 +1,596 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{authblk}
+\usepackage{enumerate}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+
+\title{Project Phase 1: Build a thread system for kernel processes}
+\author{Romil Singapuri (ha), Alexander Wang (is), Manohar Jois (jp),\\Shrayus Gupta (jq), Junseok Lee (fy)}
+\date{February 13, 2014}
+
+\begin{document}
+
+\maketitle
+
+\noindent Note: Below, comments beginning with ``//'' (without the quotes) indicate changes from the initial design.
+
+\section{Thread Join}
+
+\subsection{Overview}
+
+Our goal here is to provide a method KThread.join() by which one thread can choose to go to sleep and wait for another thread to finish before continuing. If threadA calls threadB.join(), threadA will go to sleep until threadB() finishes.
+
+\subsection{Correctness Constraints}
+
+\begin{itemize}
+\item If threadA calls threadB.join(), threadA must not run until threadB is finished.
+\item threadA must not consume any CPU time in the process, and this method must not impede threadB's ability to run.
+\item Calling threadB.join() twice, regardless of by whom the call is made, may result in undefined behavior.
+\item The thread that is joined must receive a priority donation from the joining thread.
+\end{itemize}
+
+\subsection{Declarations} % Use {\ttfamily ...} for declarations
+
+{\ttfamily private ThreadQueue joined} - This queue will hold the thread that has joined. We acquire it through Scheduler.newThreadQueue(true), which will take care of priority donation from the joining thread to this thread. In the initial design document, this was simply a KThread field, but it now uses a ThreadQueue to ensure proper priority donation.
+
+\subsection{Descriptions} % Use \begin{verbatim} for code.
+
+\scriptsize
+\begin{lstlisting}
+// added interrupt disabling and changed this to use a ThreadQueue for proper priority donation.
+method join():
+    disable interrupts
+    if this thread is not finished:
+        assert this thread != current thread
+        initialize joined
+        add the current thread to joined
+        joined.acquire(this)
+        joined.waitForAccess(currentThread)
+        sleep()
+    else:
+        enable interrupts
+
+// added interrupt disabling.
+method finish():
+    disable interrupts
+    mark thread to be destroyed
+    set thread status to finished
+    if a thread is in joined:
+        add that thread to ready queue
+    sleep()
+\end{lstlisting}
+\normalsize
+
+\subsection{Testing Plan}
+
+This test runs in ThreadedKernel.selfTest() and is implemented in KThread.selfTest().
+
+For ten threads, we create a new Runnable each instantiated with a unique number and a reference to another thread, which it will join, except one, which has a null reference and joins no thread. These threads are numbered 0 through 9, inclusive, and each except 0 joins the thread with one number lower. We fork the threads in a jumbled up order, join thread number 9, then check to make sure all the numbers are added to the list in the correct order (0 through 9, sorted in ascending order). This ensures that every thread runs and no thread runs before the thread it has joined is finished.
+
+\section{Condition Variables}
+
+\subsection{Overview}
+
+We intend to implement condition variables for a Mesa-style monitor. These are used to lock up access to certain resources in a way that minimizes busy-waiting while preserving correctness of results obtained using concurrent behavior.
+
+\subsection{Correctness Constraints}
+
+\begin{itemize}
+\item No thread should be able to sleep on the condition variable without holding the lock.
+\item When a thread sleeps on the condition variable, it must be placed on that variable's wait queue.
+\item When wake() is called, if any threads are on the wait queue for that condition variable, exactly one shall be placed on the ready queue.
+\item When wakeAll() is called, all threads on the wait queue for that condition variable shall be placed on the ready queue.
+\end{itemize}
+
+\subsection{Declarations} % Use {\ttfamily ...} for declarations
+
+Changed the waitQueue to be a ThreadQueue (LinkedList previously) for proper priority donation.
+
+{\ttfamily private ThreadQueue waitQueue} - Used to store the threads sleeping on this condition variable.
+
+\subsection{Descriptions} % Use \begin{verbatim} for code.
+
+\scriptsize
+\begin{lstlisting}
+// added interrupt disabling for proper functionality
+// sleep() asserts disabled interrupts
+method sleep():
+    assert lock is held by current thread
+    disable interrupts
+    release lock
+    add current thread to wait queue
+    sleep()
+    acquire lock
+
+// added interrupt disabling/enabling for proper functionality
+// ready() requires disabled interrupts
+method wake():
+    assert lock is held by current thread
+    disable interrupts
+    if the wait queue is not empty:
+        pop a thread from the wait queue
+        add the thread to the ready queue
+    enable interrupts
+
+// added interrupt disabling/enabling for proper functionality
+// ready() requires disabled interrupts
+method wakeAll():
+    assert lock is held by current thread
+    disable interrupts
+    while the wait queue is not empty:
+        pop a thread from the wait queue
+        add the thread to the ready queue
+    enable interrupts
+\end{lstlisting}
+\normalsize
+
+\subsection{Testing Plan}
+
+This test runs in ThreadedKernel.selfTest() and is implemented in Condition2.selfTest().
+
+We use a condition variable on a set of ten threads, each acting on a shared integer. The thread increments the integer, but it does so by saving the value into a temporary variable, adding one to that, and then storing it back. If two threads are in the critical section at the same time, this will result in the integer's final value after all threads are run being less than 10. If it is 10, this has worked correctly. We do this 100 times because this test will not fail every time since problems with condition variables involve timing of interrupts. If the value is wrong any one time, the condition variables are not correctly implemented. To encourage faulty values in the case of faulty behavior, we insert yield statements between the reading of the value and the incrementing/assignment.
+
+\section{Alarm}
+
+\subsection{Overview}
+
+We here aim to complete the implementation of the Alarm class and allow threads to call the waitUntil() method, which puts the calling thread to sleep and wakes it back up after the specified amount of time.
+
+\subsection{Correctness Constraints}
+
+\begin{itemize}
+\item The calling thread must not run until at least the specified time.
+\item The calling thread must not use any CPU resources, i.e. it must not busy-wait.
+\item Any number of threads may call waitUntil() method and expect the method to work correctly.
+\item The calling thread must be placed on the ready queue at or soon after the specified time.
+\end{itemize}
+
+\subsection{Declarations} % Use {\ttfamily ...} for declarations
+\begin{itemize}
+\item {\ttfamily class ThreadHolder} - A simple class that holds a thread and a priority and provides a compareTo() method that compares priorities. It allows us to read both fields, but we (importantly) cannot modify the priority. The initial document had this as a public class, but we chose to use a default access class to keep the definition within the same file.
+
+\item {\ttfamily private PriorityQueue<ThreadHolder> threadHeap} - We use a priority queue here to allow us to check the value of the minimum element in $O(1)$ time, add a new element in $O(\log n)$ time, and remove the minimum element in $O(\log n)$ time. We choose this because we expect to check the minimum element far more often than we expect to add an element.
+
+The initial document had a Lock field here, but since timerInterrupt() calls do not necessarily happen in a separate thread the Lock mechanism will not work here.
+\end{itemize}
+
+\subsection{Descriptions} % Use \begin{verbatim} for code.
+
+\scriptsize
+\begin{lstlisting}
+// disabled interrupts to ensure proper functionality
+method waitUntil(x):
+    disable interrupts
+    wakeTime = current time + x
+    add current thread to threadHeap with priority wakeTime
+    sleep()
+
+// disabled interrupts to provide atomicity
+method timerInterrupt():
+    disable interrupts
+    if threadHeap is not empty:
+        while current time >= min time in threadHeap:
+            currentThread = pop thread with min wakeTime from threadHeap
+            add currentThread to ready queue
+    enable interrupts
+\end{lstlisting}
+\normalsize
+
+\subsection{Testing Plan}
+
+These tests run in ThreadedKernel.selfTest() and are implemented in Alarm.selfTest().
+
+For our first test, we initially note the time on the system clock. We have a thread call waitUntil() to wait a five hundred thousand clock ticks fifty times. After each waiting period, we check that at $5*10^5$ clock ticks have elapsed on the system clock since the previous check. The reason we wait so long is to ensure that scheduling doesn't just naturally cause the thread to not run during the waiting period.
+
+For our second test, we run three threads. Each thread has access to the same linked list. The first thread will add the numbers 1, 4, 7, 10, and 13 to the list. The second will add 2, 5, 8, 11, and 14. The third will add 3, 6, 9, 12, and 15. Between each addition, there will be a $1.5*10^7$ clock tick wait. The starting of the threads will also be staggered such that the second thread starts $5*10^6$ clock ticks after the first thread, and the third starts $5*10^6$ clock ticks after the second thread. In the end, $8.5*10^7$ ticks should have elapsed on the clock, and the linked list should be sorted in ascending order. The long waiting period again is there to ensure that issues regarding the order in which these threads run do not arise simply due to scheduling.
+
+\section{Communicator}
+
+\subsection{Overview}
+In order to ensure that only one speaker and listener are transferring at a time, we will use a lock and a condition variable. When \texttt{listen()} gets called, it will acquire the lock, increase the number of waiting listeners, and check to see if the number of waiting speakers is greater than one. If so, \texttt{listen()} will \texttt{signal()} and then \texttt{wait()} for the speaker to transfer the word; otherwise, it will simply call \texttt{wait()}. Upon the waking up from the second \texttt{wait()}, \texttt{listen()} will release the lock and return the word. When \texttt{speak()} gets called, it will acquire the lock, increase the number of waiting speakers, and check to see if the number of waiting listeners is greater than one. If so, \texttt{speak()} will decrease the number of waiting speakers, \texttt{signal()} a listener, and release the lock.
+
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item A speaker and listener are never both waiting
+\item Exactly one listener receives a word given by any speaker
+\end{itemize}
+
+\subsection{Declarations}
+\texttt{Lock lock} - Ensure only one communicator is modifying condition variables at any given time. \\
+\texttt{int speakersWaiting} - Allow listener to determine if a speaker is available. \\
+\texttt{int listenersWaiting} - Allow speaker to determine if a listener is available. \\
+\texttt{int activeListeners} - Prevent two listeners from getting the same word. \\
+\texttt{int activeSpeakers} - Prevent two speakers from speaking at the same time. \\
+\texttt{int currentWord} - 32-bit word that is to be replaced by the speaker in transfer. \\
+\texttt{Condition okToTransfer} - Conditional variable to let speaker send. \\
+\texttt{Condition okToReceive} - Conditional variable to let receiver receive. \\
+\texttt{Condition transferMade} - Conditional variable to transfer.
+
+\subsection{Descriptions}
+
+\scriptsize
+\begin{lstlisting}
+Lock lock
+word = nil
+speakersWaiting = 0
+listenersWaiting = 0
+activeSpeakers = 0
+activeListeners = 0
+Condition variables...
+
+listen():
+    acquire lock
+    //If there's a speaker speaking, wait until next speaker
+    while (speakersWaiting is 0 and activeSpeakers is 0) or activeListeners > 0:
+        increment listenersWaiting
+        wait on okToReceive and release lock
+        decrement listenersWaiting
+    increment activeListeners
+    //In the case that the speaker went first
+    if activeSpeakers is 0:
+        signal okToTransfer
+        wait on transferMade and release lock
+    //Wake another speaker to keep the communication going
+    if speakersWaiting > 0:
+        signal okToTransfer
+    activeListeners--;
+    activeSpeakers--;
+    release lock
+    return word
+
+speak(myWord):
+    acquire lock
+    //One speaker at a time
+    while (listenersWaiting is 0 and activeListeners is 0) or activeSpeakers > 0:
+        increment speakersWaiting
+        wait on okToTransfer and release lock
+        decrement speakersWaiting
+    increment activeSpeakers
+    // If listen went first, speaker has to wake it up
+    if listenersWaiting > 0:
+        signal okToReceive
+    word = myWord
+    signal transferMade
+    release lock
+\end{lstlisting}
+\normalsize
+
+\subsection{Testing Plan}
+We plan to test Communicator by including test methods.
+\begin{itemize}
+\item Initialize 4 speakers each with unique words
+\subitem Call listen one by one and see if the 4 words are returned as expected
+\subitem Check that both speakersWaiting and listenersWaiting are 0
+\item Initialize 4 listeners
+\subitem Call speak one by one with unique words and see that each is returned as expected
+\subitem Check that both speakersWaiting and listenersWaiting are 0
+\item Listener, Speaker, Speaker, Listener
+\subitem Ensure that the words are transmitted correctly despite the order jumbling.
+\end{itemize}
+
+\section{Priority Scheduler}
+\def \changecolor {BrickRed}
+\large
+**Non-trivial changes are in \textcolor{\changecolor}{RED}**
+\normalsize
+
+\subsection{Overview}
+The \texttt{PriorityScheduler} determines which thread gets access to a particular resource by dequeueing the thread of highest priority in its wait queue, with ties broken on a FIFO basis. However this can lead to a problem known as \textit{priority inversion}, which is when a low-priority thread that has a resource is holding up higher priority threads by waiting among higher priority threads for another resource. We solve this using \textit{priority donation}, where threads holding a resource inherit priority from threads in that resource's wait queue.
+
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item For a given queue, always dequeue thread of highest effective priority, with ties broken by FIFO.
+\item Waiting threads donate their effective priority to the owning thread, with the latter taking on the greatest of all donations. This remedies priority inversion.
+\item Only recalculate a thread's effective priority if it's possible for it to change. This handles transitive priority donation and recalculates changing effective priorities in the most effecient way possible, depending on the following situations:
+\begin{enumerate}[1.]
+\item a thread of higher effective priority than the owning thread enters a wait queue held by the latter;
+\item a waiting thread receives a donation from elsewhere that is greater than the owning thread's effective priority;
+\item the owning thread releases the queue containing its maximum-priority donor; or
+\item \textcolor{\changecolor}{the owning thread's maximum-priority donor has its effective priority decreased.}
+\end{enumerate}
+\end{itemize}
+
+\subsection{Declarations} % Use {\ttfamily ...} for declarations
+
+\textbf{PriorityScheduler extends Scheduler:} \begin{itemize}
+\item \texttt{\textcolor{\changecolor}{static Comparator<ThreadState> TS\_COMP\_EFF}} -- A custom comparator for use in Java priority queues to sort and dequeue threads by effective priority first and FIFO second.
+\item \texttt{\textcolor{\changecolor}{static Comparator<ThreadState> TS\_COMP\_REG}} -- Same but compares by regular priority. Since the donation enable/disable flag isn't changed after queue creation, we choose the comparator to use at initialization.
+\end{itemize}
+
+\noindent\textbf{PriorityQueue extends ThreadQueue:} \begin{itemize}
+\item \texttt{\textcolor{\changecolor}{long queueOrder}} -- The counter of threads to join the queue. Assigned to each waiting thread as a relative timestamp, then incremented.
+\item \texttt{ThreadState holder} -- The thread state of the thread holding this queue's resource.
+\item \texttt{\textcolor{\changecolor}{java.util.PriorityQueue<ThreadState> realQueue}} -- Holds the ThreadState objects and dequeues them according to the appropriate comparator.
+\item \texttt{void waitForAccess(KThread thread)} -- Adds thread to wait queue and donates to owning thread, if any.
+\item \texttt{void acquire(KThread thread)} -- Simply calls the holder's .acquire() method to maintain state.
+\item \texttt{KThread nextThread()} -- Dequeues a thread and sets it as the owning thread, while calling the release procedure for the previous owning thread. If none to dequeue, returns null.
+\item \texttt{ThreadState pickNextThread()} -- Peeks to see what the next thread dequeued would be. If none, returns null.
+\item \texttt{void addThread(ThreadState threadState, boolean needsNewOrder)} -- Adds a thread to the internal queue. The boolean should only be False if we are changing the priority of a thread already in the queue.
+\item \texttt{void changePriority(ThreadState threadState)} -- Change priority of a thread already in the queue.
+\end{itemize}
+
+\noindent\textbf{ThreadState:} \begin{itemize}
+\item \texttt{int effPriority} -- The priority after taking all donations into account.
+\item \texttt{java.util.LinkedList<PriorityQueue> heldQueues} -- A list of all queues this thread holds.
+\item \texttt{PriorityQueue waitQueue} -- The queue this thread is waiting in, if any, otherwise null.
+\item \texttt{long waitQueueOrder} -- The relative timestamp of this thread in the queue it's waiting in. Invalid if not waiting in a queue.
+\item \texttt{void waitForAccess(PriorityQueue waitQueue)} -- Sets the queue this thread is waiting in.
+\item \texttt{void acquire(PriorityQueue waitQueue)} -- Adds the queue to the list of held queues.
+\item \texttt{\textcolor{\changecolor}{void release(PriorityQueue heldQueue)}} -- Removes the queue from the list of held queues and does a full recalculation of effective priority, notifying the holder of waitQueue if necessary.
+\item \texttt{void notifyPriorityChange(boolean incVsDec, int oldEff)} -- Tells the holder of waitQueue that this thread's effective priority has changed. Parameters passed in are the caller's responsibility.
+\item \texttt{void notifyPriorityIncrease(int newEff)} -- Changes effective priority if it should increase and notifies if necessary.
+\item \texttt{\textcolor{\changecolor}{void notifyPriorityDecrease(int oldEff, int newEff)}} -- Changes effective priority if it should decrease and notifies if necessary. Must do a full recalculation.
+\item \texttt{\textcolor{\changecolor}{int recalculate()}} -- Private method to fully recalculate effective priority.
+\end{itemize}
+
+\subsection{Descriptions} % Use \begin{verbatim} for code.
+\scriptsize
+\begin{lstlisting}
+class PriorityScheduler(Scheduler):
+    TS_COMP_EFF = new Comparator<ThreadState>:
+        def compare(ts1, ts2):
+            priorityComparison = compare respective effective priorities (highest first)
+            if priorityComparison is 0:
+                return comparison of respective wait queue order numbers (lowest first)
+            else return priorityComparison
+
+    TS_COMP_REG = similar, but first compare regular priorities
+
+
+class PriorityQueue(ThreadQueue):
+    holder
+    realQueue
+    queueOrder
+
+    def PriorityQueue(transferPriority):
+        realQueue = new Java priority queue using appropriate comparator
+                    (based on transferPriority)
+
+    def waitForAccess(thread):
+        threadState = getThreadState(thread)
+        threadState.waitForAccess(this queue)
+        addThread(threadState, needsNewOrder=True)
+        notify holder, if any, of priority increase
+
+    def acquire(thread):
+        assert realQueue is empty
+        holder = getThreadState(thread)
+        holder.acquire(this queue)
+
+    def nextThread():
+        threadState = dequeue from realQueue
+        oldHolder = holder
+        holder = threadState
+        return null if holder is null
+        holder.acquire(this queue)
+        oldHolder.release(this) if not null
+        notify holder of priority increase if realQueue is not empty
+        return holder's thread
+
+    def pickNextThread():
+        return realQueue.peek()
+
+    def addThread(threadState, needsNewOrder):
+        if needsNewOrder:
+            threadState.waitQueueOrder = queueOrder
+            queueOrder += 1
+        enqueue threadState into realQueue
+
+    def changePriority(threadState):
+        remove threadState from realQueue
+        addThread(threadState, needsNewOrder=False)
+
+
+class ThreadState:
+    effPriority
+    heldQueues
+    waitQueue
+    waitQueueOrder
+
+    def ThreadState(thread):
+        heldQueues = empty Java linked list
+        set priority and effPriority to default level
+
+    def waitForAccess(waitQueue):
+        this.waitQueue = waitQueue
+
+    def acquire(waitQueue):
+        this.waitQueue = null
+        add waitQueue to heldQueues
+
+    def release(heldQueue):
+        remove heldQueue from heldQueues
+        store old effective priority and recalculate
+        notify waitQueue's holder, if any, of priority decrease if decreased
+
+    def notifyPriorityChange(incVsDec, oldEff):
+        if waitQueue and waitQueue's holder are both non-null:
+            if incVsDec: notify priority increase
+            else: notify priority decrease
+
+    def notifyPriorityIncrease(newEff):
+        if effective priority should increase:
+            store old effective priority and set new
+            if waitQueue is not null:
+                change priority of this thread in waitQueue
+                notify priority increase
+
+    def notifyPriorityDecrease(oldEff, newEff):
+        return if effective priority shouldn't decrease
+        store old effective priority and recalculate new
+        if waitQueue is not null:
+            change priority of this thread in waitQueue
+            notify priority decrease
+
+    def recalculate():
+        maxPriority = this.priority
+        for queue in heldQueues:
+                threadState = peek at queue head
+                if threadState is not null and has higher max so far:
+                    set maxPriority to that max
+        return maxPriority
+\end{lstlisting}
+\normalsize
+
+\subsection{Testing Plan}
+We used static self-test methods in \texttt{PriorityScheduler} to run all test cases. \\\\
+\textbf{Basic Scheduling:}
+Implemented in \texttt{PriorityScheduler.basicSchedulingTest()}
+\begin{itemize}
+\item Create threads with priority (and relative time) 1a, 1b, 2a, 3a, 3b, 4a, 6a, 3c, 4b, 7a
+\item Enqueue these threads and dequeue five threads: 7a, 6a, 4a, 4b, 3a
+\item Enqueue 4c, 5a, 4d, 7b, 7c and dequeue all: 7b, 7c, 5a, 4c, 4d, 3b, 3c, 2a, 1a, 1b
+\end{itemize}
+
+\noindent\textbf{Donations:}
+Implemented in \texttt{PriorityScheduler.basicDonationTest()}
+\begin{itemize}
+\item Create resource queues (and owning threads) R1(1a), R2(2a), R3(3a)
+\item Enqueue thread 1a into R2, now 2a.eff = 2
+\item Enqueue thread 3a into R1, now 1a.eff = 3 and 2a.eff = 3
+\item Enqueue thread 5a into R2, now 2a.eff = 5
+\item Enqueue thread 7a into R3, now 3a.eff = 7 and 1a.eff = 7 and 2a.eff = 7
+\item 1a loses R1, which goes to 3a, now 1a.eff = 1 and 2a.eff = 5 and 3a.eff = 7
+\end{itemize}
+
+\noindent\textbf{\textcolor{\changecolor}{Extreme and Random Integration Test:}}
+Implemented in \texttt{PriorityScheduler.integrationTest()}
+\begin{itemize}
+\item Initialize instances of Communicator and Alarm, a random number in [1,50] of speaker threads, and a random number (at least 1 times numSpeakers) of listener threads. Each thread gets a random priority.
+\item Each speaker runs an infinite loop where it speaks and records a random integer in [0,9999] and then waits a random number of ticks in [0,9999].
+\item Each listener simply calls listen() and stores what it gets.
+\item After waiting for all listeners to finish, we combine all spoken words into set A and all listened words into set B and check if the two sets are equivalent.
+\end{itemize}
+This test is repeated for several iterations in \texttt{PriorityScheduler.selfTestMJ()} and the results are displayed to standard output.
+
+\section{Oahu to Molokai}
+
+\subsection{Overview}
+
+To solve the problem of getting all the adults and children to Molokai, we should first take a look at the problem itself. A few observations:
+\begin{itemize}
+  \item If an adult ever leaves Oahu when there are no children on Molokai, then that is the last boat trip (unless the adult returns).
+  \item If there are ever two children on Oahu, they should immediately ride for Molokai, since they are transporting a child while also making a return journey possible.
+  \item The last boat ride from Oahu to Molokai will involve two children. This is because a child must return with the boat to pick up the last child.
+\end{itemize}
+Since the last boat ride can not be an adult, we can not let the adult leave Oahu unless there is at least one child on Molokai who can return. Also note that whenever we have two children on Oahu, they can leave immediately without worrying about what happens to the others.
+
+\subsection{Correctness Constraints}
+
+These are the constraints that produce the correctness of the algorithm:
+\begin{itemize}
+  \item Only one thread is allowed to access the state variables (to prevent data races).
+  \item An adult can only leave Oahu if the boat is on Oahu AND it is known that there is at least one child on Molokai.
+  \item If ever two children are on Oahu AND the boat is on Oahu, they should leave immediately without hesitation.
+  \item If there is anybody left in Oahu AND the boat is on Molokai AND there is a child on Molokai, the child should return with the boat.
+\end{itemize}
+
+\subsection{Declarations}
+\scriptsize
+\begin{lstlisting}
+Lock stateLock;         // Lock to keep state safe
+Condition makeReturn;   // For children waiting on Molokai in case they need to make the return journey
+Condition sendAdult;    // For adults on Oahu waiting to leave
+Condition sendChildren; // For children on Oahu waiting to leave
+int childrenOnO;        // Self-explanatory
+int childrenOnM;
+int adultsOnO;
+int adultsOnM;
+boolean boatOnO;
+boolean freeTicket;     // Whether or not a child can go for a free ride to Molokai (not rowing)
+boolean terminated;     // Whether or not all children can stop waiting to return to Molokai
+Alarm ender;            // An alarm to see if anything happens after the last child leaves
+boolean active;         // Whether or not some thread has awoken while 'ender' is ticking
+\end{lstlisting}
+\normalsize
+
+\subsection{Descriptions} % Use \begin{verbatim} for code.
+Adults only need to be able to know when they can leave, and leave when it's possible. Once they are on Molokai, they do not affect the rest of the algorithm at all.
+
+\scriptsize
+\begin{lstlisting}
+
+// When shouldn't adults leave Oahu?
+// When they don't have a boat or a return journey is not possible
+acquire stateLock
+active = true;
+adultsOnO++;
+while the boat isn't available or a return journey isn't possible:
+    wait until adult is signaled to travel to Molokai
+    active = true;
+}
+adultsOnO--;
+send adult to Molokai
+adultsOnM++;
+boatOnO = false;
+signal to children on Molokai to make return journey
+release stateLock
+\end{lstlisting}
+\normalsize
+:
+Children, on the other hand, must be kept track of even after they have arrived at Molokai, for we may need them to make a return journey to pick up remaining passengers.
+
+\scriptsize
+\begin{lstlisting}
+acquire stateLock
+active = true
+childrenOnO++
+loop forever:
+    while the boat isn't availabe or there is no other child to go with:
+        wait until child is signaled to travel to Molokai
+        active = true
+        if a freeTicket was left:
+            break from loop
+    if child has freeTicket:
+        consume freeTicket
+        childrenOnO--
+        send child (riding) to Molokai
+        childrenOnM++
+        if there was nobody else on Molokai:
+            active = false
+            set ender to 10000
+            if nothing happened:
+                terminate = true
+                signal all children to terminate
+                release stateLock
+                return
+    else:
+        childrenOnO--
+        send child (rowing) to Molokai
+        childrenOnM++
+        leave freeTicket
+        boatOnO = false
+        notify a child on Oahu to take free ticket
+    while there is nobody on Oahu or the boat isn't availabe or nobody has taken the free ticket:
+        wait until child is signaled to return
+        active = true
+        if terminate:
+            release stateLock
+            return
+    childrenOnM--
+    send child to Oahu
+    childrenOnO++
+    boatOnO = true
+    if there are now at least 2 children on Oahu:
+        signal children on Oahu to travel to Molokai
+    otherwise, if there are adults on Oahu:
+        signal adult on Oahu to travel to Molokai
+\end{lstlisting}
+\normalsize
+
+When all the threads terminate, everyone must be at Molokai.
+
+\subsection{Testing Plan}
+
+To test the algorithm, we can simply run many different instances of the same problem and make sure that every instance is solved properly. The following tests are implemented in \texttt{Boat.selfTest()}
+\begin{itemize}
+\item \textbf{0 adults, 2 children:} Both should cross immediately.
+\item \textbf{1 adult, 2 children:} Children cross, one returns, adult crosses, second child returns, both children cross.
+\item \textbf{3 adults, 3 children:} Whenever 2 children are on Oahu, they cross and one comes back. Otherwise an adult crosses and a child comes back.
+\item \textbf{10 adults, 10 children:} Same as above.
+\item \textbf{50 adults, 2 children:} Same as above.
+\end{itemize}
+
+\end{document}

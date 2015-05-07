@@ -1,0 +1,262 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{hyperref}
+\usepackage{amsmath,amssymb,polynom}
+\lecture{3}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday September 23 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle
+
+\begin{enumerate}
+
+\item \textbf{Solving modular equations}: For each of the following equations, find a value of $x$
+that makes the equation true. 
+Show your work---your procedure
+should be generalizable to similar equations with different numbers.
+\begin{enumerate}
+\item $x + 41 \equiv 1 \pmod{99}$.
+\begin{eqnarray*}
+x & \equiv & -40 \pmod{99} \\
+x & = & {\bf 59}
+\end{eqnarray*}
+\item $x * 41 \equiv 1 \pmod{99}$. \\
+Extended Euclid's algorithm to find $a,b$ such that $41a + 99b = 1$:
+\begin{eqnarray*}
+99 & = & 41 \cdot 2 + 17 \\
+41 & = & 17 \cdot 2 + 7 \\
+17 & = & 7 \cdot 2 + 3 \\
+7 & = & 3 \cdot 2 + 1 \\
+1 & = & 7 - 3 \cdot 2 \\
+  & = & 7 - (17 - 7 \cdot 2) \cdot 2 \\
+  & = & 7 \cdot 5 - 17 \cdot 2 \\
+  & = & (41 - 17 \cdot 2) \cdot 5 - 17 \cdot 2 \\
+  & = & 41 \cdot 5 - 17 \cdot 12 \\
+  & = & 41 \cdot 5 - (99 - 41 \cdot 2) \cdot 12 \\
+  & = & 41 \cdot 29 - 99 \cdot 12 \\
+1 & \equiv & 41 \cdot 29 \pmod{99} \\
+x & = & {\bf 29}
+\end{eqnarray*}
+\item $5x + 3y \equiv 1 \bmod 11$ and $2x + y \equiv 7 \bmod 11$.
+\begin{eqnarray*}
+5x & \equiv & 1-3y \pmod{11} \\
+ x & \equiv & 9(1-3y) \pmod{11} \qquad \qquad \text{since } 5 \cdot 9 \equiv 1 \pmod{11} \\
+ & \equiv & 9(1-3(7-2x)) \pmod{11} \qquad \text{since } y \equiv 7-2x \pmod{11} \\
+ & \equiv & 9-27(7-2x) \pmod{11} \\
+ & \equiv & 9-5(7-2x) \pmod{11} \\
+ & \equiv & 9-35+10x \pmod{11} \\
+9x & \equiv & -7 \pmod{11} \\
+x & \equiv & -35 \pmod{11} = {\bf 9} \\
+y & \equiv & 7-2\cdot9 \pmod{11} = {\bf 0}
+\end{eqnarray*}
+\item $7x + 9y \equiv 0 \bmod 31$ and $2x -5y \equiv 2 \bmod 31$.
+\begin{eqnarray*}
+2x & \equiv & 5y+2 \pmod{31} \\
+ x & \equiv & 16(5y+2) \pmod{31} \qquad \text{since } 2\cdot16 \equiv 1 \pmod{31} \\
+   & \equiv & 80y+32 \pmod{31} \\
+   & \equiv & 18y+1 \pmod{31} \\
+9y & \equiv & -7(18y+1) \pmod{31} \\
+   & \equiv & -126y-7 \pmod{31} \\
+   & \equiv & 29y-7 \pmod{31} \\
+20y & \equiv & 7 \pmod{31} \\
+ y & \equiv & 7\cdot14 \pmod{31} \qquad \qquad \text{since } 20\cdot14 \equiv 1 \pmod{31} \\
+   & \equiv & 98 \pmod{31} = {\bf 5} \\
+ x & \equiv & 18\cdot5 + 1 \pmod{31} = {\bf 29}
+\end{eqnarray*}
+\end{enumerate}
+
+\newpage
+\item \textbf{Computing the GCD}: Consider the following recursive definition of $F$:
+\begin{itemize}
+\item $F(a, 0) = F(0,a) = a$.
+\item If $0 < a < b$, $F(a, b) = F(a, b-a)$.
+\item If $0 < b < a$, then $F(a, b) = F(a-b, b)$.
+\end{itemize}
+\begin{enumerate}
+\item Write a recursive program to compute $F(a,b)$. \\
+\begin{tabbing}
+function F(a, b): \\
+\hspace{1cm} if a = 0: return b \\
+\hspace{1cm} if b = 0: return a \\
+\hspace{1cm} if a < b: return F(a, b - a) \\
+\hspace{1cm} else: return F(a - b, b)
+\end{tabbing}
+\item Prove that $F(a, b)$ divides both $a$ and $b$.
+\item Prove that if $x$ divides $a$ and $b$, then $x$ divides $F(a, b)$.
+\item Conclude that $F(a, b)$ is equal to the greatest common divisor of $a$ and $b$. 
+\end{enumerate}
+{\bf Note:} You might find it easier to directly prove that $F(a, b) = gcd(a,b)$.
+You can turn in such a proof instead of parts (b), (c) and (d). \\
+The case where either $a=0$ or $b=0$ is trivial: the nonzero argument is the largest divisor of both numbers. \\
+Now assume $a \geq b > 0$. Then $F(a,b) = F(a-b,b)$. If $a-b \geq b$, then $F(a-b,b) = F(a-2b,b)$. Continuing this process we see that $F(a,b) = F(a-kb,b)$ where $k$ is the smallest natural number such that $a-kb < b$. But notice that $a-kb \equiv a \bmod b$. So $F(a,b) = F(a \bmod b, b)$, which is exactly Euclid's algorithm for $gcd(a,b)$. \\
+By an entirely symmetrical argument, it can be shown that if $b \geq a > 0$, then $F(a,b) = F(a, b \bmod a)$, which is also equivalent to Euclid's $gcd$ algorithm. Since these are the only two non-trivial cases, it is clear that $F(a,b) = gcd(a,b)$. \\
+We should then prove that the algorithm $gcd(a,b) = gcd(b,r)$ works, where $r = a \bmod b$ and we impose the convention that $a \geq b \geq 0$ in all iterations of the algorithm, which works since it covers both non-trivial cases. So we prove that any common divisor $d$ of $a$ and $b$ also divides $r$. If $d$ divides both $a$ and $b$, then there exist integers $x,y$ such that $a=dx$ and $b=dy$. Then $r = a-kb = dx - kdy = d(x-ky)$ for a certain integer $k$. Clearly $d$ divides $r$ and thus repeated iterations of the algorithm produce $gcd(a,b)$.
+
+\newpage
+\item \textbf{RSA lite}: Woody misunderstood how to use RSA. 
+So he selected prime $P = 101$ and encryption 
+exponent $e = 67$, and encrypted his message $m$ to get $35 = m^e \bmod P$.
+Unfortunately he forgot his original message $m$
+and only stored the encrypted value $35$. But Carla thinks she 
+can figure out how to recover $m$ from $35 = m^e \bmod P$, with 
+knowledge only of $P$ and $e$. Is she right? 
+Can you help her figure out the message $m$. Show all your work. \\ \\
+We must find the decryption exponent $d$ such that $(x^e)^d \equiv x \pmod P$, or rather $x^{ed} - x \equiv 0 \pmod P$.
+Since we are working in $\bmod P$ we can assume $x<P$, then from Fermat's Little Theorem we can use the following: \\
+\begin{eqnarray*}
+x^{P-1} & \equiv & 1 \pmod P \\
+(x^{P-1})^k & \equiv & 1^k \pmod P \qquad \text{for an arbitrary integer } k \\
+x^{k(P-1)}-1 & \equiv & 0 \pmod P \\
+x(x^{k(P-1)}-1) & \equiv & 0 \pmod P \\
+x^{1+k(P-1)}-x & \equiv & 0 \pmod P
+\end{eqnarray*} 
+Now we equate $x^{ed} - x = x^{1+k(P-1)} - x$ and see that $ed \equiv 1 \pmod{P-1}$. \\
+We thus have that $67d = 1 \bmod 100$ and can easily find the inverse: $67*3 = 201 \equiv 1 \bmod 100$ so $d=3$. \\
+So $m = 35^3 \bmod 101 = {\bf 51}$. \\
+As a check, we can see that $51^{67} \bmod 101 = 35$.
+
+\newpage
+\item \textbf{Super-RSA?}: Charlie decides that it might be even safer use three 
+prime numbers in place of two from traditional RSA. Suppose he uses primes 
+$P_1 = 3, P_2 = 5, P_3 = 11$ to get $N = P_1 P_2 P_3 = 165$ and selects $e = 3$. 
+
+\begin{enumerate}
+\item What is the encryption of the message $m = 10$. \\
+$E(10) = 10^3 \bmod{165} = {\bf 10}$ 
+\item What property should the decryption exponent $d$ satisfy? i.e. 
+how would you calculate $d$ given $P_1, P_2, P_3, e$?
+Calculate the decryption exponent for the public key $(N, e) = (165, 3)$. \\ \\
+$ed$ should be relatively prime with $P_1-1, P_2-1, P_3-1$. \\
+So $d \equiv e^{-1} \bmod{(P_1-1)(P_2-1)(P_3-1)} = 3^{-1} \bmod{(3-1)(5-1)(11-1)} = 3^{-1} \bmod{80}$. \\
+\begin{eqnarray*}
+80 & = & 3 \cdot 26 + 2 \\
+3 & = & 2 \cdot 1 + 1 \\
+1 & = & 3 - 2 \cdot 1 \\
+  & = & 3 - (80 - 3 \cdot 26) \\
+  & = & 3 \cdot 27 - 80 \cdot 1 \\
+1 & \equiv & 3 \cdot 27 \pmod{80} \\
+e^{-1} & = & d = {\bf 27}
+\end{eqnarray*}
+\item Prove that the decryption function $D(y) = y^d \bmod N$ is the inverse 
+of the encryption function $E(x) = x^e \bmod N$, for your definition of $d$. \\
+We claim that $(x^e)^d \equiv x \pmod{N} \qquad \forall x \in \{0,1,\ldots,N-1\}$. \\
+We must show that $x^{ed} - x \equiv 0 \pmod{N}$, or rather that $x^{ed} - x$ is divisible by $N$. 
+\begin{eqnarray*}
+x^{ed}-x & = & x^{1 \bmod{(P_1-1)(P_2-1)(P_3-1)}}-x \\
+ & = & x^{1+k(P_1-1)(P_2-1)(P_3-1)}-x \qquad \text{for some integer } k \\
+ & = & x(x^{k(P_1-1)(P_2-1)(P_3-1)}-1)
+\end{eqnarray*}
+If $x$ is a multiple of $P_1$, then this is clearly divisible by $P_1$, as it is divisible by $x$. \\
+If $x$ is not a multiple of $P_1$, and thus not zero, we use Fermat's Little Theorem by stating that $x^{P_1-1} = 1 \bmod{P_1}$. \\
+Then $(x^{P_1-1})^{k(P_2-1)(P_3-1)} \equiv 1^{k(P_2-1)(P_3-1)} \bmod{P_1}$, and so $x^{k(P_1-1)(P_2-1)(P_3-1)} - 1 = 0 \bmod{P_1}$ and is divisible by $P_1$. \\
+Similarly, it can be shown that the expression is divisible by $P_2$ and $P_3$, and is thus divisible by $P_1 P_2 P_3 = N$. \\
+So $D(y) = y^d \bmod N$ is the inverse of $E(x) = x^e \bmod N$ for our definition of $d$.
+\end{enumerate}
+
+\newpage
+\item \textbf{Bijections}: Given a prime number $p$:
+\begin{enumerate}
+\item Is $f(x)=x^{-1} \bmod p$ a bijection from $\{1, \ldots, p-1\}$ to $\{1, \ldots, p-1\}$? \\
+We first show that $f(x)=x^{-1} \bmod p$ exists and is unique for every $x \in \{1, \ldots, p-1\}$ \\ 
+It was proved in class that every $x \in \{1, \ldots, p-1\}$ has a unique inverse $\bmod p$ iff $gcd(x,p) = 1$. \\
+Since $p$ is prime, it cannot have a divisor less than itself other than $1$, and all $x$ (along with whatever divides it) in the domain are strictly less than $p$, so it follows that $x$ and $p$ are relatively prime and so $f(x)=x^{-1} \bmod p$ exists and is unique for every $x \in \{1, \ldots, p-1\}$. \\
+Since $f(x)$ maps every element of a domain of length $p-1$ to a unique image in a range of length $p-1$, $f(x)=x^{-1} \bmod p$ must be a bijection.
+\item How about $f(x)=x^2$? \\
+{\bf No:} Here is a counterexample for $p=7$:
+\begin{eqnarray*}
+f(3) & = & 3^2 \bmod 7 = 2 \\
+f(4) & = & 4^2 \bmod 7 = 2
+\end{eqnarray*}
+The function is not one-to-one and so can't be a bijection.
+\end{enumerate}
+
+\newpage
+\item \textbf{Looking ahead}:
+\begin{enumerate} 
+\item 
+Find a polynomial $q(x)$ and a number $c$ such that
+\[ {x^4 - x^3 + x^2 - 5 x + 1} = (x - 2)q(x) + c \] \\
+\polylongdiv{x^4 - x^3 + x^2 - 5x + 1}{x-2} \\
+$q(x) = {\bf x^3 + x^2 + 3x + 1}$ \\
+$c = {\bf 3}$
+\item 
+Compute $x^4 - x^3 + x^2 - 5x + 1$
+for $x = 2$. \\
+$x^4 - x^3 + x^2 - 5x + 1 \bigg|_{x=2} = (2-2)q(x) + c = c = {\bf 3}$
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

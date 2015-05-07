@@ -1,0 +1,110 @@
+\section{Slave Registration, Consistent Hashing, TPCClientHandler}
+\subsection{Overview}
+\texttt{TPCMaster} must contain the logic to register slaves by their unique and eternal 64-bit IDs. These slave IDs must be maintained and used to consistently hash keys to certain slave servers. The key's first replica is stored at the result of the consistent hash and its second replica is stored in the subsequent slave. \texttt{TPCClientHandler} manages a thread pool used to concurrently serve client requests. The provided encapsulation allows each job to simply call the appropriate request-handling method in \texttt{TPCMaster} and send back a properly formatted response.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item Only \texttt{numSlaves} slaves are allowed to register, and it is expected that exactly this many will. Any other registration requests are ignored.
+\item A slave may register multiple times, although it will always be with its same ID, without causing problems.
+\item The first replica of a key will be stored on the server who has the smallest ID greater than or equal to the key's hash (wrap around if necessary).
+\item The second replica will be stored on the server with the next greatest ID to the first replica server (wrap around if necessary).
+\item \texttt{TPCClientHandler} concurrently handles all client requests and is guaranteed to try sending a response back exactly once, whether it is a success response or some exception propagated up through the system.
+\end{itemize}
+\subsection{Declarations}
+\textbf{TPCMaster}
+\begin{itemize}
+\item (CHANGED) \texttt{TreeSet<TPCSlaveInfo> slavePool}: Set of registered slaves. Size determines number of registered slaves. Convenient API allows hashing code to write itself ;)
+\end{itemize}
+\subsection{Descriptions}
+\begin{verbatim}
+class TPCSlaveInfo:
+    def TPCSlaveInfo(id):                               // only added for
+        slaveID = id                                    // hashing convenience
+
+class TPCMaster:
+    def TPCMaster(numSlaves, cache):
+        ...
+        slavePool = TreeSet(custom unsigned long comparator)
+
+    def synchronized registerSlave(slave):              // use of TreeSet API
+        if slavePool.size() >= numSlaves: return
+        slavePool.add(slave)
+        if slavePool.size() < numSlaves: return
+        notifyAll()
+
+    def findFirstReplica(key):                          // TreeSet API means no
+        dummy = TPCSlaveInfo(hashTo64bit(key))          // longer linear time
+        slave = slavePool.ceiling(dummy);
+        if slave is null: return slavePool.first()
+        else: return slave
+
+    def findSuccessor(firstReplica):                    // TreeSet API means no
+        slave = slavePool.higher(firstReplica)          // longer linear time
+        if slave is null: return slavePool.first()
+        else: return slave
+
+class TPCClientHandler(NetworkHandler):
+    def TPCClientHandler(tpcMaster, connections):
+        tpcMaster = tpcMaster
+        threadPool = ThreadPool(connections)
+
+    def handle(client):
+        clientJob = ClientHandler(client)
+        threadPool.addJob(clientJob)
+
+    class ClientHandler(Runnable):
+        def run():
+            try:
+                request = KVMessage(client)
+                response = KVMessage(RESP)
+                switch request.getMsgType():
+                    case GET_REQ:
+                        value = master.handleGet(request)
+                        response.setKey(request.getKey())
+                        response.setValue(value)
+                        break
+                    case PUT_REQ:
+                        master.handleTPCRequest(request, True)
+                        response.setMessage(SUCCESS)
+                        break
+                    case DEL_REQ:
+                        master.handleTPCRequest(request, False)
+                        response.setMessage(SUCCESS)
+                        break
+                    default:
+                        response.setMessage(ERROR_INVALID_FORMAT)
+            catch KVException e:
+                response = e.getKVMessage()
+            try:
+                response.sendMessage(client)
+            catch KVException e:
+                pass // best-effort
+\end{verbatim}
+\subsection{Testing Plan}
+\textbf{Consistent Hashing:} Tests for slave registration logic and consistent hashing are in \texttt{test/ConsistentHashTest.java}.
+\begin{itemize}
+\item \texttt{testRegistration()} verifies correct behavior by creating an instance of TPCMaster with an expected number of slaves and then registering an actual (possibly different) number of slaves. It also tests blocking until all slaves are registered and re-registering upon failure. The test is repeated with several combinations of expected-vs-actual number of slaves:
+\subitem - Initialize master, expected and actual slaves.
+\subitem - Start a few threads and have them wait on master.
+\subitem - Attempt to register all actual slaves.
+\subitem - Check whether master has registered the correct slaves.
+\subitem - Have a few random actual slaves attempt to re-register.
+\subitem - Check that master's slave pool hasn't changed
+\subitem - Check the status of the above threads based on whether enough slaves registered.
+\item \texttt{testHashing()} tests whether hashing a given key multiple times results in accurate (the correct first and second servers) and precise (consistently the same) results, as well as whether the second server is truly the successor of the first. This test is also repeated with several numbers of slaves.
+\subitem - Initialize master and slaves, with random IDs, and register them
+\subitem - Sort the slaves by ID
+\subitem - Generate several long and random test keys
+\subitem - For each key, find and store the first and second servers
+\subitem - Loop through the keys several times and repeat the last step.
+\subitem - Make sure first and second servers are consistent for each key.
+\subitem - Make sure second server is proper successor to first (using the sorted list)
+\end{itemize}
+\textbf{TPCClientHandler:} Tests for the client handler are in \texttt{test/TPCClientHandlerTest.java}.
+\begin{itemize}
+\item TPCClientHandler will be thoroughly tested with any significant end-to-end test. But for the purposes of unit-testing, we can use mocking in place of a functional TPCMaster and have it return random values and/or throw exceptions to properly glass-box test all execution paths.
+\subitem - Mock a TPCMaster that randomly throws an exception or returns for every client request.
+\subitem - Fork off threads to start the master and a slave.
+\subitem - Try several client get/put/del requests.
+\subitem - Collect number of exceptions and returns from mocked master.
+\subitem - See if they match the results propagated to the client by the TPCClientHandler.
+\end{itemize}

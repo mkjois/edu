@@ -1,0 +1,128 @@
+Script started on Wed 27 Feb 2013 05:13:20 PM PST
+]0;manohar@ubuntu: ~/Documents/CS9F/prog3manohar@ubuntu:~/Documents/CS9F/prog3$ g++ inventory.cpp
+]0;manohar@ubuntu: ~/Documents/CS9F/prog3manohar@ubuntu:~/Documents/CS9F/prog3$ ./a.out
+update      list names
+list quantities
+update apple 6
+update pear 2
+update berry -7
+update banana 0
+list names
+apple:	6
+banana:	0
+berry:	-7
+pear:	2
+list quantities
+berry:	-7
+banana:	0
+pear:	2
+apple:	6
+update berry 7
+update a pear -13
+update grape 9
+update melon 3
+update grape -4
+update apple 15
+update banana 2 6
+list names
+apple:	21
+banana:	6
+berry:	0
+grape:	5
+melon:	3
+pear:	-11
+list quantities
+pear:	-11
+berry:	0
+melon:	3
+grape:	5
+banana:	6
+apple:	21
+batch sample2.txt
+apple:	21
+banana:	6
+berry:	0
+bread:	289
+butter:	7
+eggs:	-172
+fruit:	-18
+grape:	5
+juice:	49
+melon:	3
+milk:	0
+pear:	-11
+vegetable:	824
+eggs:	-172
+fruit:	-18
+pear:	-11
+milk:	0
+berry:	0
+melon:	3
+grape:	5
+banana:	6
+butter:	7
+apple:	21
+juice:	49
+bread:	289
+vegetable:	824
+2adfjk:	92
+6AjfDw:	-43
+apple:	21
+banana:	6
+berry:	0
+bread:	0
+butter:	7
+eggs:	-172
+Fruit:	8
+fruit:	57
+grape:	5
+juice:	76
+JUICE:	5
+melon:	3
+milk:	0
+pear:	-11
+vEgEtAbLe:	26
+vegetable:	824
+eggs:	-172
+6AjfDw:	-43
+pear:	-11
+milk:	0
+berry:	0
+bread:	0
+melon:	3
+grape:	5
+JUICE:	5
+banana:	6
+butter:	7
+Fruit:	8
+apple:	21
+vEgEtAbLe:	26
+fruit:	57
+juice:	76
+2adfjk:	92
+vegetable:	824
+q update apple -12849
+list names
+2adfjk:	92
+6AjfDw:	-43
+apple:	-12828
+banana:	6
+berry:	0
+bread:	0
+butter:	7
+eggs:	-172
+fruit:	57
+Fruit:	8
+grape:	5
+JUICE:	5
+juice:	76
+melon:	3
+milk:	0
+pear:	-11
+vEgEtAbLe:	26
+vegetable:	824
+quite 
+]0;manohar@ubuntu: ~/Documents/CS9F/prog3manohar@ubuntu:~/Documents/CS9F/prog3$ cat[K[K[Kexit
+exit
+
+Script done on Wed 27 Feb 2013 05:16:56 PM PST

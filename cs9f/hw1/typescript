@@ -1,0 +1,32 @@
+Script started on Tue Jan 29 19:55:59 2013
+
+'cs9f-ak' is using 59/819 MB (7%) of its disk quota on /home/cc.
+(Type 'more /share/b/pub/disk.quotas' for more information.)
+
+cs9f-ak@nova [123] [1m~/prog1b[0m # a.out     g++ prog1b.cpp
+cs9f-ak@nova [124] [1m~/prog1b[0m #                                                  cs9f-ak@nova [124] [1m~/prog1b[0m # a.out
+Input: 5
+Input: 6
+Input: 0
+Subtotal: 11
+Input: -3
+Input: -2
+Input: 5
+Input: 0
+Subtotal: 0
+Input: 13
+Input: -13
+Input: 8
+Input: 0
+Subtotal: 8
+Input: 0
+Total: 19
+cs9f-ak@nova [125] [1m~/prog1b[0m #                                                  cs9f-ak@nova [125] [1m~/prog1b[0m # a.out
+Input: 0
+Subtotal: 0
+Input: 0
+Total: 0
+cs9f-ak@nova [126] [1m~/prog1b[0m #                                                  cs9f-ak@nova [126] [1m~/prog1b[0m # exit
+exit
+
+script done on Tue Jan 29 19:56:54 2013

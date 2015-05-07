@@ -1,0 +1,146 @@
+\section{System calls: {\ttfamily exec()}, {\ttfamily join()}, and {\ttfamily exit()}}
+\subsection{Overview}
+Our goal is to implement {\ttfamily exec()}, {\ttfamily join()}, and {\ttfamily exit()} syscalls such that they work correctly and are ``bulletproof.'' These perform the functions of executing child processes, suspending execution until child processes complete, and ending processes, respectively. Full descriptions are documented in {\ttfamily syscall.h}.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item No syscall argument shall cause a kernel crash.
+\item No syscall argument shall corrupt a kernel data structure.
+\item No allocated memory shall ever belong to a terminated process.
+\item If a process calls {\ttfamily join()} with its child as an argument, it shall be suspended until the joined process exits, at which point it will return 0 if the child exited abnormally and 1 otherwise.
+\item If a process calls {\ttfamily join()} on a process that is not its child, it shall not be suspended, and {\ttfamily join()} shall immediately return $-1$.
+\item If a process calls {\ttfamily exec()} with a valid executable, that executable shall run in a new process.
+\item If a process calls {\ttfamily exec()} with an invalid executable, {\ttfamily exec()} shall immediately return $-1$.
+\item If a process calls {\ttfamily exit()}, it shall immediately be terminated.
+\item Calls to {\ttfamily exit()} do not return.
+\item If a process is joined, exit status shall be written to the appropriate location in the parent process's virtual memory space.
+\item No two processes shall have the same PID.
+\item The root process shall have PID 0.
+
+\end{itemize}
+\subsection{Declarations}
+\textbf{UserProcess:}
+\begin{itemize}
+\item{\ttfamily private static final Lock counterLock} - A lock for {\ttfamily counter}.
+\item{\ttfamily private static final Lock activeLock} - A lock for {\ttfamily active}.
+\item{\ttfamily private static final Lock processesLock} - A lock for {\ttfamily processes}.
+\item{\ttfamily private static final Lock statusLock} - A lock for {\ttfamily statuses}
+\item{\ttfamily private static int counter} - A counter for how many processes have been executed. Initialized to 0.
+\item{\ttfamily private static int active} - The number of active processes.
+\item{\ttfamily private static final HashMap<Integer, UserProcess> processes} - A mapping from PID to process.
+\item{\ttfamily private static final HashMap<Integer, Integer> statuses} - A mapping from PID to exit status.
+\item{\ttfamily private HashSet children} - Gives us access to all the children of this process. Allows us to verify in constant time that a process this process is trying to join() is indeed a child of this process. Keys are pid fields.
+\item{\ttfamily private Lock childLock} - A lock for {\ttfamily children}.
+\item{\ttfamily private int pid} - A globally unique process identifier (PID).
+\item{\ttfamily private boolean exitedNormally} - Whether this process exited normally.
+\item{\ttfamily private UThread thread} - The thread in which this process runs.
+\item{\ttfamily private void kill()} - Handles abnormal termination.
+\item{\ttfamily private void handleJoin(int pid, int status)} - Handles a {\ttfamily join()} syscall. Note that the status argument is a pointer to a location in this process's virtual memory space into which the child's exit status will be written.
+\item{\ttfamily private void handleExec(int name, int argc, int argv)} - Handles an {\ttfamily exec()} syscall. The arguments are the same integers passed into {\ttfamily handleSyscall()}.
+\item{\ttfamily private void handleExit(int status, boolean normal)} - Handles process termination, both normal and abnormal (specify in {\ttfamily normal} parameter), with exit status {\ttfamily status}.
+\end{itemize}
+\subsection{Descriptions}
+\begin{verbatim}
+/**
+ * Handles system calls. See the Nachos source for full documentation.
+ * Ellipses below indicate switch cases not relevant to this section.
+ */
+handleSyscall(syscall, a0, a1, a2, a3):
+    switch (syscall):
+        ...
+        case syscallExit:
+            terminate(a0, true)
+        case syscallExec:
+            return handleExec(a0, a1, a2)
+        case syscallJoin:
+            return handleJoin(a0, a1)
+        ...
+
+// Moved tracking of active processes and PID assignment into load()
+handleExec(name, argc, argv):
+    proc = new user process
+    nameString = proc->read string from name
+    argPointers = empty int array of length argc
+    load argc words from address argv into argPointers
+    args = empty string array of length argc
+    load strings from addresses in argPointers into args
+    success = proc->execute with name, args
+    if success:
+        acquire childLock
+        add pid to children
+        release childLock
+        acquire processesLock
+        add proc to processes with key pid
+        release processesLock
+        return proc->pid
+    else:
+        return -1
+
+// Used static exit status HashMap to allow access to exit statuses
+// even when join() is called on a process that has already terminated.
+handleJoin(pid, status)
+    acquire childLock
+    if pid not in children:
+        release childLock
+        return -1
+    release childLock
+    acquire processesLock
+    joining = processes->get(pid)
+    release processesLock
+    t = joining->thread
+    if t is not null:
+        t->join
+    acquire statusLock
+    s = statuses->get(pid)
+    release statusLock
+    write s to virtual memory location status
+    if joining->exitedNormally:
+        return 0
+    return 0
+
+execute(name, args):
+    if not load(name, args): return false
+    thread = new UThread
+    thread->setName(name)
+    thread->fork
+    return true
+
+kill():
+    terminate(-1, false)
+
+// Writes exit status to HashMap instead of directly into parent
+// memory, allowing join() to work even when the process has already
+// terminated.
+handleExit(status, normal):
+    exitedNormally = normal
+    unloadSections()
+    acquire activeLock
+    decrement active
+    if active == 0:
+        kernel->terminate
+    release activeLock
+    acquire statusLock
+    add status to statuses with key pid
+    release statusLock
+    set thread to null // helps with garbage collection
+    close all files
+    finish
+
+// Added active process tracking and PID assignment into load().
+load(name, args):
+    perform load as per section 2
+    if loadSections() succeeds:
+        acquire activeLock
+        increment active
+        release activeLock
+        acquire counterLock
+        pid = counter
+        increment counter
+        release counterLock
+    return value as per section 2
+\end{verbatim}
+\subsection{Testing Plan}
+These tests involve programs written in C, which will be compiled by a MIPS cross-compiler.
+\begin{itemize}
+    \item Execute a process that executes two other processes. The parent process will join each child process in order. One child will join the other and immediately exit with its exit status being the return value of {\ttfamily join()}. The call to {\ttfamily join()} should fail, causing the child process to exit with status -1. The parent process reads the child process's exit status, and the test succeeds if and only if the value read by the parent process is -1. This test makes sure that a {\ttfamily join()} call to process that is not a child of the calling process fails and returns -1. It also checks that a parent process can read a child process's exit status correctly through {\ttfamily join()}.
+    \item We have a C program that, when executed with no arguments, will execute itself with argument ``a''. Each subsequent instance of the process will execute itself with its argument incremented by 1. When the argument is ``d'', the process will not call {\ttfamily exec()}, but will instead exit with status 1. If the argument exists but is not ``d'', the process will join the process it has executed and exit with the child process's status plus 1. The initial process (the one executed with no arguments) joins the process it has executed and checks that its exit status is 3, in which case the test passes. This test ensures that {\ttfamily join()} works correctly in succession and that parent processes can correctly access their child processes' exit statuses.
+\end{itemize}

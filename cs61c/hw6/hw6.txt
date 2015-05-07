@@ -1,0 +1,58 @@
+CS 61C Homework 6
+Name: Manohar Jois
+Login: cs61c-bm
+
+
+P1 - Pipelining
+1) 20 MHz: 1 / (20ns + 15ns + 15ns)
+2) 50 MHz: 1 / max(20ns, 15ns, 15ns + 5ns)
+3) non-pipelined: 50ns = 20ns + 15ns + 15ns
+   pipelined: 55ns = 20ns (first cycle) + 20ns (second cycle) + 15ns (subtractor)
+4) 2 inputs (100ns for non-pipelined, 75ns for pipelined)
+
+
+
+P2 - Waveform Diagrams
+1) 2
+2) 2
+3) t=1
+4) t=9
+
+
+
+P3 - Clock Frequency
+1) Input Y arrives on the edge of the clock and takes 2ns to propagate through the adder to form a sum, albeit currently a garbage sum, since the output of the register hasn't made its way around at this point. This sum is presented as input to the register only 2ns after the edge of the clock, but the register's required hold time is 3ns. This isn't enough for the register to get a stable reading of the input and update its value to output later.
+2) critical delay: 10ns = 4ns (clk-to-q) + 2*2ns (adders) + 2ns (setup)
+   max frequency: 100 MHz = 1 / 10ns
+3) Have the first adder operate on X and Y, then add the output to the register's output and present the total sum as input to the register. This way the hold time is satisfied regardless (it takes a minimum of 2*2ns = 4ns for the register input to change) and the critical delay is 4ns + 2ns + 2ns = 8ns (clk-to-q + adder + setup). Now the maximum clock rate is 1 / 8ns = 125 MHz.
+
+
+
+P4 - Simple FSM and Truth Tables
+
+   CS1	 CS0| Input	| NS1   NS0	| Output
+    0   | 0	| 	0	| 0   | 0   |   0
+    0   | 0	| 	1	| 0   | 1   |   0
+	0	| 1	| 	0	| 0   | 0   |   0
+	0	| 1	| 	1	| 1   | 0   |   1
+	1	| 0	| 	0	| 0   | 0   |   1
+	1	| 0	| 	1	| 1   | 0   |   1
+		| 	| 		|           |
+
+States:
+00 = Last input was 0
+01 = Last 2 inputs were 01
+10 = Last 2 inputs were 11
+
+
+
+P5 - Truth Tables, Boolean Algebra, FSMs, Logic Circuits
+1)
+
+Out = Curr0 & ~In
+
+Next1 = ~Curr1 & In
+
+Next0 = ~In
+
+2) B && (A || C)

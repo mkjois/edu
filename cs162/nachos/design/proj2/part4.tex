@@ -1,0 +1,148 @@
+\section{Lottery Scheduler}
+
+\subsection{Overview}
+The \texttt{Lottery Scheduler} extends the Priority Scheduler Class. It assigns every thread a number of "tickets" which determine the probability that it will get picked to have a resource. Shorter processes have higher priority. We solve the \texttt{Priority Inversion} problem by giving the running thread the summation of the tickets of all of the threads in queue for this resource.
+
+\subsection{Correctness Constraints}
+
+\begin{itemize}
+
+\item The running thread has to have number of tickets equal to the summation (tickets of threads in waiting queue).
+\item Tickets are not to be treated as objects, because we could potentially have billions of tickets in circulation at a time.
+\item The number of tickets a process has is effectively the processes' priority. This means the the minimum priority if a process is 1 and the maximum priority is Integer.maxValue().
+\item The total number of tickets in the system can not exceed Integer.maxValue().
+\end{itemize}
+
+\subsection{Declarations}
+
+\textbf{LotteryScheduler extends PriorityScheduler:}\begin{itemize}
+
+\item {\ttfamily priorityMinimum = 1}
+\item {\ttfamily priorityMaximum = Integer.maxValue}
+\item {\ttfamily newThreadQueue(transferPriority)} - Allocate a new lottery queue.
+\item {\ttfamily getThreadState(thread)} - Return thread's scheduling state
+\end{itemize}
+
+\noindent\textbf{LotteryQueue extends PriorityQueue:} \begin{itemize}
+\item {\ttfamily LThreadState holder} - Current holder. of this lock
+\item {\ttfamily LinkedList<LThreadState> realQueue} - LinkedList holding all threads in line for this lock, I changed it from a priority queue, because there is no reason to compare threads now.
+\item {\ttfamily LotteryQueue(transferPriority)} - calls super() then sets realQueue to a linked List instead of a Priority Queue.
+\item {\ttfamily void waitForAccess(thread)} - puts a threads on this resource's wait queue.
+\item {\ttfamily void acquire(thread)} - gives a thread the lock.
+\item {\ttfamily KTread nextThread()} - returns the next thread what will get this resource and gives that thread the lock. Changed so that it works with LinkedLists and calls the correct functions in LThreadState.
+\item {\ttfamily LThreadState pickNextThread()} - called by nextThread to choose the next thread that will get this lock. Changed so that it implements a lottery algorithm.
+\item {\ttfamily int numTickets()} - Counts up the number of tickets allocated for this resource.
+\end{itemize}
+
+\noindent\textbf{LThreadState extends ThreadState:} \begin{itemize}
+\item {\ttfamily LinkedList heldQueues}               - All the resources that this thread is holding.
+\item {\ttfamily LotteryQueue waitQueue}              - A queue that this thread is waiting in.
+\item {\ttfamily LThreadState(p)}                      
+\item {\ttfamily void waitForAccess(waitQueue)}       - updates waitQueue.
+\item {\ttfamily void release(heldQueue)}              - releases a lock and fixes priority for all threads affected.
+\item {\ttfamily acquire(waitQueue)}                  - empties waitQueue and gives thread a lock.
+\item {\ttfamily notifyPriorityChange()}              - called whenever priority of a thread is changed, updates priority for all threads connected to this one.
+\item {\ttfamily recalculate()}                       - recalculates priority for current thread.
+\end{itemize}
+
+\subsection{Description}
+\begin{verbatim}
+class LotteryScheduler extends PriorityScheduler:
+    int priorityMinimim
+    int priorityMaximum
+    
+    newThreadQueue(transferPriority):
+        return new LotteryQueue(transferPriority)
+    
+    
+    getThreadState(KThread thread):
+        return thread.schedulingState
+    
+    
+    class LotteryQueue extends PriotityQueue:
+        LThreadState holder
+        LinkedList realQueue
+        
+        LotteryQueue(transferPriority):
+            super()
+            realQueue = LinkedList<LThreadState>()
+        
+        
+        void waitForAccess(KThread thread):
+            if transferPriority:
+                holder.priority += thread.priority          
+            threads.append(thread)                              
+            thread.waitForAccess(this)                          
+            
+        
+        LThreadState nextThread():
+            oldHolder = holder                      
+            oldHolder.priority = oldHolder.recalculate()
+            holder = pickNextThread()
+            remove new holder from queue
+            holder.recalculate()
+            notifyPriorityChange()
+        
+        void acquire():
+            this.holder = getThreadState(thread)                
+            this.holder.acquire(this)                           
+
+        
+        LThreadState pickNextThread():
+            selection = Math.random from 1 to numTickets        
+            for thread in threads:                               
+                selection -= thread.priority                    
+                if selection <= 0:                              
+                    return thread           
+        
+        int numTickets():
+            for all threads in queue:
+                count up the number of tickets 
+                    
+        class LThreadState extends ThreadState:
+            LinkedList heldQueue
+            LotteryQueue waitQueue
+            
+            LThreadState(p):
+                super()
+                heldQueue = LinkedList
+                
+            waitForAccess(queue):
+                this.waitQueue = queue
+            
+            acquire(queue):                                     
+                this.waitQueue = null
+                this.heldQueue.append(queue)
+            
+            release(heldQueue):                      
+                heldQueue.remove(queue)
+                this.priority = recalculate()
+                notifyPriorityChange()
+                
+            notifyPriorityChange(value):
+                if (waitQueue != null && waitQueue.holder != null && waitQueu.transferPriority):
+            	 int a = waitQueue.holder.recalculate()
+            	 waitQueue.holder.effPriority = a
+            	 waitQueue.holder.notifyPriorityChange();
+            
+            int recalculate():
+                for q in heldQueues:
+                    effPriority += numTickets()
+             
+            
+\end{verbatim}
+\subsection{Testing Plan}
+I will reuse many of the tests from proj1 PrioritySchduler.
+
+\texttt{donationTest}
+\begin{itemize}
+\item R1 - holder(thread1 - 11), in queue: (thread2 - 2), (thread3 - 3)
+\item priority of T1 - 6, T2 - 2, T3 - 3
+
+\texttt{cascadeTest}
+\item R1 - holder(T1 - 1), in queue (T2)
+\item R2 - holder(T2 - 2), in queue (T3)
+\item R3 - holder(T3 - 3)
+\item T1's priority should be 6, T2's priority should be 5.
+\item R2.nextThread(), now T1, T2, and T3's priority should be 3.
+\end{itemize}

@@ -1,0 +1,66 @@
+Script started on Sun 24 Feb 2013 09:23:32 PM PST
+]0;manohar@ubuntu: ~/Documents/CS9F/prog3manohar@ubuntu:~/Documents/CS9F/prog3$ ./a.out
+
+No commands given.
+command
+Unrecognizable command word.
+update
+Error: update command not given proper arguments
+update word
+Error: update command not given proper arguments
+update word word2
+Error: update command not given proper arguments
+update word word2 word3
+Error: update command not given proper arguments
+update word 23
+update word 23
+update word    moreWords         anotherWord -1890
+update anotherWord -1890
+update word 25 word2
+Error: update command only takes 2 arguments
+list
+Error: list command not given arguments
+list word
+Error: list command must take "names" or "quantities" as argument
+list names word
+Error: list command only takes 1 argument
+list quantities word
+Error: list command only takes 1 argument
+list word word2
+Error: list command only takes 1 argument
+list names
+list names
+list quantities
+list quantities
+batch
+Error: batch command not given arguments
+batch samp    word
+Error: batch command could not open word
+batch sample
+Error: batch command could not open sample
+batch sample.txt word
+Error: batch command only takes 1 argument
+batch sample.txt
+Unrecognizable command word.
+Error: update command not given proper arguments
+Error: update command not given proper arguments
+Error: update command only takes 2 arguments
+update word1 28
+update word2 3402
+Error: list command not given arguments
+Error: list command must take "names" or "quantities" as argument
+Error: list command only takes 1 argument
+Error: list command only takes 1 argument
+list names
+list quantities
+Error: quit command does not take arguments
+]0;manohar@ubuntu: ~/Documents/CS9F/prog3manohar@ubuntu:~/Documents/CS9F/prog3$ ./a.out
+quit word
+Error: quit command does not take arguments
+quit 298
+Error: quit command does not take arguments
+quit
+]0;manohar@ubuntu: ~/Documents/CS9F/prog3manohar@ubuntu:~/Documents/CS9F/prog3$ exit
+exit
+
+Script done on Sun 24 Feb 2013 09:27:01 PM PST

@@ -1,0 +1,13 @@
+Script started on Sun 10 Mar 2013 09:40:01 PM PDT
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ exitclearjava test.TestDListclear[Kjavac test/TestDList.java[8Plist/*.javatest/TestDList.javaclear[Kjava test.TestDListclear[K[1Pexit[Kexit[Kg++ lists.cpp destr.test.cpp
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ .a/[K[K/a.out
+5 4 3 o t
+3 4 5 
+Deleting node with value 3
+Deleting node with value 4
+Deleting node with value 5
+25501728 25501696 0 
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ exit
+exit
+
+Script done on Sun 10 Mar 2013 09:41:09 PM PDT

@@ -1,0 +1,217 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{6}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday October 14 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\newcommand{\G}{\overline{G}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle 
+
+\begin{enumerate}
+
+\item \textbf{Warm-up:} Let $G$ be a graph with vertices $V$
+and edges $E$.
+For $v \in V$, let $\deg{v}$ be the degree of $v$.
+Prove that
+\[ \sum_{v \in V} \deg{v} = 2 |E| \]
+Every edge $(u,v) \in E$ is incident upon vertices $u$ and $v$, and increases each vertex's degree by 1. So for every edge $(u,v) \in E$, we increase $\sum_{v \in V} \deg{v}$ by 2 because for some $u \in V$ and $v \in V$, we increase each degree by 1. With no edges, the sum is zero, so clearly $\sum_{v \in V} \deg{v} = 2 |E|$.
+
+\newpage
+\item \textbf{True or false?} 
+For each of the following propositions, give a proof or counterexample.
+In each part, $G$ is a graph with $n$ vertices, and $n \geq 3$.
+\begin{enumerate}
+\item If each vertex of $G$ has degree at most $1$, then $G$ does not have a cycle. \\
+{\bf True:} Assuming no self-edges or multiple-edges, then there is no such thing as a cycle of $n<3$ vertices, and for any length $n\geq3$ cycle, each vertex $v$ in the cycle must have at least $\deg{v} \geq 2$, because a cyclical path must come in on one edge and leave on a different one. This already condradicts the statement.
+\item If each vertex of $G$ has degree at least $2$, then $G$ has a cycle. \\
+{\bf True:} Begin with vertex $v_0$. By the statement, it connects at least to some vertex $v_1$ and another vertex $v_j$ assuming no self- or multiple-edges. Also, $v_1$ must connect to at least $v_0$ and some $v_2$. Each $v_i$ is connected to $v_{i-1}$ and some $v_{i+1}$, but since we have a finite set of vertices, there exists a $v_k$ such that it is connected to one of the previous vertices besides $v_{k-1}$, and this creates a cycle.
+\item If each vertex of $G$ has degree at most $2$, then $G$ is not connected. \\
+{\bf False:} Consider the counterexample of a graph of vertices $u,v,w$ where each vertex is connected to the other two.
+\item If each vertex of $G$ has degree at least $\lfloor \frac n2 \rfloor$,
+then $G$ is connected. \\
+{\bf True:} If each vertex in a component of a graph has degree at least $\lfloor \frac n2 \rfloor$, then that component must have at least $\lfloor \frac n2 \rfloor + 1$ vertices (one for each edge and one for the vertex itself). But if there were at least 2 separate components in this situation, we would have at least $2\cdot (\lfloor \frac n2 \rfloor + 1) > n$ vertices, which is a contradiction and so G is connected.
+\end{enumerate}
+
+\newpage
+\item \textbf{Eulerian road trips:} In a certain county 
+there are $n$ cities
+and a number of roads connecting them.
+Each road runs between two cities, 
+and there are no highways within cities.
+Each road can be travelled in either direction.
+Fortunately, it is possible to get from any city
+to any other city by traveling across a sequence of roads.
+
+\begin{enumerate}
+
+\item Show that it is possible
+to make a trip which goes
+over each road exactly once in each direction. \\
+Depth-first search of a graph does this exactly (modified to check if an edge was visited rather than a vertex). Start an any city and look at each of its incident roads. If the road was not travelled, use it to get to the next city and repeat from there, then backtrack the edge you used to get there. \\
+Let's assume this algorithm doesn't work and there is an road $e$ that isn't traversed along the path. Then we can say neither of its incident cities $c_1,c_2$ were travelled to (if they were, then the nature of the algorithm guarantees $e$ would be traversed). This implies that none of the roads incident to either of those 2 cities was traversed to get to each city. By induction, we can say that any city connected by some path of roads to $c_1$ or $c_2$ was never travelled to, and since this graph of cities is connected, this accounts for all cities. But since we started at a city, the base case is true and we have a contradiction, so all edges are traversed. \\
+The fact that each edge is traversed once in each direction is trivial. Once you traverse an unvisited road in one direction, the road is marked as traversed and the algorithm dictates it won't be traversed again if it approaches it from another city. Once the recursion at that level is complete, you travel back in the other direction, so each road is traversed exactly once in each direction.
+\item Suppose that I am willing to make $\left \lfloor \frac n2 \right \rfloor$ ($n/2$ rounded down)
+``off-road'' trips. That is, on $\left \lfloor \frac n2 \right \rfloor$ occasions
+I am willing to travel from one city to \emph{any} other city,
+regardless of whether there is a road connecting them.
+Prove that it is possible to make a trip
+which passes over each road exactly once in \emph{either} direction.
+\end{enumerate}
+
+\newpage
+\item \textbf{Graphing divisibility:}
+
+Let $p$ and $q$ be distinct primes,
+and let $G$ be the graph defined by:
+\begin{itemize}
+\item The vertices of $G$ are the integers $\left\{0, 1, 2, \ldots, pq-2,pq-1\right\}$
+\item There is an edge in $G$ between $a$ and $b$
+if $a \neq b$ and either $p \mid a - b$ or $q \mid a - b$.
+\end{itemize}
+\begin{enumerate}
+\item How many edges are there in $G$?
+Prove that your answer is correct (be careful). \\
+There is an edge $(a,b)$ if $a\neq b$ and either $a=b+kp$ or $a=b+kq$ for some integer $k$. Notice we don't need to consider the case where $a=b+kpq$ for some integer $k$ because the range of the set of vertices V is $pq-1-0 = pq-1$. \\
+For each $a \in V$, there is an edge connecting $a$ to all $b \in \{a+p\bmod{pq},a+2p\bmod{pq},\ldots,a+(q-1)p\bmod{pq}\}$ Each element of this set is distinct and maps to a unique element in V. There are $q-1$ edges for each of the $pq$ vertices that satisfy $p \mid a-b$, but since we counted each edge $(a,b$ and $(b,a)$ we must divide by 2 to get $\frac{1}{2} pq(q-1)$ edges. \\
+Similarly, there are $\frac{1}{2} pq(p-1)$ edges $(a,b)$ that satisfy $q \mid a-b$. Since we don't have any double counting between the two sets of edges, the total number of edges in G is $\frac12 pq(p+q-2)$.
+\item Prove that for any vertices $a, b$ in $G$,
+there is a path of length at most 2 from $a$ to $b$. \\
+Let's continue to work in $\bmod{pq}$. We are trying to prove that for any distinct $(a,b)$, the path between them exists or there exists a $c$ such that the path $(a,c)$ to $(c,b)$ exists. If $a \equiv b \bmod p$ or $a \equiv b \bmod q$, then there is a path of length 1 between them and we are done. \\
+Otherwise, notice that there is a path from $a$ to every vertex $u \in \{a+p,a+2p,\ldots,a+(q-1)p\}$ and a path from $b$ to every vertex $v \in \{b+q,b+2q,\ldots,b+(p-1)q\}$. Either this is true or vice versa (where $p$ and $q$ are switched) since if we have both $a$ and $b$ equivalent to either $p$ or $q$, we have the above case of a length-1 path between them. \\
+\end{enumerate}
+
+\newpage
+\item \textbf{Touring the hypercube:} 
+Let $G$ be a hypercube of dimension $n$, i.e.
+\begin{itemize}
+\item The vertices of $G$ are the binary strings of length $n$.
+\item $u$ and $v$ are connected by an edge if they differ in exactly one location.
+\end{itemize}
+A \emph{Hamiltonian tour} of a graph is a sequence of vertices
+$v_0, v_1, \ldots, v_k$ such that:
+\begin{itemize}
+\item Each vertex appears exactly once in the sequence.
+\item Each pair of consecutive vertices is connected by an edge.
+\item $v_0$ and $v_k$ are connected by an edge.
+\end{itemize}
+\begin{enumerate}
+\item Show that the hypercube has an Eulerian tour if and only if $n$ is even. \\
+There is a proof in Note 7 that shows that a graph that is connected with every vertex having an even degree has a Eulerian tour. The exact proof need not be restated on this homework. \\
+By the definition of a hypercube, it is connected and each vertex has exactly $n$ incident edges, since there are $n$ bit positions that can be toggled to find one of its neighbors. It follows that the hypercube has an Eulerian tour iff $n$ is even, since each vertex would have an even degree $n$.
+\item Show that the hypercube has a Hamiltonian tour. \\
+Base Case: the $n=1$ hypercube has a Hamiltonian tour from $v_0 = 0$ to $v_1 = 1$. Checking the conditions is trivial. \\
+Induction Hypothesis: The $n$-dimension hypercube has a Hamiltonian tour such that $v_0$ and $v_k$ differ only in the $n^{\text{th}}$ bit position. \\
+Induction Step: The $(n+1)$-dimension hypercube has two sub-hypercubes of dimension $n$. To construct the new tour, start at $v_0$ on one of the subcubes and proceed through the Hamiltonian tour on the subcube, then cross over to the other subcube and take the Hamiltonian tour on that one. Each vertex appears on the tour exactly once. \\
+Let's call the vertices on the 0-subcube $v_i$ and those on the 1-subcube $u_i$. We must show that $v_0$ and $u_k$ are connected by an edge. By the definition of a Hamiltonian tour and our use of induction, $v_0$ differs from $v_k$ in the $n^{\text{th}}$ bit position. Then, $v_k$ differs from $u_0$ in the $(n+1)^{\text{th}}$ bit position. Then $u_0$ differs from $u_k$ in the $n^{\text{th}}$ bit position. Thus $v_0$ and $u_k$ only differ in the $(n+1)^{\text{th}}$ bit position and are connected by an edge. Therefore the $(n+1)$-dimension hypercube has a Hamiltonian tour.
+\end{enumerate}
+\raisebox{0.4em}{\rotatebox{180}{\parbox{40em}{Hint: 
+For parts (b) and (c), use induction and strengthen the hypothesis.}}}
+
+\newpage
+\item \textbf{Squaring the hypercube:} Fix some $n \geq 2$ and consider the graph $G$ defined as follows:
+
+\begin{itemize}
+\item The vertices of $G$ are the binary strings of length $n$.
+\item $u$ and $v$ are connected by an edge if they differ in exactly 2 locations.
+\end{itemize}
+
+Let $S$ be a subset of the vertices in $G$, and let $E_{S, V-S}$ be the set of edges between
+the vertices in $S$ and the vertices not in $S$.
+\begin{enumerate}
+\item Show that if $|S| \leq 2^{n-2}$, then $|E_{S, V-S}| \geq |S|$. \\
+Base Case: for $n=2$, we have $|S| \leq 2^0 = 1$ and $|E_{S, V-S}| = 1 \geq 1$, for $|S| = 1$. The case for $|S| = 0$ is also trivially true. \\
+Induction Hypothesis: (see claim) \\
+Induction Step: Let $S_0$ be the vertices in S from the 0-subcube and $S_1$ be those from the 1-subcube. \\
+Case 1: $|S_0| \leq 2^{n-2}/2 = 2^{n-3}$ and $|S_1| \leq 2^{n-2}/2 = 2^{n-3}$. \\
+By the induction hypothesis, $|E_{S,V-S}| = |E_{S_0,V_0-S_0}| + |E_{S_1,V_1-S_1}| \geq |S_0| + |S_1| = |S|$. \\
+Case 2: $|S_0| > 2^{n-2}/2 = 2^{n-3}$.
+\item Show that for every $n$, there is a set $S$ of size $|S| = 2^{n-1}$
+such that $|E_{S, V-S}| = 0$. \\
+Base Case: for $n=2$, we can split the hypercube up into $S = \{00,11\}$ and $V-S = \{01,10\}$. There are no edges between $S$ and $V-S$. \\
+Induction Hypothesis: (see claim) \\
+Induction Step: Again let $S_0$ be the vertices in S from the 0-subcube and $S_1$ be those from the 1-subcube. \\
+Consider the case where $|S_0| = |S_1| = 2^{n-1}/2 = 2^{n-2}$. \\
+By the induction hypothesis, $|E_{S,V-S}| = |E_{S_0,V_0-S_0}| + |E_{S_1,V_1-S_1}| \geq |S_0| + |S_1| = |S|$. \\
+\end{enumerate}
+
+\raisebox{0.4em}{\rotatebox{180}{\parbox{40em}{Hint: adapt the proof 
+from the notes that the hypercube satisfies a similar property.}}}
+
+\end{enumerate}
+
+\end{document}

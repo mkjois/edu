@@ -1,0 +1,19 @@
+Name: Manohar Jois
+Login: cs61b-mk
+
+Initialize an h-by-v 2D array of cells and initialize every possible wall in the maze.
+Use depth-first-search starting at the (0,0) cell. We must maintain a 2D boolean array
+to check if cells have been visited. For each DFS call, use random numbers to determine
+which neighbor cell to call DFS on next. If the next cell has already been visited, we
+don't call DFS from it. If it hasn't been visited, we unlock the wall between the 2 cells,
+mark the next cell visited and call DFS from it.
+
+a) Unlocking walls for a cell that hasn't been visited by DFS ensures there is exactly
+   one path from that cell to (0,0). This means there is exactly one path between any
+   two cells, which happens to go through (0,0).
+
+b) For every cell that calls DFS, use random numbers (i.e. 1-4) to tell DFS what order
+   to investigate it's neighboring cells. Just order the 4 random numbers to determine
+   the order of investigation. If a cell doesn't have a right/left/upper/lower neighbor
+   or a neighbor has been visited, just move on to investigate the next random direction.
+   This creates random connections for every maze generation.

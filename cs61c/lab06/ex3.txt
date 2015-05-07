@@ -1,0 +1,31 @@
+# load address (addr is a label)
+la $s0, addr = lui $at, %hi(addr)
+               addiu $s0, $at, %lo(addr) 
+
+# copy value
+move $s1, $s0 = add $s1, $s0, $zero
+
+# set to bitwise inverse
+not $s1, $s1 = addi $at, $zero, -1
+               xor $s1, $s1, $at
+	
+# load immediate
+li $s2, 0xAABBCCDD = lui $at, 0xAABB
+                     ori $s2, $at, 0xCCDD
+li $t0, 5 = addiu $t0, 5
+li $t1, 4 = addiu $t1, 4
+
+# multiply
+mul $s0, $t0, $t1 = mult $t0, $t1
+                    mflo $s0
+	
+# divide
+div $s0, $t0, $t1 = div $t0, $t1
+                    mflo $s0
+
+# remainder
+rem $s0, $t0, $t1 = div $t0, $t1
+                    mfhi $s0
+
+# 0x00000000 operation (does nothing)
+nop = sll $zero, $zero, 0

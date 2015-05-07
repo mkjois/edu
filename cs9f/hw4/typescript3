@@ -1,0 +1,102 @@
+Script started on Wed 13 Mar 2013 03:10:13 PM PDT
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ g++ amoebas.cpp amoebamain.cpp
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ .a.[K[K/a.out
+Hi, my name is me
+Meet my parent mom/dad
+My grandparent is Amos McCoy
+
+Testing PrintChildren()
+
+Amos McCoy children: 
+mom/dad
+mom/dad children: 
+Wilma
+Fred
+me
+my children: 
+Marge
+Homer
+Mike
+Mike children: 
+Lisa
+Bart
+Marge children: 
+Hilary
+Bill
+Fred children: 
+Lisa children: 
+
+Testing PrintGrandchildren()
+
+Amos McCoy gc: 
+Wilma
+Fred
+me
+mom/dad gc: 
+Marge
+Homer
+Mike
+my gc: 
+Hilary
+Bill
+Lisa
+Bart
+Marge gc: 
+Fred gc: 
+Bart gc: 
+
+Testing PrintDescendants()
+
+Amos McCoy tree: 
+mom/dad
+    Wilma
+    Fred
+    me
+        Marge
+            Hilary
+            Bill
+        Homer
+        Mike
+            Lisa
+            Bart
+
+mom/dad tree: 
+Wilma
+Fred
+me
+    Marge
+        Hilary
+        Bill
+    Homer
+    Mike
+        Lisa
+        Bart
+
+my tree: 
+Marge
+    Hilary
+    Bill
+Homer
+Mike
+    Lisa
+    Bart
+
+Mike tree: 
+Lisa
+Bart
+
+Marge tree: 
+Hilary
+Bill
+
+Wilma tree: 
+
+Homer tree: 
+
+Lisa tree: 
+
+Hilary tree: 
+]0;manohar@ubuntu: ~/Documents/cs9f/prog4manohar@ubuntu:~/Documents/cs9f/prog4$ exit
+exit
+
+Script done on Wed 13 Mar 2013 03:10:29 PM PDT

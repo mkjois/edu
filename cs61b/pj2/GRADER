@@ -1,0 +1,334 @@
+                                     GRADER
+
+Name of student running submit: Manohar Jois
+Login of student running submit: cs61b-mk
+
+Second team member's name: Junseok Lee
+Second team member's login: cs61b-ze
+
+Third team member's name (if any): Shrayus Gupta
+Third team member's login: cs61b-qj
+
+IMPORTANT:  Once you've submitted Project 2 once, the same team member should
+submit always.  If a different teammate must submit, inform cs61b@cory.eecs of
+all the details.  Include a complete list of team members, and let us know
+which submission you want graded.
+
+If you've submitted your project once, or even written a substantial amount of
+code together, you may not change partners without the permission of the
+instructor.
+===============================================================================
+Does your program compile without errors?
+- Yes
+
+Have you tested your program on the machines in the Soda CS 61B lab?
+- Yes
+
+Did you successfully implement game tree search?  Did you successfully
+implement alpha-beta pruning?  Are there any limitations on it?  What is the
+default number of search levels set by the one-parameter MachinePlayer
+constructor?
+- Yes
+- Yes
+- No, other than run time based on search depth
+- 3
+
+Describe your board evaluation function in some detail.
+- It takes scores based on the following 3 attributes of a board:
+    1) How many total connections all chips of one color have vs. how many all
+       chips of the opponent have.
+    2) How many triangular connections one color has vs. how many the opponent
+       has.
+    3) How many chips each player has in each goal area.
+- It then averages these 3 scores to produce a final score.
+
+Does your MachinePlayer use any special method of choosing the first few moves?
+- It places its first 2 chips in the goal areas, one in each.
+
+Is there anything else the graders should know to help them read your project?
+
+
+
+Describe the classes, modules, and interfaces you designed before and while you
+implemented the project.  Your description should include:
+  -  A list of the classes your program uses.
+  -  A list of each of the "modules" used in or by MachinePlayer, similar to
+     the list in the "Teamwork" section of the README (but hopefully more
+     detailed).
+  -  For each module, list the class(es) the module is implemented in.
+  -  For each module, say which of your team members implemented it.
+  -  For each module, describe its interface--specifically, the prototype and
+     behavior of each method that is available for external callers (outside
+     the module) to call.  Don't include methods that are only meant to be
+     called from within the module.
+
+     For each method, provide (1) a method prototype and (2) a complete,
+     unambiguous description of the behavior of the method/module.  This
+     description should also appear before the method in your code's comments.
+
+You will probably need to change some of your design decisions as you go; be
+sure to modify this file to reflect these changes before you submit your
+project.  Your design of classes and interfaces with be worth about 10% of your
+grade.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~ CLASS HIERARCHY ~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+
+package player:
+    class MachinePlayer
+    class Best
+    class Player
+    class Move
+
+package board:
+    class Board
+    class BoardCheck
+    class Point
+    class InvalidMoveException
+    class OffBoardException
+
+package list:
+    class DList
+        class DListIterator
+    class DListNode
+
+package dict:
+    class HashTable
+    class Entry
+    class PrimeGen
+
+~~~~~~~~~~~~~~~
+~~~ MODULES ~~~
+~~~~~~~~~~~~~~~
+
+1) Determine whether or not a board has a winning network.
+   (Junseok Lee)
+    
+    board.BoardCheck.winner(Board, int)
+
+    /**
+     * winner(Board, int) : STATIC
+     * Determines if the player of the input color has won given the input
+     * board.
+     *
+     * @param   b       the board to check for a winner
+     * @param   color   the color to check
+     * @return          boolean, whether or not color player has won
+     */
+    public static boolean winner (Board b, int color);
+
+2) Generating a list of connections visible to a given chip.
+   (Junseok Lee)
+
+    board.BoardCheck.links(Board, int, int)
+
+    /**
+     * links(Board, int, int) : STATIC
+     * Returns a DList of int[2]'s corresponding to the coordinates of the 
+     * pieces directly "visible" to and of the same color as the input piece.
+     * 
+     * @param   b   the board on which to look for links
+     * @param   x   the x-coordinate of the input piece
+     * @param   y   the y-coordinate of the input piece
+     * @return      DList of links
+     * @exception OffBoardException Thrown if (x,y) is not on the given Board.
+     */
+    public static DList links (Board b, int x, int y) throws OffBoardException;
+
+3) Implementing minimax game tree search with alpha-beta pruning.
+   (Manohar Jois)
+
+    player.MachinePlayer.minimax(int, double, double, boolean)
+
+    /**
+     * minimax(int, double, double, boolean)
+     * Returns the Best that gives this player the highest chance of
+     * winning this Board using a minimax algorithm for searching
+     * game trees. The algorithm will generate a game tree down to the
+     * given search depth and evaluate each possible outcome to determine
+     * what Move will put the given player closest to winning. Note that
+     * the method is guaranteed to return a Best with a valid Move.
+     *
+     * @param depth The search depth of the game tree generated and
+     *     evaluated by the minimax algorithm. When the search depth is
+     *     recursively decreased to 0, the current board is evaluated
+     *     heuristically and given a score.
+     * @param alpha The lowest score this player is guaranteed to achieve. 
+     *     This will update if a move is found that guarantees a score
+     *     higher than the current alpha.
+     * @param beta The highest score the opponent is guaranteed to achieve.
+     *     This will update if a move is found that guarantees a score
+     *     lower than the current beta.
+     * @param orig The original player to call the minimax algorithm. True
+     *     if the algorithm is in the process of evaluating moves for this
+     *     player's turn, false if in the process of evaluating moves for
+     *     the opponent's turn.
+     * @return The Best with the best Move to bring the given player closest to
+     *     winning. Guaranteed to return a Best with a valid Move.
+     */
+    private Best minimax (int depth, double alpha, double beta, boolean orig);
+
+4) Writing a heuristic function to evaluate a given board.
+   (Manohar Jois)
+
+    player.MachinePlayer.evalBoard()
+    board.Board.propertyScores(int)
+
+    /**
+     * eval()
+     * Assigns a score between -1.0 and +1.0 for this board and player.
+     * A more positive score means that this player has a higher chance
+     * of winning the game on the current board, while a more negative score
+     * indicates the opponent has a higher chance of winning. A score with
+     * a magnitude of 1.0 indicates someone has won the game. Used by
+     * minimax() and assumes that neither player has won the game.
+     *
+     * @return A double between -1.0 and +1.0 (exclusive) that effectively
+     *     assesses how likely it will be for this player to win the
+     *     game, assuming infinite intelligence on both sides.
+     */
+    private double evalBoard ();
+
+    /**
+     * propertyScores(int)
+     * Returns an int[] of critical values pertaining to this Board for the
+     * given player. The four values in the returned array are:
+     *   1) The total number of connections for all chips of the given player.
+     *   2) The total number of triangular connections for the given player.
+     *   3) The number of chips in the given player's starting goal.
+     *   4) The number of chips in the given player's ending goal.
+     *
+     * @param color The player color.
+     * @return An int[4] holding the above critical values.
+     */
+    public int[] propertyScores (int color);
+
+5) Determining whether or not a given move is valid for a board.
+   (Shrayus Gupta)
+
+    board.Board.isValidMove(int, Move)
+
+    /**
+     * isValidMove(int, Move)
+     * Determines whether or not the given Move is allowed by the rules of
+     * the Network game for the given player color on this Board.
+     *
+     * @param color The player color, white or black, as determined by
+     *     final constant integers.
+     * @param m The move to be judged as valid or not.
+     * @return true if given Move is valid for given player, false otherwise.
+     */
+    public boolean isValidMove (int color, Move m);
+
+6) Generating a list of all valid moves for a given player and board.
+   (Shrayus Gupta)
+
+    board.Board.allValidMoves(int)
+
+    /**
+     * allValidMoves(int)
+     * Returns a DList of all valid Moves for the given player based only on
+     * the configuration of this Board.
+     *
+     * @param color The player color, white or black, as determined by
+     *     final constant integers.
+     * @return A DList, possibly empty, of all valid Moves for given player
+     *     on this Board.
+     */
+    public DList allValidMoves (int color);
+
+7) Implementing a hash table data structure for faster board-to-score lookup.
+   (Manohar Jois)
+
+    dict.HashTable.find(Object)
+    dict.HashTable.insert(Object, Object)
+    board.Board.hashCode()
+
+    /** 
+     *  Search for an entry with the specified key.  If such an entry is found,
+     *  return it; otherwise return null.  If several entries have the specified
+     *  key, choose one arbitrarily and return it.
+     *
+     *  This method should run in O(1) time if the number of collisions is small.
+     *
+     *  @param key the search key.
+     *  @return an entry containing the key and an associated value, or null if
+     *          no entry contains the specified key.
+     **/
+    public Entry find(Object key);
+  
+    /**
+     *  Create a new Entry object referencing the input key and associated value,
+     *  and insert the entry into the dictionary.  Return a reference to the new
+     *  entry.  Multiple entries with the same key (or even the same key and
+     *  value) can coexist in the dictionary.
+     *
+     *  This method should run in O(1) time if the number of collisions is small.
+     *
+     *  @param key the key by which the entry can be retrieved.
+     *  @param value an arbitrary object.
+     *  @return an entry containing the key and value.
+     **/
+    public Entry insert(Object key, Object value) {
+  
+    /**
+     * hashCode()
+     * Returns a hash code for this Board, used for storage in HashTables.
+     * Every Board has a unique hash code.
+     *
+     * @return This Board's hash code, a numerical representation of this object.
+     */
+    public int hashCode (){
+
+8) Determining whether a board is in the "add move" stage or the "step move" stage.
+   (Shrayus Gupta)
+
+    board.Board.isFull()
+    board.Board.chipsNotOnBoard()
+
+    /**
+     * isFull()
+     * Determines whether or not both player have exhausted all 10 of their
+     * "add moves" (a.k.a. There are 20 chips on this Board, 10 white and
+     * 10 black).
+     *
+     * @return true if both players have 10 chips on this Board, false
+     *     otherwise.
+     */
+    public boolean isFull ();
+  
+    /**
+     * chipsNotOnBoard()
+     * Returns the number of chips that have yet to be added to this Board.
+     * Always between 0 and 20 (inclusive).
+     *
+     * @return The number of chips not yet placed on this Board.
+     */
+    public int chipsNotOnBoard ();
+
+9) Providing a way to make and undo moves applied to a board for faster game tree search.
+   (Shrayus Gupta)
+
+    board.Board.makeMove(int, Move)
+    board.Board.undoLastMove()
+
+    /**
+     * makeMove(int, Move)
+     * Applies the given Move to this Board for the given player if the move
+     * is valid, otherwise throws an exception.
+     *
+     * @param color The player color, white or black, as determined by
+     *     final constant integers.
+     * @param m The Move to applied to this Board.
+     * @exception InvalidMoveException Thrown if the given Move is invalid
+     *     for the given player.
+     */
+    public void makeMove (int color, Move m) throws InvalidMoveException;
+  
+    /**
+     * undoLastMove()
+     * Returns this Board to a state as if the last applied Move never happened.
+     * If no Moves have been applied, this method returns immediately.
+     */
+    public void undoLastMove ();

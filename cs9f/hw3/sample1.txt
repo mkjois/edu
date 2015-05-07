@@ -1,0 +1,17 @@
+command
+
+update
+update word3 word4
+update word5 23940 word6
+update word1 28
+update word2 3402
+
+list
+list word7
+list names word8
+list quantities word9
+list names
+list quantities
+
+quit word10
+quit

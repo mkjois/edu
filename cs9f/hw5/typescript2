@@ -1,0 +1,25 @@
+Script started on Wed 10 Apr 2013 02:25:41 PM PDT
+]0;manohar@ubuntu: ~/Documents/cs9f/prog5manohar@ubuntu:~/Documents/cs9f/prog5$ g++ sorted.lists.h sltest.cpp
+]0;manohar@ubuntu: ~/Documents/cs9f/prog5manohar@ubuntu:~/Documents/cs9f/prog5$ ./a.out
+List 1: 3 5 7 10
+List 2: 4 6 8 11
+Should get operator= call here deleting elements of list 1.
+*** in operator=, destroying:  3 5 7 10
+List 1 after replacement: 4 6 8 11
+Error msg should result here from assigning list 2 to itself.
+Cannot assign list to itself.
+Should get copy constructor call here.
+*** in copy constructor
+Should get operator= call here deleting old elements of list 1.
+*** in operator=, destroying:  4 6 8 11
+List 1 after assignment from list2: 4 6 8 11
+List 2 after assignment: 4 6 8 11
+Pairs of list 2 elements: (6 4)  (8 4)  (8 6)  (11 4)  (11 6)  (11 8) 
+Should now get three destructor calls, one each for list1, list2, and list3.
+*** in destructor, destroying:  4 6 8 11
+*** in destructor, destroying:  4 6 8 11
+*** in destructor, destroying:  4 6 8 11
+]0;manohar@ubuntu: ~/Documents/cs9f/prog5manohar@ubuntu:~/Documents/cs9f/prog5$ exit
+exit
+
+Script done on Wed 10 Apr 2013 02:26:03 PM PDT

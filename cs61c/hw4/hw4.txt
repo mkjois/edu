@@ -1,0 +1,25 @@
+CS61C Fa13 HW4
+Name: Manohar Jois
+Login: cs61c-bm
+
+Problem 1
+a) 0xFFF00B9E = NaN 
+b) 0x00000000 = 0
+c) 0xBFC00000 = -1.5
+d) 0x42420000 = 48.5
+e) 42 = 0x42280000
+f) 1337 = 0x44a72000
+
+Problem 2
+a) 0x20020000 = addi $v0, $0, 0
+b) 0x00082100 = sll $a0, $t0, 4
+c) 0x3C1d0007 = lui $sp, 7
+d) 0x8F19FFFC = lw $t9, -4($t8)
+e) 0x020B102A = slt $v0, $s0, $t3
+
+Problem 3
+a) jal quadruple = 0x0c401000
+b) sll $v0, $a0, 2 = 0x00041080
+c) srl $t0, $v0, 2 = 0x00024082
+d) beq $v0, $t0, warning = 0x10480001
+e) jr $ra = 0x03e00008

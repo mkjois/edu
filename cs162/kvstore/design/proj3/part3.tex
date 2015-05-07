@@ -1,0 +1,212 @@
+\section{KVCache}
+
+\subsection{Overview}
+KVCache stands for Key-Value Cache. It is a direct mapped cache that basically uses 
+a hashtable of LinkedLists. Keys are strings and values are LinkedLists simulating 
+sets. We make sure that our LinkedList does not contain duplicate entries. Replacement 
+is done based on the second chance algorithm, all values have a "used" boolean value associated 
+with them. Entries start out with a value of false and if they get accessed then we change the 
+value to true. The most recently accessed value is at the tail of the queue and the least 
+recently accessed value is at the head of the queue.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item Every entry enters the queue with its used bit set to 0.
+\item Whenever something is accessed, it's used bit is set to 1 and it is moved to the tail of the Linked List.
+\item Two copies of the same element cannot exist in the cache (it is a set)
+\end{itemize}
+
+\subsection{Declarations}
+public class \texttt{KVCache} implements KeyValueInterface
+\begin{itemize}
+\item Java.util.hashtable cache - our "cache"
+\item int numSets
+\item public KVCache(numSets, maxElemsPerSet) - constructor
+\item String get(key) - retrieves an entry from the cache
+\item void put(key, value) - puts a value in the cache 
+\item void del(key) - removes an entry from the cache
+\item Lock getLock(key) - gets a lock for a set corresponding to a given key
+\item int getSetId(key) - get the id of a set that contains a specific key
+\item String toXML() - serialoze this store to XML
+\item void makeSpace - if a set is full, do second chance on it to make space
+\end{itemize}
+
+private class \texttt{lockList} - linked list with a lock, otherwise same as a normal LinkedList
+\begin{itemize}
+\item java ReentrantLock Lock
+\item LinkedList<cacheNode> set
+\item int size
+\item boolean isFull() - check to see if this set is full
+\item cacheNode find(key) - find given value for a key, if it isnt there, return null
+\item LinkedList<cacheNode> getList() - returns this.set
+\item ReentrantLock getLock() - returns this.lock
+\end{itemize}
+
+private class \texttt{cacheNode} - a node that has a used bit and a container for the entry
+\begin{itemize}
+\item boolean used
+\item String key
+\item String value 
+\item getUsed()
+\item setUsed(boolean b)
+\item getKey()
+\item getValue()
+\item setValue(String v)
+\end{itemize}
+
+\subsection{Descriptions}
+\begin{verbatim}
+class KVCache
+    Java.util.hashtable cache
+    int numSets
+    
+    KVCache(int numSets, int maxElemsPerSet)
+        cache = new hashTable<lockList>
+        this.numSets = numSets
+        for a in range(numsets)
+            add a LockList of max size maxElemsPerSet to the HashTable
+    
+    get(key)
+        int a = getSetId(key)
+        cacheNode value = l.find(key)
+        if value != null
+            value.used = true
+            return value.value
+        return null
+    
+    put(key,value)
+        int a = getSetId(key)
+        Locklist l = cache.get(a)
+        cacheNode v = l.find(key)
+        if v != null
+            v.value = value
+            v.used = true
+        else
+            cacheNode n = new cacheNode(key, value)
+            if l.isFull()
+                makeSpace(l)
+            l.add(n)
+    
+    del(key)
+        int a = getSetId(key)
+        Locklist l = cache.get(a)
+        cacheNode value = l.find(key)
+        if value != null
+            l.remove(value)
+    
+    getLock(key)
+        int a = getSetId(key)
+        Locklist l = cache.get(a)
+        return l.getLock()
+    
+    getSetId(key)
+        int h = key.hashcode()
+        int id = mod(h, this.numSets)
+        f (id < 0 ) id = id + this.numSets
+        return id
+    
+    makeSpace(lockedlist list)
+        boolean replaced = false
+        for node in list
+            if node.used == false
+                list.remove(node)
+                replaced = true
+            node.used = false
+        if !replaced
+            remove the head
+        return 
+    
+    toXML()
+       Element rootNode = new Element("KVCache");
+    		
+    	for (int s = 0; s < this.numSets; s++){
+    		Element set = new Element("Set");
+    		int setID = getSetId(String.valueOf(s));
+    		String name = String.valueOf(setID);
+    		
+    		Attribute Id = new Attribute("Id", name);
+    		set.addAttribute(Id);
+    		
+    		LockList l = cache.get(setID);
+    		for (cacheNode c : l.set){
+    			Element cacheEntry = new Element("CacheEntry");
+    			Attribute isReferenced = new Attribute("isReferenced", String.valueOf(c.getUsed()));
+    			cacheEntry.addAttribute(isReferenced);
+    			
+    			Element key = new Element("Key");
+    			key.appendChild(c.getKey());
+    			
+    			Element value = new Element("Value");
+    			value.appendChild(c.getValue());
+    			
+    			cacheEntry.appendChild(key);
+    			cacheEntry.appendChild(value);
+    			set.appendChild(cacheEntry);
+    		}
+    		
+    		rootNode.appendChild(set);
+    		
+    	}
+    	Document output = new Document(rootNode);
+    	return output.toXML();
+    	
+    	
+class LockList
+   
+    java.util.lock Lock
+    LinkedList<cacheNode> set
+    int size
+   
+    LockList(id, size)
+        this.id = id
+        this.size = size
+        set = new LinkedList<cacheNode>
+        this.Lock = new Lock
+    
+    isFull()
+        return this.size >= this.set.size()
+        
+    find(key)
+        for node in set
+            if key == node.key
+                return node
+        return null
+    
+    getList()
+        return this.set
+    
+    getLock()
+        return this.lock
+    
+class CacheNode
+    
+    boolean used
+    String key
+    String value
+    CacheNode(key, value)
+        this.key = key
+        this.value = value
+        this.used = false
+    
+    getUsed()
+        return this.used
+    
+    setUsed(boolean b)
+        this.used = b
+        
+    getKey()
+        return this.key
+        
+    getValue()
+        return this.value
+    
+    setValue(String value)
+        this.value = value
+        
+\end{verbatim}
+\subsection{Testing Plan}
+I made 5 tests, all are in KVCacheTest.java
+    1.test filling up the cache fully
+    2.make sure no duplicate elements in sets
+    3.test dell()
+    4.test makeSpace()
+    5.test toXML()

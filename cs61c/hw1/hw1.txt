@@ -1,0 +1,68 @@
+Problem 1: Warehouse Scale Computers
+
+a. True. The connections between nodes in an SMP server are all within the machine
+    and run very fast to reduce latency, whereas most of the connections between
+    the same number of nodes in a cluster of low-end PC-class serves would be Ethernet
+    LAN links which increase latency.
+
+b. False. A large SMP server takes advantage of more DRAM, which is more expensive,
+    whereas low-end PC class servers make more use of cheap hard disks. Also, it's
+    cheaper to buy more low-end servers because you'd be buying in larger bulk
+    compared to the SMP servers.
+
+c. True. A PUE under 1.0 would mean the IT equipment is using more power than the
+    entire WSC facility, which is not possible.
+
+d. False. With a PUE of 2 to 3 for an average WSC (The Datacenter as a Computer 48),
+    this means that the IT equipment only consumes about one-third to one-half of
+    the power.
+
+e. False. A typical server consumes about 50% of its peak power when idle and
+    increases power usage quickly with greater load, then plateaus near 100% of its
+    peak power at around 80% of its max load (Datacenter 59).
+
+
+Problem 2: MapReduce Questions
+
+a. A combiner is a program that runs independently on each machine designated to be a
+    mapper that collects identical keys and sums their values so that every key appears
+    at most once in the output of each mapper. This reduces the amount of data the
+    mappers need to send to the reducers over the network.
+
+b. Whether or not a combiner is used shouldn't affect the output of the entire MapReduce
+    process, so the key-value pair types the reducers receive from the combiners should
+    be the same as the types they get from the mappers, meaning the input types should
+    be the same as the output types for the combiners.
+
+c. Yes. Each combiner program running on a mapper machine is independent of the other
+    mappers and the data they are processing, and they maintain the same key-value pair
+    types to eventually send to the reducers.
+
+d. Yes. Google's WSCs use MapReduce to extract relevant documents and information from
+    multiple document and index servers.
+
+e. If a process on one worker is running slowly or stalls, the "master" kills the process
+    and shares the associated data with another machine.
+
+
+Problem 3: MapReduce Programming
+
+a. Aim for a list where the key is an individual word and the value is the proportion of
+    the number of occurrences of that word in a spam email versus all emails. This should
+    show how words relating to advertising, marketing, finances, etc. correlate with spam
+    emails because the proportion of their appearances in spam emails will be high.
+
+b. The mapper takes in (boolean, string) as input key-value pairs, splits the text into
+    words and for each word can emit (word, tuple) as an output key-value pair where it
+    would be (word, [1, 0]) if the email was spam and (word, [0, 1]) if it wasn't.
+
+c. The combiner can compress all the identical (word, tuple) key-value pairs into pairs
+    represented by (word, [x, y]), where the word appeared x times in spam emails and y
+    times in non-spam emails.
+
+d. The reducer would take the (word, tuple) input key-value pairs and create (word, float)
+    output pairs where the float is (x / (x+y)), representing the proportion of occurrences
+    of each word that were in spam emails.
+
+
+Problem 4: Do in hw1.c

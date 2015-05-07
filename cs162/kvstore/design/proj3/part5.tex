@@ -1,0 +1,168 @@
+\section{ThreadPool, SocketServer, ServerClientHandler}
+\subsection{Overview}
+\texttt{ThreadPool} is a generic class to hold a fixed amount of threads that indefinitely block-and-wait for jobs on an internal queue and run them. \texttt{SocketServer} is the generic outer interface for accepting client connections to the server's socket. It basically waits for client sockets to connect and passes them to a network handler. \texttt{ServerClientHandler} is that handler used by \texttt{SocketServer} to access \texttt{KVServer}. It maintains its own server and thread pool instances and wraps client sockets holding \texttt{KVMessage} XML requests into jobs for the thread pool to run.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item The job queue in ThreadPool is thread-safe.
+\item Threads in ThreadPool are never idle unless the job queue is empty.
+\item SocketServer doesn't throw exceptions besides IOExceptions while using the Java Socket API.
+\item When stop() is called on a SocketServer, its internal ServerSocket is closed no more than TIMEOUT ms later.
+\item ServerClientHandler passes client sockets to ClientHandler processes to run jobs concurrently.
+\item Any KVException encountered while reading from the socket, parsing the XML, interacting with the KVServer, or writing to the socket is propagated to the client by sending an error KVMessage through the socket.
+\end{itemize}
+\subsection{Declarations}
+Changes are marked with "(NEW)" \\\\
+\textbf{ThreadPool}
+\begin{itemize}
+\item \texttt{LinkedList jobQueue}: the queue of jobs for this server, ripe for picking by threads. 
+\end{itemize}
+\textbf{ServerClientHandler.ClientHandler implements Runnable}
+\begin{itemize}
+\item (NEW) \texttt{KVServer kvServer}: necessary reference to the KVServer this client wants to use.
+\item The following three methods encapsulate if-else, try-catch, and spec logic for handling GET, PUT and DEL requests, respectively.
+\subitem \texttt{void handleGet(String, String, String)}
+\subitem \texttt{void handlePut(String, String, String)}
+\subitem \texttt{void handleDel(String, String, String)}
+\end{itemize}
+\subsection{Descriptions}
+Changes are noted as comments to the right.
+\begin{verbatim}
+class ThreadPool:
+    def ThreadPool(size):
+        threads = new Thread[size]
+        jobQueue = new LinkedList();
+        set each element to new WorkerThread(this)
+        calls start() for each WorkerThread
+
+    def synchronized addJob(runnable):
+        if runnable is null: return
+        jobQueue.enqueue(runnable)
+        notify()
+
+    def synchronized getJob():
+        while jobQueue is empty:                        // changed if to while
+            wait()
+        return jobQueue.dequeue()
+
+    class WorkerThread(Thread):
+        def run():
+            while True:
+                try:
+                    job = threadPool.getJob()
+                    if job is not null:
+                        job.run()
+                        threadPool.finishJob()          // testing method only
+                catch InterruptedException e:
+                    pass                                // moved try-catch-ignore
+                                                        // from getJob()
+
+class SocketServer:
+    def connect():
+        try:
+            server = new ServerSocket(port)             // bind port in constructor
+            server.setSoTimeout(TIMEOUT)
+            port = server.getLocalPort()
+        catch Exception e:
+            throw new IOException(ERROR_COULD_NOT_CREATE_SOCKET)
+
+    def start():
+        while not stopped:
+            try:
+                clientSock = server.accept()
+                clientSock.setSoTimeout(TIMEOUT)
+            catch SocketTimeoutException e:             // necessary with Java API
+                continue                                // guarantee TIMEOUT close
+            catch Exception e:
+                throw new IOException(ERROR_COULD_NOT_CONNECT)
+            if stopped: break                           // guarantee TIMEOUT close
+            handler.handle(clientSock)
+        try:
+            server.close()
+        catch IOException e:
+            pass
+
+class ServerClientHandler(NetworkHandler):
+    def ServerClientHandler(kvServer, connections):
+        kvServer = kvServer
+        threadPool = new ThreadPool(connections)
+
+    def handle(clientSock):
+        try:
+            job = new ClientHandler(clientSock)
+            job.kvServer = kvServer                     // necessary reference
+            threadPool.addJob(job)
+        catch InterruptedException e:
+            pass
+
+    class ClientHandler(Runnable):                      // general code refactoring
+        def run():                                      // no major changes
+            try:
+                request = new KVMessage(client, client.getSoTimeout())
+                key, val, msg = request.getKey(), ...getValue(), ...getMessage()
+                switch request.getMsgType():
+                    case GET_REQ: response = handleGet(key, val, msg); break
+                    case PUT_REQ: response = handlePut(key, val, msg); break
+                    case DEL_REQ: response = handleDel(key, val, msg); break
+                    default:      response = new KVMessage(RESP, ERROR_INVALID_FORMAT)
+            catch KVException e:
+                response = e.getKVMessage()
+            catch SocketException e:                    // necessary with Java API
+                response = new KVMessage(RESP, ERROR_COULD_NOT_RECEIVE_DATA)
+            try:
+                response.sendMessage(client)
+            catch KVException e:
+                pass
+
+        def handleGet(key, value, message):
+            response = new KVMessage(RESP)
+            value = kvServer.get(key)
+            response.setKey(key)
+            response.setValue(value)
+            return response
+
+        def handlePut(key, value, message):
+            response = new KVMessage(RESP)
+            kvServer.put(key, value)
+            response.setMessage(SUCCESS)
+            return response
+
+        def handleDel(key, value, message):
+            response = new KVMessage(RESP)
+            kvServer.del(key)
+            response.setMessage(SUCCESS)
+            return response
+\end{verbatim}
+\subsection{Testing Plan}
+All tests of class $X$ are located in class $X$Test in the \texttt{test} package. \\\\
+\textbf{ThreadPoolTest} \\\\
+This test involves seeing if multiple threads in a ThreadPool can concurrently compute and synchronously write Fibonnaci numbers to a shared array. The number of jobs added is three times the SIZE field, and each thread is responsible for computing and writing a certain, non-overlapping set of FIbonnaci numbers. \\\\
+We tested zero, low, medium and high thread-to-job ratios and determined whether or not the shared array in the end had all of the correct answers. We also tested adding the jobs to the queue in chunks while the threads were computing to test proper blocking while the queue was empty and concurrency of all threads. \\\\
+\textbf{SocketServerTest} \\\\
+This is a unit test that first tests for correctness under certain edge cases and then tests correct functionality by mocking a NetworkHandler. The tests can be run in any order but we describe them here by the order in which they appear in the code. \\\\
+\texttt{testArgs()} makes sure trying to bind a ServerSocket fails when using invalid ports, non-ephemeral ports, and the same host/port pair twice. It also makes sure binding a ServerSocket with proper host/ephemeral-port pairs works. \\\\
+\texttt{testStopBeforeStart()} makes sure a SocketServer that is stopped doesn't accept any connections when start() is called, and also that if connect() is called again it doesn't recognize the Socket instances that connected to it before stop() was called. \\\\
+\texttt{testHandler()} uses a Mockito-mocked NetworkHandler to test the right behavior of the SocketServer. We run the server, wait for a while and stop, then make sure the handler's handle() method was called a certain number of times, and of those times only a certain number of clients that connected to the right host and port were accepted. \\\\
+\textbf{ServerClientHandlerTest} \\\\
+This is more of an end-to-end test that relies on all the other parts of the project. A KVServer, SocketServer, ServerClientHandler, and several clients are all initialized. Each client does the following sequence and determines whether or not the result it gets is correct (oskey: oversized key; lkey: large but valid key):
+\begin{itemize}
+\item get(null)
+\item get("")
+\item get(oskey)
+\item get(lkey)
+\item put(null, null)
+\item put("word", null)
+\item put("", word)
+\item put("word", "")
+\item put(oskey, osvalue)
+\item put(lkey, osvalue)
+\item put(lkey, lvalue)
+\item get(lkey)
+\item put(lkey, lkey)
+\item get(lkey)
+\item del(null)
+\item del("")
+\item del(oskey)
+\item del(lkey)
+\item get(lkey)
+\item del(lkey)
+\end{itemize}

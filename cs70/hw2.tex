@@ -1,0 +1,192 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{amsmath,amssymb}
+\def\title{HW 2, Manohar Jois}
+\begin{document}
+\maketitle
+
+\section*{Due Monday September 16th}
+
+\begin{enumerate}
+
+\item {\bf Well ordering principle:}\\
+Recast the induction proof in question 4, HW1, as a proof using the well ordering principle. 
+
+{\bf Base Case:} When there are $n=0$ lines the plane is divided into $\frac {0(0+1)}2 + 1 \leq 1$ regions.
+
+Assume our claim is false in general and $\exists k \in \mathbb{N}\, s.t.\, k$ is the smallest number of lines where the plane is divided into $R(k) > \frac {k(k+1)}2 + 1$ regions. We take away the $k^\text{th}$ line which intersects at most $k-1$ lines. Between each line is 2 regions so the $k^\text{th}$ line is what split $k$ regions into $2k$ regions. By taking away the $k^\text{th}$ line we therefore remove $k$ regions. \\
+$R(k-1) > \frac {k(k+1)}2 + 1 - k = \frac {k(k-1)}2 + 1$, which contradicts our statement that $n=k$ was the smallest value to invalidate our claim. Because our base case is true, our claim is therefore true.
+
+\newpage
+\item {\bf You be the judge:}\\
+Identify the precise flaw in the proof by induction below. Is the actual statement being proved correct? If so give a valid proof. If not provide a counterexample. 
+
+Claim: Given a set of $n \geq 2$ airports such that each airport is connected by flights to at least one other airport (assume the flights go in both directions), 
+then for any pair of airports $A$ and $B$, it is possible to take a sequence of flights to get from one to the other. 
+
+Proof: By induction on $n$. 
+
+Base case: $n = 2$ is trivially true. 
+
+Induction Hypothesis: Assume that the claim is true for some value of $n \geq 2$. 
+
+Induction Step: Consider any set of $n$ airports such that each airport is connected by flights to at least one other airport.
+By the induction hypothesis, for any pair of airports $A$ and $B$ in this set it is possible to take a sequence of flights to get from $A$ to $B$. Now add one more airport $X$ to this set. It remains to show that it is possible to get from $X$ to each of the $n$ airports by a 
+sequence of flights. We know that there is at least one airport to which there are flights from $X$. Call it $Y$. We also know
+from the discussion above that we can get from $Y$ to any other airport $Z$ by a sequence of flights. It follows that we can 
+also get from $X$ to $Z$, by first taking the flight from $X$ to $Y$ and then the sequence of flights from $Y$ to $Z$. $\spadesuit$
+
+There is a build-up error where the proof assumes the only way to construct the $(n+1)^\text{th}$ set is by adding a new connection, when in fact it's possible to take a connection away from an existing pair of airports (such that those 2 airports are still connected to at least one other airport each) to use in connecting the new airport to the previous set. $P(n+1)$ is thus possible without $P(n)$ necessarily being true, so the induction doesn't hold.
+
+The claim itself is not true, as illustrated by the following counterexample: Consider the set of airports $\{A,B,C,D\}$ where $(A,B)$ are connected and $(C,D)$ are connected. Each airport is connected to at least one other airport, but it is not possible, for example, to fly from airport $A$ to airport $D$.
+
+\newpage
+\item {\bf Stable Marriage:}\\
+In class, we've seen an algorithm that produces a stable pairing between men and women given their preferences don't allow for any ties.  Consider another scenario in which we do allow for ties.  i.e. There may be several partners that are equally preferred by a person.  As an example consider the scenario in which the women are indifferent amongst the men:
+\begin{center}
+\begin{minipage}{2in}
+    \begin{tabular}{|c|c|}
+      \hline
+          \mbox{Men} & \mbox{Women} \\ \hline
+      1 & A \hspace{0.2cm}$>$\hspace{0.2cm} B \\ \hline
+      2 & B \hspace{0.2cm}$>$\hspace{0.2cm} A \\ \hline
+    \end{tabular}
+\end{minipage}
+\begin{minipage}{2in}
+    \begin{tabular}{|c|c|}
+      \hline
+          \mbox{Women} & \mbox{Men} \\ \hline
+      A & 1 \hspace{0.2cm}=\hspace{0.2cm}  2  \\ \hline
+      B & 1 \hspace{0.2cm}=\hspace{0.2cm}  2 \\ \hline
+    \end{tabular}
+\end{minipage}
+\end{center}
+In this kind of scenario the definition of a stable pairing is no longer obvious.  Consider the following definitions for stability criteria: 
+\begin{enumerate}
+\item As in the original problem, define a {\it rogue couple} to be a man and a woman who prefer each other than their partners in the pairing. We say a pairing is {\it stable} if it has no rogue couple.  This definition would mean that both the pairing $(A,2), (B,1)$ and the pairing $(A,1), (B,2)$ would be considered stable in the example above.  In the presence of ties, is there an algorithm that always yields a stable pairing?  If so, prove it.  If not, provide a counter example.
+
+{\bf Algorithm:} Have men propose to women as they do in the regular stable marriage algorithm with ties going before those who are outright less preferred. Women should only reject men if they receive a proposal from a man they outright prefer, except for possibly on the first day.
+
+{\bf Proof:} Let's say after the algorithm is run there is a couple $(M,W)$ such that $M$ prefers outright a woman $W^*$ to $W$. This means $M$ proposed to $W^*$ before proposing to $W$. The only way $W^*$ could have possibly rejected $M$ for her eventual partner $M^*$ is if she 1) outright preferred $M^*$ to $M$ on any day, or 2) she equally preferred $M^*$ to $M$ on the first day of the algorithm's run. In neither case does $W^*$ outright prefer $M$ to her current partner, so the algorithm does not produce rogue couples and is thus stable.
+
+\item Let us define a {\it somewhat rogue couple} to be a man and a women such that the man prefers the woman to his present partner and the woman is indifferent between her present partner and the man or vice versa.  Now we can define an {\it extremely stable pairing} to be one in which there are no {\it somewhat rogue couples}.  e.g. $(A,2), (B,1)$ Is not a stable marriage despite the fact that both $A$ and $B$ do not prefer a different partner to themselves.  In this case, $(A,1), (B,2)$ is the only {\it extremely stable pairing}.  Is there always an {\it extremely stable pairing}?  If so, prove it.  If not, give a counter example.
+
+Consider the following counterexample:
+\begin{center}
+\begin{minipage}{2in}
+    \begin{tabular}{|c|c|}
+      \hline
+          \mbox{Men} & \mbox{Women} \\ \hline
+      1 & A \hspace{0.2cm}$>$\hspace{0.2cm} B \\ \hline
+      2 & A \hspace{0.2cm}$>$\hspace{0.2cm} B \\ \hline
+    \end{tabular}
+\end{minipage}
+\begin{minipage}{2in}
+    \begin{tabular}{|c|c|}
+      \hline
+          \mbox{Women} & \mbox{Men} \\ \hline
+      A & 1 \hspace{0.2cm}=\hspace{0.2cm}  2  \\ \hline
+      B & 1 \hspace{0.2cm}=\hspace{0.2cm}  2 \\ \hline
+    \end{tabular}
+\end{minipage}
+\end{center}
+There are only 2 stable pairings: $\{(A,1),(B,2)\}\text{ and }\{(A,2),(B,1)\}$. In either case, one man prefers outright the woman he's not paired with while the women are indifferent towards both men. Thus there are no extremely stable pairings and for any given set of preferences there may not necessarily be an extremely stable pairing.
+\end{enumerate}
+
+\newpage
+\item {\bf True or False:}\\
+For each of the following statements, indicate whether the statement is True or False and justify your answer with a short 2-3 line explanation:
+\begin{enumerate}
+\item ({\bf True}/False) In a stable marriage algorithm execution which takes n days, there is a woman who did not receive a proposal on the $n-1$th day. \\
+There must have been at least 1 man rejected on the $(n-1)^\text{th}$ day for the algorithm to terminate on the $n^\text{th}$ day. This means at least 1 woman received more than 1 proposal on that day. For this to happen in a set of $n$ men proposing exactly once each to one in a set of $n$ women, there must have been at least 1 woman who did not receive a proposal that day.
+\item ({\bf True}/False) In a stable marriage algorithm execution if a woman receives a proposal on day $n$, she receives a proposal on every subsequent day until termination \\
+Let's reserve the role of P to be the man that will propose to this woman on the next day. If man A proposes to the woman on day $n$, he takes the role of P. On the next day, the woman can either 1) keep A "on a string," in which case A retains his role of P, or 2) she rejects A's proposal for B's offer, in which case B takes the role of P. Clearly every subsequent day until termination some man will propose and take the role of P for this particular woman.
+\item (True/{\bf False}) In a stable marriage algorithm execution, given $n$ men and $n$ women, there is a set of preferences, such that algorithm gives every man his least preferred woman. \\
+For this to happen, every possible unique proposal between any man M and woman W must have been made. Every woman must have been proposed to by every man. We know from (4a) that on day $i-1$ (assuming the algorithm terminates on day $i$), at least one woman didn't receive a proposal and from (4e) we know that this woman didn't receive any prior proposals either. So for the algorithm to terminate on day $i$ this woman must have received exactly 1 proposal in total, and it was on day $i$. For any $n > 1$ pairs of men and women we have just contradicted ourselves, so the claim is false.
+\item ({\bf True}/False) In a stable marriage algorithm execution, given $n$ men and $n$ women, there is a set of preferences, such that algorithm gives every woman her least preferred man. \\
+{\bf Example:} \begin{center}
+\begin{minipage}{2in}
+    \begin{tabular}{|c|c|}
+      \hline
+          \mbox{Men} & \mbox{Women} \\ \hline
+      1 & A \hspace{0.2cm}$>$\hspace{0.2cm} B \\ \hline
+      2 & B \hspace{0.2cm}$>$\hspace{0.2cm} A \\ \hline
+    \end{tabular}
+\end{minipage}
+\begin{minipage}{2in}
+    \begin{tabular}{|c|c|}
+      \hline
+          \mbox{Women} & \mbox{Men} \\ \hline
+      A & 2 \hspace{0.2cm}$>$\hspace{0.2cm}  1  \\ \hline
+      B & 1 \hspace{0.2cm}$>$\hspace{0.2cm}  2 \\ \hline
+    \end{tabular}
+\end{minipage}
+\end{center}
+More generally this occurs when the first woman on each man's list is different (the algorithm terminates on the first day) and each of the women who are first on a list have that corresponding man as their least preferred.
+\item ({\bf True}/False) In a stable marriage algorithm execution, if woman $W$ receives no proposal on day $i$, then she receives no proposal on any previous day $j$ which is less than $i$. \\
+Let day $n$ be the first day on which at least one man approaches $W$. Then she must keep one of the men who approach her "on a string" and will thus receive a proposal on day $n+1$ and every day after that until termination (by our proof in part (b)). By contrapositive, if she doesn't receive a proposal on a day $i$, then no one approached or proposed to her on day $i-1$, and by induction she didn't receive a proposal on day $i-2$, $i-3$ or on any day $j < i$.
+
+\end{enumerate}
+
+\newpage
+\item {\bf Remainders:}
+\begin{enumerate}
+\item What is the remainder when you divide 15 by 7? \\
+$15 \% 7 = {\bf 1}$
+\item What is the remainder when you divide 25 by 7? \\
+$25 \% 7 = {\bf 4}$
+\item What is the remainder when you divide $15 + 25$ by $7$? How does it compare to the sum of the remainders in the first two parts? \\
+$(15+25)\%7 = {\bf 5} = ((15\%7)+(25\%7))\%7$
+\item What is the remainder when you divide $15 \times 25$ by $7$? How does it compare to the product of the remainders in the first two parts? \\
+$(15 \cdot 25) \% 7 = {\bf 4} = (25(15\%7))\%7 = (15(25\%7))\%7$
+\end{enumerate}
+
+\newpage
+\item {\bf Running time:}\\
+In your online homework you ran the stable marriage algorithm on the following example (or small variant):
+
+Men's preference list:
+\begin{center}
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+$1$     & $A$     & $B$ & $C$ & $D$ \\ 
+\hline 
+$2$     & $B$     & $C$ & $A$ & $D$ \\
+\hline
+$3$     & $C$     & $A$ & $B$ & $D$ \\
+\hline
+$1$     & $A$     & $B$ & $C$ & $D$ \\ 
+\hline
+\end{tabular}
+\end{center}
+
+Women's preference list:
+\begin{center}
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+$A$     & $2$     & $3$ & $4$ & $1$ \\ 
+\hline 
+$B$     & $3$     & $4$ & $1$ & $2$ \\
+\hline
+$C$     & $4$     & $1$ & $2$ & $3$ \\
+\hline
+$D$     & $1$     & $2$ & $3$ & $4$ \\ 
+\hline
+\end{tabular}
+\end{center}
+
+\begin{enumerate}
+\item Show that the total number of proposals when a stable marriage algorithm is run on an instance of n women and n men, is at most $n(n-1)+1$. This shows that the above example is the worst possible instance for $n=4$. 
+
+We prove the claim by induction on $n$, the number of men (and women).
+
+{\bf Base Case:} For $n=1$ we have $1 \leq 1(1-1)+1 = 1$ proposal.
+
+{\bf Inductive Hypothesis:} Assume the number of proposals $P(n) \leq n(n-1)+1$
+
+{\bf Inductive Step:} By adding an $(n+1)^\text{th}$ man and woman we must count an extra possible $n+1$ proposals for the new man and an extra possible $n$ proposals that the new woman may receive from the men of the previous set. However from (4c) we know that it's not possible for every theoretically unique proposal to be made, so at least 1 man doesn't propose to the last woman on his list. Therefore the number of extra possible proposals we must consider is $(n+1)+n-1 = 2n$. It follows that $P(n+1) \leq n(n-1)+1+2n = n(n+1)+1$, so the claim is true.
+
+\end{enumerate}
+
+\end{enumerate}
+\end{document}

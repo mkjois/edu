@@ -1,0 +1,163 @@
+\section{System calls: creat(), open(), read(), write(), close(), unlink()}
+\subsection{Overview}
+These six system functions allow the user to access files and streams in their programs safely and without risking failure of the operating system. No syscall, combination of syscalls, or combination of arguments to syscalls should be able to corrupt or crash the kernel, except the \textit{root} (first) process possibly calling \texttt{halt()}. We deal only with virtual addresses, so we must make use of the methods to read/write virtual memory to interface with the underlying file system. Each process references a file/stream using a recyclable integer called a \textit{file descriptor} from 0-15, and separate sets of file descriptors are given to each process.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item When initialized, file descriptors 0 and 1 for all processes refer to standard input and output, respectively. A user can close them at any time, but may not reopen them.
+\item \texttt{halt()} can only execute for the root process, otherwise return -1 immediately.
+\item Correctness constraints for the system calls:
+\begin{itemize}
+\item \texttt{creat()} -- Open a disk file (never a stream) by name, creating it if no such file exists, and return the file descriptor. If called multiple times, simply open the file. If user process already has 16 valid file descriptors, or file system couldn't open the file, return -1.
+\item \texttt{open()} -- Open a disk file (never a stream) by name. If called multiple times, return a new file descriptor for each call. If file system couldn't open the file, return -1.
+\item \texttt{read()} -- Read bytes from an open file/stream and return the number of bytes immediately read, advancing the file pointer position by this number. If the file descriptor is invalid for this process, reading from file fatally errs, or writing to virtual memory fatally errs, return -1. 
+\item \texttt{write()} -- Write bytes to an open file/stream and return the number of bytes successfully written, advancing the file pointer position by this number. If less than the number of bytes requested to be written, this is an error the user must deal with. If the file descriptor is invalid, writing to the file fatally errs, or reading from virtual memory fatally errs, return -1.
+\item \texttt{close()} -- Invalidate a file descriptor, flush any data written to the associated file/stream, and release its resources. If an invalid file descriptor or other error, return -1.
+\item \texttt{unlink()} -- Signal the internal file system to delete the file, while also invalidating the file descriptor for this process. Other processes also cannot use this file except to call close() on its file descriptor. If an error occured within the file system, return -1.
+\end{itemize}
+\item Any combination of syscalls (valid 0-9 or invalid) and/or arguments to the syscalls must result in the correct behavior as specified above with a valid return value, a -1 for an error, or the termination of the process and the deallocation of its resources.
+\end{itemize}
+\subsection{Declarations}
+\large
+***No significant changes.***\\\\
+\normalsize
+\textbf{UserProcess:}
+\begin{itemize}
+\item \texttt{OpenFile[] files} -- Set of open files for this process, indexed by file descriptor. Invalid file descriptors correspond to null entries.
+\item \texttt{LinkedList<int> descriptors} -- Queue of available file descriptors. Dequeue to get one for a new file in creat() and enqueue an invalidated one in close().
+\item \texttt{boolean bogusArguments(pointer, fileDesc, count)} -- Returns true if pointer < 0, fileDesc not in [0,15], or count < 0
+\item Syscalls will be handled internally using \texttt{handle<Syscall>()} methods.
+\item \texttt{void kill()} -- Defined in section 3.
+\end{itemize}
+\subsection{Descriptions}
+\large
+***No significant changes.***
+\normalsize
+\begin{verbatim}
+class UserProcess:
+    def UserProcess():
+        // in addition to current constructor code
+        files = new OpenFile[16]
+        descriptors = empty Java linked list of integers
+        enqueue 2-15 into descriptors, in that order
+        assign files[0] to UserKernel.console.openForReading()
+        assign files[1] to UserKernel.console.openForWriting()
+
+    def handleSyscall(syscall, a0, a1, a2, a3):
+        switch syscall:
+            call handlers based on syscall with arguments in same order
+            default:
+                kill() this process
+
+    def handleCreat(nameAddr):
+        return handleCreateOrOpen(nameAddr, true)
+
+    def handleOpen(nameAddr):
+        return handleCreateOrOpen(nameAddr, false)
+
+    def handleCreateOrOpen(nameAddr, create): // create is a boolean
+        if bogusArguments(nameAddr, 0, 0): return -1
+        if descriptors is empty: return -1
+        name = readVirtualMemoryString(nameAddr, 256)
+        if name is null: return -1
+        newFile = ThreadedKernel.fileSystem.open(name, create)
+        if newFile is null: return -1
+        newDescriptor = descriptors.dequeue()
+        assert files[newDescriptor] is null
+        files[newDescriptor] = newFile
+        return newDescriptor
+
+    def handleRead(fileDesc, buffAddr, count):
+        if bogusArguments(buffAddr, fileDesc, count): return -1
+        if files[fileDesc] is null: return -1
+        buffer = new byte[count]
+        bytesReadFromFile = files[fileDesc].read(buffer, 0, count)
+        if bytesReadFromFile == -1: return -1
+        bytesWrittenToMem = writeVirtualMemory(buffAddr, buffer, 0, bytesReadFromFile)
+        if bytesWrittenToMem < bytesReadFromFile: return -1
+        else return bytesReadFromFile
+    
+    def handleWrite(fileDesc, buffAddr, count):
+        if bogusArguments(buffAddr, fileDesc, count): return -1
+        if files[fileDesc] is null: return -1
+        buffer = new byte[count]
+        bytesReadFromMem = readVirtualMemory(buffAddr, buffer)
+        if bytesReadFromMem < count: return -1
+        bytesWrittenToFile = files[fileDesc].write(buffer, 0, count)
+        if bytesWrittenToFile == -1: return -1
+        else return bytesWrittenToFile
+
+    def handleClose(fileDesc):
+        if bogusArguments(0, fileDesc, 0): return -1
+        if files[fileDesc] is null: return -1
+        files[fileDesc].close()
+        set files[fileDesc] to null
+        enqueue fileDesc into descriptors
+        return 0
+
+    def handleUnlink(nameAddr):
+        if bogusArguments(nameAddr, 0, 0): return -1
+        name = readVirtualMemoryString(nameAddr, 256)
+        if name is null: return -1
+        if ThreadedKernel.fileSystem.remove(name) fails: return -1
+        else return 0
+
+    def handleHalt():
+        if current process is root: Machine.halt()
+        else return -1
+
+    def bogusArguments(pointer, fileDesc, count):
+        return (pointer < 0 or count < 0 or
+                fileDesc < 0 or fileDesc > 15)
+\end{verbatim}
+\subsection{Testing Plan}
+We used 5 test programs written in C and compiled to MIPS using a cross compiler. These tests are mostly of the glass box variety while also testing to bulletproof the kernel against any user input, whether unintentionally bad or intentionally malicious. All tests are in the \texttt{test} directory.
+\begin{itemize}
+\item \texttt{p1t1.c} tests... \begin{itemize}
+\item correct creat() functionality.
+\item open() on nonexistent file.
+\item reading from stdin.
+\item writing to a file.
+\end{itemize}
+\item \texttt{p1t2.c} tests... \begin{itemize}
+\item correct open() functionality.
+\item reading from a file.
+\item writing to stdout.
+\end{itemize}
+\item \texttt{p1t3.c} tests... \begin{itemize}
+\item reading from one file and writing read data to another.
+\item correct close() functionality.
+\item correct unlink() functionality.
+\item calling close() after unlink().
+\end{itemize}
+\item \texttt{bullets1.c} tests... \begin{itemize}
+\item creat() on a file name $<=$ 256 characters.
+\item creat() on a file name of 257 characters.
+\item creat() on an invalid (negative) pointer.
+\item if creat() returns file descriptors up to 15.
+\item that successive calls to creat() return -1.
+\item close() on invalid file descriptors.
+\item unlink() on nonexistent files.
+\item unlink() on a file name $<=$ 256 characters.
+\item unlink() on a file name of 257 characters.
+\item unlink() on an invalid (negative) pointer.
+\end{itemize}
+\item \texttt{bullets2.c} tests... \begin{itemize}
+\item reading more from stdin than given buffer can hold.
+\item writing more to stdout than given buffer contained.
+\item reading from stdout.
+\item writing to stdin.
+\item reading negative bytes from a file.
+\item writing negative bytes to a file.
+\item reading to a nonexistent file.
+\item writing to a nonexistent file.
+\item reading from a file and writing data to another file in blocks, using a while loop.
+\item reading from a closed file.
+\item writing to closed file.
+\item open() on a file already opened.
+\item open() on an unlinked file.
+\item creat() on an unlinked file.
+\item reading second version of file using a file descriptor for the first version.
+\item reading with an invalid file descriptor.
+\item writing with an invalid file descriptor.
+\end{itemize}
+\end{itemize}

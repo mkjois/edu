@@ -1,0 +1,90 @@
+\section{TPCMasterHandler}
+\subsection{Overview}
+We implement here the handler that provides multithreaded access to a slave KVServer using two-phase commit. It manages a thread pool used to handle multiple requests concurrently.
+\subsection{Correctness Constraints}
+\begin{itemize}
+\item Must keep a log of all committed values as soon as they are commited.
+\item Must handle requests concurrently using a thread pool.
+\item Must not commit until commit decision is received.
+\item Must commit if commit decision is received.
+\item Must not commit if abort decision is reveived.
+\end{itemize}
+\subsection{Declarations}
+\begin{itemize}
+\item{\ttfamily private static final int MAX\_KEY} - Max key size (256)
+\item{\ttfamily private static final int MAX\_VAL} - Max value size (256 * 1024)
+\end{itemize}
+\subsection{Descriptions}
+\begin{verbatim}
+handle(master):
+    handler = new MasterHandler(master)
+    threadPool.addJob(handler)
+
+run():
+    m = new KVMessage(master)
+    if m.type == "getreq":
+        try:
+            val = kvServer.get(m.key)
+            r = new KVMessage("resp")
+            r.key = m.key
+            r.val = val
+        catch KVException e:
+            r = new KVMessage("abort", e)
+        r.send(master)
+    elif m.type == "putreq":
+        if not m.key or not m.value:
+            r = new KVMessage("abort", ERROR_INVALID_FORMAT)
+        if m.key == "":
+            r = new KVMessage("abort", ERROR_INVALID_KEY)
+        elif m.value == "":
+            r = new KVMessage("abort", ERROR_INVALID_VALUE)
+        elif len(m.key) > MAX_KEY:
+            r = new KVMessage("abort", ERROR_OVERSIZED_KEY)
+        elif len(m.value) > MAX_VAL:
+            r = new KVMessage("abort", ERROR_OVERSIZED_VALUE)
+        else:
+            r = new KVMessage("ready")
+        r.send(master)
+        resend = true
+        while resend:
+            m2 = new KVMessage(master)
+            if m2.type == "commit":
+                resend = false
+                r = new KVMessage("ack")
+                kvServer.put(m.key, m.value)
+                kvLog.appendAndFlush(m)
+                r.send(master)
+            elif m2.type == "abort":
+                resend = false
+                r = new KVMessage("ack")
+                r.send(master)
+    elif m.type == "delreq":
+        m = new KVMessage(master)
+        if not m.key:
+            r = new KVMessage("abort", ERROR_INVALID_FORMAT)
+        elif not kvServer.hasKey(m.key):
+            r = new KVMessage("abort", ERROR_NO_SUCH_KEY)
+        else:
+            r = new KVMessage("ready")
+        r.send(master)
+        resend = true
+        while resend:
+            m2 = new KVMessage(master)
+            if m2.type == "commit":
+                resend = false
+                r = new KVMessage("ack")
+                kvServer.del(m)
+                kvLog.appendAndFlush(m)
+                r.send(master)
+            elif m2.type == "abort":
+                resend = false
+                r = new KVMessage("ack")
+                r.send(master)
+    else:
+        pass
+\end{verbatim}
+\subsection{Testing Plan}
+\begin{itemize}
+\item As a sanity check and end-to-end test, we simply add and remove selected keys, getting values to make sure the store works properly in the case that nothing fails.
+\item We unit test the TPCMasterHandler, checking to make sure it behaves correctly with different types of commits, votes abort when it should, and has correct values after various messages resulting in commits or aborts.
+\end{itemize}

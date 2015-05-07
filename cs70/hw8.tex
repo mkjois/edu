@@ -1,0 +1,216 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{cs70,latexsym,epsf}
+\usepackage{rotating}
+\usepackage[ruled,vlined]{algorithm2e}
+\lecture{8}
+\def\title{HW \the\lecturenumber, Manohar Jois}
+\begin{document}
+\maketitle
+\section*{Due Monday October 28 at 5 pm}
+
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+%\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+%\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+%\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+%\usepackage{amsmath, amsfonts}
+%\usepackage{booktabs} % for much better looking tables
+%\usepackage{array} % for better arrays (eg matrices) in maths
+%\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+%\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+%\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+%\pagestyle{fancy} % options: empty , plain , fancy
+%\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{}
+%\lfoot{}\cfoot{\thepage}\rfoot{}
+
+\iffalse
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+%%% END Article customizations
+\fi
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+
+%%% The "real" document content comes below...
+
+%\title{Homework \#1}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+%\begin{document}
+%\maketitle 
+
+\begin{enumerate}
+\item \textbf{Dice or Coins?}
+Suppose that you are offered some bonus points to make up for the grade lost so far in CS 70. But you first have to play and win in a game of chance. You have two options.
+
+In one of them, you throw three coins and win the game if two consecutive throws result in heads. In the other game, you throw two (six-sided) dice and win the game if the numbers that show up differ by no more than 1.
+
+\begin{enumerate}
+\item Which game would you play and why? What is the probability of winning in each of the two games? \\
+-----------------\\
+In the coin game, there are $2^3=8$ possible outcomes, out of which only 3 outcomes  have the desired result: $\{H,H,T\},\{T,H,H\},\{H,H,H\}$. So P(win) $= 3/8$. \\\\
+In the dice game, there are $6^2=36$ possible outcomes. If one of the dice is a 1 or 6, only 2 out of the six possibilities for the second die produce a win. Otherwise, 3 out of the six possibilities for the second die produce a win (if the first is 2, 3, 4, or 5). \\\\
+So P(win) $= (2*2+4*3)/36 = 16/36 = 4/9 > 3/8$, so we should play the dice game.
+\item Now suppose that a third game which is a hybrid of coin and dice throwing. In this new game, you first throw three coins. If you throw two consecutive heads you win the game. If you throw less than two heads you lose the game. But if you throw two non-consecutive heads you advance to the next round and play the dice game, and that will determine whether you win or lose.
+What is the probability of winning now? Do you prefer playing this to your answer in the previous part? \\
+-----------------\\
+There is only one way out of 8 we can get two non-consecutive heads: $\{H,T,H\}$. \\\\
+Now P(win) $= 3/8 + (1/8)(4/9) = 31/72 < 32/72 = 4/9$, so we should still play just the dice game.
+\end{enumerate}
+
+\newpage
+\item \textbf{Options} There are $4$ cards numbered $1, 2, 3, 4$. You and I both draw one card from the deck uniformly at random. Then we reveal our cards and the person with the higher number wins.
+\begin{enumerate}
+\item What is the probability that I win this game? \\
+-----------------\\
+Both you and I have equal chance of selecting any card (the game is balanced), and clearly there can be no ties. So P(you win) $=1/2$.
+\item Now suppose that I tell you my card is not number $4$, and then I give you the chance to put back your card in the deck of cards, shuffle them, and redraw one card at random from the deck (which now has three cards). You can see your card before deciding whether you want to do this. For which numbers should you redraw your card? \\
+-----------------\\
+Let "Case X" denote the case where I have the card numbered X. \\\\
+\textbf{Case 1}: The probability that I win with the 1 card is zero, since you cannot possibly have a lower card. Redrawing clearly produces a higher probability of winning. \\
+\textbf{Case 2}: The probability that I win with the 2 card is $1/2$, since I win if you have the 1 and not the 3. \\
+    P(win) = P(you have 1)*P(draw any out of 2,3,4) + P(you have 3)*P(draw 4 out of 1,2,4) \\
+    $\qquad = (1/2)(1) + (1/2)(1/3) = 2/3 > 1/2$ \\
+\textbf{Case 3}: The probability that I win with the 3 card is 1, since you don't have the 4 and thus can't win. \\
+\textbf{Case 4}: The probability that I win with the 4 card is 1, since you cannot possibly have a higher card. \\\\
+I should redraw when I have a 1 or 2, since redrawing produces a higher probability of winning than does keeping that card. 
+\end{enumerate}
+
+\newpage
+\item \textbf{Study Party} You have a study group for CS 70. You typically meet in one of the library rooms which has a round table with 10 seats around it. You want to introduce one of your shy friends to the study group. But since he is shy, you want him to sit next to you. On the other hand, you don't want to make your shy friend anxious by asking others to move around and empty seats for you two.
+
+\begin{enumerate}
+\item Before you go to the library you text one of the people in the study group and she tells you there are already 7 people there. Assuming that people choose seats uniformly at random (i.e. every arrangement is equally likely), what is the probability that there are two empty seats left for you and your shy friend? \\
+-----------------\\
+There is no difference between the 7 people picking their seats randomly and picking the 3 empty seats randomly. So we can reduce the problem to finding the probability of finding at least 2 empty seats in a row when we distribute 3 empty seats randomly among 10 seats in a circle. Call the empty seats A, B, and C, placed in that order. We first attempt to find the probability that no two seats are placed in a row. \\\\
+We can choose any location for A, then the probability that B isn't placed next to A is $\frac79$. Given this, if B is placed 2 spots away from A (probability $\frac27$), then we have 5 of the remaining 8 spots to place C. If B is placed more than 2 spots away from A (probability $\frac57$), then we have 4 of the remaining 8 spots to place C. \\\\
+Thus the probability of finding at least 2 seats in a row is: \\
+$1 - \frac79(\frac27 \cdot \frac58 + \frac57 \cdot \frac48) = \frac7{12}$
+\item Now assume that you again text one of the people in the study group and she assures you that there are two empty seats next to each other. But she also tells you there is one more person coming to the study group. Assuming this extra person arrives before you and your shy friend, and that he also chooses a seat uniformly at random from the remaining seats, what is the probability that you will still find two empty seats next to each other when you arrive? \\
+-----------------\\
+Given that we have an instance of at least 2 empty seats in a row, there 2 possibilities: \\\\
+\textbf{Case 1}: There are 3 empty seats in a row. The extra person can choose 1 of these 3 seats, and only breaks the "2-in-a-row" condition if he chooses the middle one. So the probability of still having two empty seats in a row in this case is $2/3$. \\
+\textbf{Case 2}: There is a pair of empty seats along with a lone empty seat elsewhere: This time, the extra person breaks the condition if he chooses either seat in the pair. So the probability of still having two empty seats in a row in this case is $1/3$. \\\\
+Given that we have 2 empty seats in a row. The probability that the third empty seat is placed next to the pair is $2/8 = 1/4$, so P(Case 1 $|$ 2 empty in a row) = $1/4$ and P(Case 2 $|$ 2 empty in a row) = $3/4$. \\\\
+So the probability of still finding 2 empty seats in a row is $\frac14\cdot\frac23 + \frac34\cdot\frac13 = \frac5{12}$
+\newpage
+\item What if you were not assured that there are two empty seats next to each other before the extra person arrives? What would be the probability of finding two empty seats next to each other then? \\
+-----------------\\
+This is similar to part (a), except we 8 people picking their seats randomly. So we only have 2 empty seats to distribute, A and B, which must be adjacent. We can choose any location for A, then the probability that B is next to A is $\frac29$.
+\end{enumerate}
+
+\newpage
+\item \textbf{Source of Error} Alice, Bob, and Chandler are CS 70 GSIs. Assume that Alice has graded 20\% of the midterms, Bob has graded 30\% of the midterms and Chandler has graded 50\% of the midterms. We know that Alice is very accurate with her grading and has a 1\% chance of error in grading any given exam. Bob on the other hand grades while playing video games and therefore has a 5\% chance of error and Chandler's chance of making an error in grading for any given exam is 2\%. If a GSI's error in grading is found, he or she has to buy other GSIs pizza.
+
+Now a student has submitted a regrade request without even looking at his/her exam.
+
+\begin{enumerate}
+\item What is the probability that the regrade request is valid? \\
+-----------------\\
+Let $A, B, C$ denote the events of Alice, Bob, and Chandler grading a midterm, respectively, and $E$ denote the event of an error (a valid request).
+\begin{align*}
+P(E) &= P(A)P(E|A) + P(B)P(E|B) + P(C)P(E|C) \\
+&= 0.2(0.01) + 0.3(0.05) + 0.5(0.02) = 0.027
+\end{align*}
+\item Now assume that the professor looks over the regrade request and finds it to be valid. What is the probability that it is Alice who has to buy pizza? What about Bob, or Chandler? \\
+-----------------\\
+The probability of Alice grading given an error is: \\
+$\displaystyle P(A|E) = \frac{P(A \cap E)}{P(E)} = \frac{P(E|A)P(A)}{P(E)} = \frac{0.01(0.2)}{0.027} = 0.074$ \\\\
+Similarly, the probabilities of Bob and Chandler grading given an error are: \\
+$\displaystyle P(B|E) = \frac{P(E|B)P(B)}{P(E)} = \frac{0.05(0.3)}{0.027} = 0.555$ \\\\
+$\displaystyle P(C|E) = \frac{P(E|C)P(C)}{P(E)} = \frac{0.02(0.5)}{0.027} = 0.370$ \\\\
+\end{enumerate}
+
+\newpage
+\item \textbf{Balls in Bins} You are throwing $n$ balls into $m$ bins. For each ball, you choose one of the bins uniformly at random and throw the ball into that bin.
+
+\begin{enumerate}
+\item Compute the probability that the first $k$ bins are empty. \\
+-----------------\\
+This results when I throw a ball into one of the $m-k$ bins $n$ times. \\
+P(first $k$ empty) $=$ P(choose one of $m-k$ out of $m$ bins, $n$ times) $= (\frac{m-k}m)^n$
+\item Now given that the first $k$ bins are empty, what is the probability that bin $k+1$ is empty? Compute this using the formula $\Pr[A\mid B]=\frac{\Pr[A\cap B]}{\Pr[B]}$. \\
+-----------------\\
+Let A and B be the events where the first $k$ bins are empty and the first $k+1$ bins are empty, respectively. \\\\
+$\displaystyle P(B|A) = \frac{P(B \cap A)}{P(A)} = \frac{(\frac{m-k-1}m)^n}{(\frac{m-k}m)^n} = (1 - \frac1{m-k})^n$
+\item Now assume that you are throwing $n$ balls into $m-k$ bins. What is the probability that the first bin is empty? Is this the same as the probability you computed in the previous section? \\
+-----------------\\
+The probability of the first bin being empty when throwing $n$ balls into $m-k$ bins is the probability of throwing one ball into $m-k-1$ out of those $m-k$ bins, $n$ times: \\\\
+P(first empty) $= (\frac{m-k-1}{m-k})^n = (1-\frac1{m-k})^n$, which is the same as in part (b).
+\end{enumerate}
+
+\newpage
+\item \textbf{Pass or Fail} I want to determine whether I will pass CS 70. A wise man has told me if I do the following experiment I will figure out whether I will pass or not. He has given me a magic coin, which I assume is fair. That is every time I throw it the probability of seeing heads or tails is $\frac{1}{2}$. Now I am supposed to keep throwing the coin until I see heads come up. Then if the number of times I have thrown the coin (including the last time) is divisible by three I shall assume I will not pass, but otherwise I will pass.
+
+\begin{enumerate}
+\item What is the probability that I will pass CS 70? \\
+-----------------\\
+The probability of getting my first heads on the third flip is the probability of getting TTH, in that order, which is $(\frac12)^3$. The probability of getting it on the sixth flip is the probability of getting TTTTTH, in that order, which is $(\frac12)^6$. \\\\
+We can see that the probability of getting the first heads on the $n$-th flip is the probability of getting $T_1T_2 \ldots T_{n-1}H_n$, which is $(\frac12)^{n-1}\cdot(\frac12) = (\frac12)^n$. \\\\
+So the probability of not passing the class is the sum of the probabilities of getting the first heads on the $n$-th flip, where $n$ is divisible by 3: \\
+$\displaystyle \sum\limits_{i=1}^{\infty} (\frac12)^{3i} = \sum\limits_{i=1}^{\infty} (\frac18)^i = \frac1{1-\frac18}-1 = \frac17$ \\\\
+Thus the probability that I do pass CS 70 is $1-\frac17 = \frac67$
+\end{enumerate}
+
+\newpage
+\item \textbf{Extra Credit} Suppose that it has been observed that in the spring of 2013, the fraction of juniors passing CS 70 (out of all juniors taking the class) was higher than the fraction of sophomores passing (out of all sophomores taking the class). The same has been observed in Math 55, that is the fraction of juniors passing Math 55 was higher than the fraction of sophomores passing. Assume that no person was taking both classes at the same time.
+
+Is it necessarily true that the fraction of juniors passing either CS 70 or Math 55 (out of all juniors taking either class) was higher than the fraction of sophomores passing either class (out of all sophomores taking either class)? Either prove this formally, or provide a counterexample (which consists of the number of students taking each class and the number passing each class, broken up into sophomores and juniors). \\
+-----------------\\
+Let $P(J_{70})$ be the proportion of juniors passing CS 70, $P(J_{55})$ be the proportion of juniors passing Math 55, and $P(J_{\text{total}})$ be the proportion of juniors passing either class. Let $P(S_i)$ denote the same scenarios for sophomores. Consider the following counterexample:
+\begin{align*}
+P(J_{70}) &= \frac{10}{10} = 1 \\
+P(J_{55}) &= \frac{50}{100} = 0.5 \\
+P(J_{\text{total}}) &= \frac{60}{110} \\
+P(S_{70}) &= \frac{99}{100} = 0.99 \\
+P(S_{55}) &= \frac{4}{10} = 0.4 \\
+P(S_{\text{total}}) &= \frac{103}{110}
+\end{align*}
+where each numerator and denominator are counts of the number of students (i.e. numerator being the number passing, denominator being the number enrolled). \\\\
+All conditions are met, but still $P(S_{\text{total}}) > P(J_{\text{total}})$, so the above claim is not necessarily true.
+
+\end{enumerate}
+
+\end{document}

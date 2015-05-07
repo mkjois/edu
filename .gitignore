@@ -7,3 +7,5 @@
 .*.swo
 *.pyc
 *.class
+*.zip
+*.DS_Store

@@ -1,0 +1,16 @@
+Name: Manohar Jois
+SID: 23808180
+Homework 6
+
+Run `python hw6.py` and observe output. Change the four parameters at the top of the file `CROSS_VALIDATION`, `TRAIN_FULL`, `PLOT_THINGS` and `TEST_SET` to run cross validation, train on the full training set, plot accuracy and loss metrics and generate Kaggle results, respectively. Plot images can be found in the `images/` directory. You can also change the `kwargs` dictionary at the top to try different things, as documented below.
+
+FIELD[DEFAULT] : VALUES...
+----------------------------
+loss[mse]      : [mse, cross]
+init[uniform]  : [uniform, gaussian]
+epsilon[1.0]   : <float> ([-x,x] for uniform, stddev=x for gaussian)
+batch[1]       : <int>
+eta[0.001]     : <float>
+iter[10000]    : <int>
+plot[False]    : <bool>
+debug[False]   : <bool>

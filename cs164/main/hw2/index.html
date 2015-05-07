@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        var setMessage;
+        var getMessage;
+
+        (function(){
+            var message = "initial message";
+            setMessage = function(x){message = x;};
+            getMessage = function(){/*execution point*/ return message;};
+        })();
+
+        console.log(getMessage());
+        setMessage("meet me by the docks at midnight");
+        console.log(getMessage());
+    </script>
+    <script>
+        var a = "This string is so cool."
+
+        var cooler = function(){
+                var a = "This string is even cooler.";
+                coolest();
+                console.log(a);
+            };
+
+        var coolest = function(){
+                a = "This string is the coolest!";
+            };
+
+        cooler();
+        console.log(a);
+    </script>
+    <script src="exercise_2.js">
+    </script>
+    <script src="hw2_2_e.js">
+    </script>
+    <script src="hw2_2_f.js">
+    </script>
+</head>
+<body>
+    <p>Y U DO DIS?!</p>
+</body>
+</html>

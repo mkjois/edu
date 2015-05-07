@@ -1,0 +1,5 @@
+def a = {x = 0, foobar = 1 + 2} 
+print a["x"]
+print a.foobar
+print ("z" in a)
+print a["z"]

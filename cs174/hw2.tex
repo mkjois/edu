@@ -1,0 +1,162 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{2} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item The sample space $\Omega$ contains four outcomes: $BB,BG,GB,GG$. Formally, let $c_1, c_2 \in \{B,G\}$ be the genders of both children, with $c_1$ being the elder child. Then 
+\begin{align*}
+P(c_1=G\cap c_2=G\mid c_1=G) &= \frac{P(c_1=G\cap c_2=G)}{P(c_1=G)}\\
+&= \frac{P(c_1=G)\cdot P(c_2=G)}{P(c_1=G)}\\
+&= P(c_2=G)\\
+&= \frac12
+\end{align*}
+\item 
+\begin{align*}
+P(c_1=G\cap c_2=G\mid c_1=G\cup c_2=G) &= \frac{P(c_1=G\cap c_2=G)}{P(c_1=G\cup c_2=G)}\\
+&= \frac{P(c_1=G)\cdot P(c_2=G)}{1-P(c_1=B\cap c_2=B)}\\
+&= \frac{P(c_1=G)\cdot P(c_2=G)}{1-P(c_1=B)\cdot P(c_2=B)}\\
+&= \frac{0.25}{0.75}\\
+&= \frac13
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item We use strong induction on $k$, the number of items seen thus far. Let's take the base case to be $k=1$, where the probability of every item seen so far being in memory (in this case just one) is $\frac1k = \frac11 = 1$. Now assume that after $k-1$ items have been seen, the probability of each of the items being in memory is $\frac1{k-1}$. When item $k$ arrives, we decide to keep whatever is currently stored in memory with probability $\frac{k-1}k$. Now for each item $n_i,i\in [1,k-1]$, the probability that $n_i$ is kept in memory after item $k$ arrives is $P(n_i\text{ was already in memory})\cdot P(\text{keep item already in memory}) = \frac1{k-1}\cdot\frac{k-1}k = \frac1k$. Using the inductive hypothesis to come up with the first term along with the fact that we keep item $k$ with probability $\frac1k$, we have shown that each item seen so far is equally likely to be in memory.
+\item We have a space in memory for the item we are currently storing as well as a space for the sum of all items seen thus far. The claim is that we have item $a_i$ in memory with probability proportional to its weight if when item $a_k$ comes in we store it with probability $\frac{a_k}{\sum_{j=1}^k a_j}$.\asdf
+Again we use strong induction on $k$, the number of items seen thus far. The base case is again $k=1$, where the probability of $a_1$ being in memory is $\frac{a_1}{\sum_{j=1}^1 a_j} = 1$. Now assume that after $k-1$ items have been seen, the probability of each item $a_i$ being in memory is $\frac{a_i}{\sum_{j=1}^{k-1} a_j}$. When item $a_k$ comes in, we first add its weight to the total sum, then we keep it with probability $\frac{a_k}{\sum_{j=1}^k a_j}$ by definition. The probability of each other item $a_i$ being in memory is the joint probability of it having been in memory in the previous iteration and keeping it in memory at this step:
+\begin{align*}
+P(a_i\text{ in memory after iteration }k) &= \frac{a_i}{\sum_{j=1}^{k-1} a_j}\cdot (1-\frac{a_k}{\sum_{j=1}^k a_j})\\
+&= \frac{a_i}{\sum_{j=1}^{k-1} a_j}\cdot \frac{\sum_{j=1}^{k-1} a_j}{\sum_{j=1}^k a_j}\\
+&= \frac{a_i}{\sum_{j=1}^k a_j}
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+We start with the probability that $A[i] > A[j]$ for a given $i,j$, where $j>i$. Consider the elements $e_i$ of $A$ but in sorted order ($e_1 < e_2 < \cdots < e_n$). For element $e_i$, there are $n-i$ elements greater than it. So the probability of $A[i]>A[j]$ is the sum over all $e_i$ of the probability of placing $e_i$ at index $i$ times the probability of picking one of $n-i$ elements to place at index $j$, which is $$\sum_{i=1}^n \frac1n\cdot\frac{n-i}{n-1} = \frac1{n(n-1)}\sum_{i=1}^n n-i = \frac1{n(n-1)}\cdot\frac{n(n-1)}2 = \frac12$$
+Now let $X_{ij}$ be the indicator random variable if $A[i]>A[j]$ for $j>i$. The expected value of $X$, the number of inversions in the whole array, is simply the sum of expectations of all $X_{ij}$:
+\begin{align*}
+E(X) &= \sum_{i=1}^n \sum_{j=i+1}^n E(X_{ij})\\
+&= \sum_{i=1}^n \sum_{j=i+1}^n P(X_{ij}=1)\\
+&= \sum_{i=1}^n \sum_{j=i+1}^n \frac12\\
+&= \frac12 \sum_{i=1}^n n-i\\
+&= \frac12\cdot\frac{n(n-1)}2\\
+&= \frac{n(n-1)}4
+\end{align*}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+Let $X_i$ be the indicator variable for the 'p' in "proof" being located at position $i$. Note that $P(X_i=1) = P(char(i)=p\cap char(i+1)=r\cap char(i+2)=o\cap char(i+3)=o\cap char(i+4)=f) = (\frac1{26})^5$ because each character is drawn independently and uniformly at random. Also note that $P(X_i=1)=0$ for $i > 10^6 - 4$ there isn't enough room for "proof" at those positions. Because no two "proof"s can overlap, the expected number of "proof" sequences $X$ is the sum of the expectations of all $X_i$:
+\begin{align*}
+E(X) &= \sum_{i=1}^{10^6-4} E(X_i)\\
+&= \sum_{i=1}^{10^6-4} \frac1{26^5}\\
+&= \frac{10^6-4}{26^5}\\
+&= 0.084
+\end{align*}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+First we prove the principle for $n=2$:
+\begin{align*}
+P(A)+P(B)-P(A\cap B) &= P(A\cap B) + P(A\cap \overline{B}) + P(A\cap B) + P(\overline{A}\cap B) - P(A\cap B)\\
+&= P(A\cap B) + P(A\cap \overline{B}) + P(\overline{A}\cap B)\\
+&= P(A\cup B)
+\end{align*}
+The inductive hypothesis is simply the principle applied to $n$ events: $$P\left(\bigcup_{i=1}^n X_i\right) = \sum_{S \subset \{1,\ldots,n\}-\emptyset} \left[(-1)^{|S|+1}\cdot P\left(\bigcap_{j \in S} X_j\right)\right]$$
+Now we extend the case to $n+1$ events.
+\begin{align*}
+P\left(\bigcup_{i=1}^{n+1} X_i\right) &= P\left(\left(\bigcup_{i=1}^n X_i\right)\cup X_{n+1}\right)\\
+&= P\left(\bigcup_{i=1}^n X_i\right) + P(X_{n+1}) - P\left(\left(\bigcup_{i=1}^n X_i\right)\cap X_{n+1}\right)\\
+&= P\left(\bigcup_{i=1}^n X_i\right) + P(X_{n+1}) - P\left(\bigcup_{i=1}^n \left(X_i\cap X_{n+1}\right)\right)\\
+&= \sum_{S \subset \{1,\ldots,n\}-\emptyset} \left[(-1)^{|S|+1} P\left(\bigcap_{j \in S} X_j\right)\right] - \sum_{S \subset \{1,\ldots,n\}-\emptyset} \left[(-1)^{|S|+1} P\left(\bigcap_{j \in S} (X_j\cap X_{n+1})\right)\right] + P(X_{n+1})\\
+&= \sum_{S \subset \{1,\ldots,n\}-\emptyset} \left[(-1)^{|S|+1}\cdot P\left(\bigcap_{j \in S} X_j\right) - (-1)^{|S|+1}\cdot P\left(\bigcap_{j \in S} (X_j\cap X_{n+1})\right)\right] + P(X_{n+1})\\
+&= \sum_{S \subset \{1,\ldots,n\}-\emptyset} \left[(-1)^{|S|+1}\cdot P\left(\bigcap_{j \in S} X_j\right) - (-1)^{|S|+1}\cdot P\left(\bigcap_{j \in S\cup \{n+1\}} X_j\right)\right] + P(X_{n+1})\\
+&= \sum_{S \subset \{1,\ldots,n+1\}-\emptyset} \left[(-1)^{|S|+1}\cdot P\left(\bigcap_{j \in S} X_j\right)\right]
+\end{align*}
+The last line is simply the inclusion-exclusion principle applied to $n+1$ events. We can think of the last step as follows: given all the subsets of $n$ events, we have to include or exclude the intersection of the union of each of those subsets with event $n+1$. The sign is flipped because we added one to the cardinality, and we have to add $P(X_{n+1})$ at the end because we don't include the empty set to start with.
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+% PUT PROBLEM 6 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item We have already proved that the probability that the randomized algorithm will return a certain minimum cut is at least $\frac2{n(n-1)}$. Returning a different min-cut is a disjoint event, so the probability of returning one of the graph's min-cuts is at least $\frac2{n(n-1)}$ times the number of min-cuts. If the graph had more than $\frac{n(n-1)}2$ distinct min-cuts, this probability would be more than $1$, so this is the upper bound on the number of distinct minimum cuts.
+\item Let $G_n$ be the graph of $n$ vertices in a line (i.e. $n_1$ connected to $n_2$, which is connected to $n_3$, etc.). If we think of the returned cut as the division of the set of vertices into two disjoint subsets, then this new algorithm can return any of the $2^n-2$ distinct cuts of the graph with equal probability ($2^n-2$ represents the powerset, which can map to a cut of the graph, except for the empty and complete sets). The vertices combined to form each of the two supernodes at the end of the algorithm represent the cut. For the line graph, there are $n-1$ distinct minimum cuts, namely each singular edge. So the probability this new algorithm returns a min-cut is $\frac{n-1}{2^n-2}$, exponentially small in $n$.
+\item Let $X$ be the number of trials necessary to get the error probability under $0.5$. We can represent this situation with the inequality $(1-\frac{n-1}{2^n-2})^X \leq \frac12$. If we let $R=\frac{2^n-2}{n-1}$ and let $X=RA$, then we can solve for $X$ easily:
+$$(1-\frac{n-1}{2^n-2})^X = (1-\frac1R)^{RA} \leq e^{-A}$$
+We can bound this greater quantity by $\frac12$ to bound the original error probability.
+\begin{align*}
+e^{-A} &\leq \frac12\\
+-A &\leq \ln{\frac12}\\
+A &\geq \ln{2}\\
+RA &\geq R\cdot \ln{2}\\
+X &\geq \frac{\ln{2}}{n-1}\cdot (2^n-2)
+\end{align*}
+which is exponential in $n$.
+\newpage
+\item Instead of choosing which edge to contract uniformly at random, choose an edge with probability proportional to its weight. Let the edge with minimum weight in the graph have weight $r$ and thus the weight of a distinct minimum cutset $C$ is $kr$ for some real number $k\geq 1$. Let $E_i$ denote the event that the $i^{\text{th}}$ edge we remove is not in the minimum cutset. Let $F_i = \cap_{j=1}^i E_i$. We are looking for an upper bound on $P(F_{n-2})$, which is the probability that our algorithm returns the cutset $C$.\asdf
+Note that every vertex at any point in the algorithm must have at least $kr$ weight leaving it, otherwise the minimum cutset would just be all edges adjacent to it. So the weight of the graph after $i$ edges have been removed must be at least $\frac{(n-i)rk}2$.
+\begin{align*}
+P(F_1) = P(E_1) &\geq 1-\frac{kr}{\frac{nrk}2} = 1-\frac2n\\
+P(E_i\mid F_{i-1}) &\geq 1-\frac2{n-i+1}\\
+P(F_{n-2}) &= P(E_{n-2}\cap F_{n-3})\\
+&= P(E_{n-2}\mid F_{n-3})\cdot P(F_{n-3})\\
+&= P(E_{n-2}\mid F_{n-3})\cdot P(E_{n-3}\mid F_{n-4})\cdots P(E_2\mid F_1)\cdot P(F_1)\\
+&\geq \prod_{i=1}^{n-2} 1-\frac2{n-i+1}\\
+&= \prod_{i=1}^{n-2} \frac{n-i-1}{n-i+1}\\
+&= \frac{n-2}{n}\cdot\frac{n-3}{n-1}\cdot\frac{n-4}{n-2}\cdots\frac{3}{5}\cdot\frac{2}{4}\cdot\frac{1}{3}\cdot\\
+&= \frac2{n(n-1)}
+\end{align*}
+We can think of the unweighted case as the special case where the weight of every edge is $r$ and $r=1$.
+\end{enumerate}
+
+\end{document}

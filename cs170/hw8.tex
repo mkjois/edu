@@ -1,0 +1,123 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{8} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2014}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+
+\title{CS170--Spring 2014 --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS170--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+Call $z$ the maximum absolute error, so $z\geq 0$. $m$ and $c$ are unrestricted. \\
+$z=\max{\{|y_1-(mx_1+c)|,|y_2-(mx_2+c)|,\ldots,|y_N-(mx_N+c)|\}}$. \\\\
+$z$ must be greater than or equal to all of these $|y_i-(mx_i+c)|$ terms, which are all positive. But this means $z$ must be greater than or equal to the positive and negative raw values of each of the terms. This gives the following LP:
+\begin{align*}
+& \min z \\
+z &\geq y_1-(mx_1+c) \\
+z &\geq -y_1+(mx_1+c) \\
+&. \\ &. \\ &. \\
+z &\geq y_N-(mx_N+c) \\
+z &\geq -y_N+(mx_N+c) \\
+z &\geq 0
+\end{align*}
+Using the technique to constrain unrestricted variables to be non-negative, we let $m=m_1-m_2$ and $c=c_1-c_2$ and impose non-negativity on these new variables so that $m$ and $c$ can still take on any real value. After rearranging the terms in the above inequalities and making these two substitutions, the LP is as follows:
+\begin{align*}
+\min z & \\
+m_1x_1-m_2x_1+c_1-c_2+z &\geq y_1 \\
+-m_1x_1+m_2x_1-c_1+c_2+z &\geq -y_1 \\
+&. \\ &. \\ &. \\
+m_1x_N-m_2x_N+c_1-c_2+z &\geq y_N \\
+-m_1x_N+m_2x_N-c_1+c_2+z &\geq -y_N \\
+m_1, m_2, c_1, c_2, z &\geq 0
+\end{align*}
+To put the LP in matrix-vector form, we set the following:
+$$A=\begin{bmatrix}x_1&-x_1&1&-1&1\\-x_1&x_1&-1&1&1\\.&.&.&.&.\\.&.&.&.&.\\.&.&.&.&.\\x_N&-x_N&1&-1&1\\-x_N&x_N&-1&1&1\end{bmatrix}, \mathbf{x}=\begin{bmatrix}m_1\\m_2\\c_1\\c_2\\z\end{bmatrix}, \mathbf{b}=\begin{bmatrix}y_1\\-y_1\\.\\.\\.\\y_N\\-y_N\end{bmatrix}, \mathbf{c}=\begin{bmatrix}0\\0\\0\\0\\1\end{bmatrix}$$
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+\begin{enumerate}[a)]
+\item Let $a_i$ be 1 if actor $i$ is cast and 0 if not. Let $b_j$ be 1 if investor $j$ agrees to invest and 0 if not. All $a_i,b_j$ must take values $\geq 0$ and $\leq 1$, in this case they must be integers. Observe that if actor $i\in L_j$ then $a_i-b_j\in \{0,1\}$. The difference can't be $-1$ because that implies investor $j$ invests without actor $i$ being cast. However if $i\notin L_j$ then $a_i-b_j\in \{-1,0,1\}$ because both values can be either $0$ or $1$. These observations spawn an LP with $n+m\in \BigOh{n+m}$ variables and $2nm+2(n+m)\in \BigOh{nm}$ constraints:
+\begin{align*}
+\max \sum_{j=1}^m p_jb_j &- \sum_{i=1}^n s_ia_i \\
+\text{For all }i,j\text{ pairs, }a_i-b_j &\leq 1 \\
+\text{if }i\in L_j\text{ then }a_i-b_j &\geq 0 \\
+\text{else }a_i-b_j &\geq -1 \\
+\text{Also }a_i,b_j &\geq 0 \\
+a_i,b_j &\leq 1 \text{ for all }i,j
+\end{align*}
+\item Assume we have a solution where for some $j$, $0<b_j<1$. Consider any actor $i$, $0\leq a_i \leq 1$. If $i\notin L_j$, then we can increase $b_j$ to $1$ and set $a_i=0$ so our objective function would strictly increase while still satisfying the constraint that $-1\leq a_i-b_j \leq 1$. If $i\in L_j$, then by the constraints $b_j \leq a_i \leq b_j+1$.
+\end{enumerate}
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item If the algorithm first chooses the path $SABT$, edges $SA$ and $BT$ will be reduced to 999 extra flow units while edges $AS$ and $TB$ will be increased to 1 current flow unit, and edge $AB$ will be replaced with edge $BA$ since its capacity was a minimal 1 flow unit. Then the algorithm may choose the path $SBAT$, which decrements edges $SB$ and $AT$ by 1 and flips edge $BA$ back to $AB$. If paths are chosen carelessly, the same two paths could be chosen repeatedly 1000 times each until edges $SA$, $SB$, $AT$, $BT$ are exhausted of flow units. Total flow would only be increased by 1 unit per iteration and it would take 2000 iterations to get the maximum possible flow of 2000 units.
+\item Use Dijkstra's but for the update procedure, remove the minimum edge permanently and use linear time BFS to check if there still exists a path from $s$ to $t$. Let $e$ be the edge we just removed when BFS finally determines that there is no path. This edge must have been on a path from $s$ to $t$ since BFS succeeded on the previous iteration. Also in the previous iteration $e$ was the lightest edge in the graph since it was next to be removed, so along the path the capacity must have been $c_e$. Clearly there are no paths of higher capacity because there are no paths from $s$ to $t$ without all the edges $e$ and lighter. The fattest path is therefore the path returned by BFS on the last successful iteration.
+\item Consider an individual flow along a path. There is some edge $e$ with capacity $c_e$ that is the minimum capacity edge on the path. This means that $c_e$ units flow along \textit{every} edge in this path, when we consider this flow alone (otherwise we wouldn't be at maximum flow if all of $c_e$ wasn't utilized). Now consider another path, whose minimum capacity edge \textit{cannot} be $e$ because that implies there are $2c_e$ units flowing through edge $e$. By extension, no two paths can have the same minimum capacity edge. There are $|E|$ edges so maximum flow is the sum of individual flows from at most $|E|$ paths.
+\item Let $f_t$ be the flow not yet exploited after $t$ iterations of greedy Ford-Fulkerson, so $f_0=F$. Since $F\geq f_t$ is the sum of flows along at most $|E|$ paths, there must be some path with at least $\frac{f_t}{|E|}$ flow. By greedy path selection, $$f_{t+1} \leq f_t-\frac{f_t}{|E|}$$ which inductively implies that $f_t \leq f_0(1-\frac1{|E|})^t$. Using the inequality $1-x < e^{-x}$ for all $x>0$, our bound is $$f_t < Fe^{-\frac t{|E|}}$$ and at $t=|E|\ln{F}$, $f_t$ is strictly less than $Fe^{-\ln{F}}=1$, and since the optimal max flow is integral, we have found it after at most $\BigOh{|E|\log{F}}$ iterations.
+\end{enumerate}
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+\begin{verbatim}
+algorithm path_cover(G=(V,E)):
+    linearize G
+    path_count = 0
+    sources = {all source nodes in G}
+    sinks = {}
+    while sources is not empty:
+        add neighbors of sources to sinks
+        find bipartite matches between sources and sinks, preferring linearized order
+        for nodes u,v in sources, sinks:
+            remove u from sources
+            if u was matched to v:
+                move v from sinks to sources
+            else if u was not matched:
+                path_count++
+            else if v was not matched:
+                keep v in sinks
+    return path_count + |sinks|
+\end{verbatim}
+At any time we maintain 2 sets: the sources and the sinks. Each original source node must be in a different path, else they wouldn't be source nodes. So we start by concurrently "walking" from each source node to a matched neighbor. If we fail to find a match for a source, the path to that source ends and we know we must add 1 to our path count. We know we are returning the minimum path cover because we only increment the path count when a node cannot be matched with any of its neighbors (because they are all matched with another source to continue that path). \\\\
+Each node is encountered in the sources set at most once and in the sinks set at most once. Building the sources set initially and the sinks sets over the entire algorithm takes linear time since you have to check each edge and node exactly once and never worry about it again. The bipartite match algorithm, which reduces to the max-flow algorithm, is run at most $|V|$ times. The inner for-loop is run exactly $|V|$ times with constant work for each iteration. So the total runtime is dominated by the bipartite matching which is $\BigOh{|V|^2|E|^2}$.
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+Create a bipartite graph $G=(V,E),V=V_Y\cup V_N$ where vertices in $V_Y$ represent a single voter's "yes" vote and vertices in $V_N$ represent a single voter's "no" vote. Examine each pair of voters and for each pair $(v_i,v_j),i\neq j$, if $v_i$ votes to keep the same animal that $v_j$ votes to eliminate, draw an edge between $v_{iY}$ and $v_{jN}$. The vice-versa case will be considered when we examine pair $(j,i)$. Clearly all edges are between $V_Y$ and $V_N$. Now we use minimum-vertex cover, which reduces to max-flow, to solve the problem. Examining all voter pairs takes $\BigOh{V^2}$ time, and there can be an edge for each pair so up to $V^2$ edges. Using min-vertex cover this runs in $\BigOh{2V(V^2)^2} = \BigOh{V^5}$ time. \\\\
+As for correctness, notice that each edge exactly represents a conflict between two voters' votes, and every conflict is identified by examining all pairs. By using min-vertex cover, we seek to minimize the number of voters we don't satisfy. When we choose a node to include in the covering set, we rule against what voter wanted for that particular animal. So we try to resolve every conflict using the fewest number of nodes, thereby pissing off the fewest number of voters and maximizing the number of satisfied voters.
+
+\end{document}

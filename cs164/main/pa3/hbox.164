@@ -1,0 +1,40 @@
+##
+# HBox: A box that lays out its children horizontally
+#
+def HBox = Box:new({children={}})
+
+HBox.new = lambda(self, obj) {
+  obj = Object.new(self, obj)
+  obj.children = {}
+  obj
+}
+
+HBox.pass2_ComputePositionSizeOpacity = lambda(self) {
+  # TODO: What should be computed in this pass?
+  # give this pass a more informative name, and complete all necessary
+  # computation
+  def currX = self.x
+  def remaining = self.width
+  for (child in self.children) {
+      def w = self.width * child.weight / self.weight # not precise
+      child.width = w
+      child.x = currX
+      currX = currX + w
+      remaining = remaining - w
+
+      child.y = self.y
+      child.height = self.height
+      child.maxOpacityValue = self.maxOpacityValue
+  }
+  def additionalX = 0
+  for (child in self.children) {
+      if (remaining > 0) {
+          child.width = child.width + 1
+          child.x = child.x + additionalX
+          additionalX = additionalX + 1
+          remaining = remaining - 1
+      } else {
+          child.x = child.x + additionalX
+      }
+  }
+}

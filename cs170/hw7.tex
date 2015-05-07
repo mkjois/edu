@@ -1,0 +1,80 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{7} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2014}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+
+\title{CS170--Spring 2014 --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS170--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+Let $K(x,y)$ be the max value attainable with a cloth of size $x$-by-$y$. So we are looking for $K(X,Y)$.
+Similar to the knapsack problem with repetition, if we were to cut cloth $a_i\times b_i$ from a corner to make a product, we would be left with an optimal solution to the cloth that is left. However, since we can only cut in one direction, we only need to consider the two rectangles that can be made using the cut that produces the $a_i\times b_i$ section. So removing this cloth from the optimal solution must leave us with the optimal solution to the two smaller rectangles. \\\\
+The base cases are such that the max over an empty set is zero, $K(x,0)=0$ and $K(0,y)=0$, since no value can be obtained from zero cloth. For an $x$-by-$y$ cloth, let $S$ be the subset of the $n$ products whose cloth requirements are bounded by the $x$-by-$y$ dimensions.
+\begin{align*}
+K(x,y)&=\max_S\{c_i+max(K(x-a,b)+K(x,y-b), K(a,y-b)+K(x-a,y))\}
+\end{align*}
+The inner max function is to account for cutting either horizontally or vertically. The algorithm would initialize an $X$-by-$Y$ table, set the base cases, and compute each subproblem in order so that references to smaller subproblems are already in the table, returning $K(X,Y)$ at the end. There are $XY$ subproblems to be done and each can take up to $\BigOh{n}$ to compute so our overall runtime is $\BigOh{nXY}$. To recover the sequence of cuts, this algorithm can be modified to use bookkeeping pointers and if-else clauses that add a constant amount of work to each loop, which doesn't change the runtime.
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Assuming $n\geq m$, when we compute the table of subproblems, we can move row by row, left to right. This is because each entry depends only on three others: one above, one to the left, and one above and to the left, each of which has already been computed by moving through the table this way. Extending this idea, it is easy to see that while computing any entry in row $i$, we only need to reference rows $i$ and $i-1$. Since we compute rows atomically, once we move past row $i$ we can discard row $i-1$ and start working on row $i+1$, meaning during any computation we only need access two rows of the table, which is $2n \in \BigOh{n}$ space.
+\item Keep row and column counters $i$ and $j$ and increment/reset them as necessary when moving to subsequent subproblems to represent the spot in the "table" we are currently on (even though we are truly only maintaining two rows at a time). For each subproblem, maintain along with the working edit distance one of the three tuples of $(i-1,j), (i,j-1), (i-1,j-1)$ depending on which of the three subproblems generated this value (which one was selected by min) breaking ties arbitrarily.
+\end{enumerate}
+
+\end{document}

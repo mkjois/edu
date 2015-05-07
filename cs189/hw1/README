@@ -1,0 +1,11 @@
+Name: Manohar Jois
+SID: 23808180
+
+Code instructions:
+p1) Run 'python p1.py' and the plot of error_rates will be saved in 'images/error_rates.png'
+p2) First change line 18 of p1.py. Change the last parameter of the call to classify() to 'True'.
+    Run 'python p1.py' and the matrices will be saved as 'images/confusion_matrix_*.png'
+p3) Open p3.py and change the 'C_RANGE' parameter to any range of C-values to test.
+    Run 'python p3.py' and the classifications of the test set will be saved as 'digits_results.csv'
+p4) Open p4.py and change the 'C_RANGE' parameter to any range of C-values to test.
+    Run 'python p4.py' and the classifications of the test set will be saved as 'spam_results.csv'

@@ -1,0 +1,7 @@
+def x = 5
+def f = null
+(lambda(){
+  def x = 3
+  f = lambda(){print x}
+})()
+f()

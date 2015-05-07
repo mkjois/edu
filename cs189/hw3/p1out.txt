@@ -1,0 +1,13 @@
+
+Sample mean of X1: 3.247523
+Sample mean of X2: 5.660500
+
+The covariance matrix:
+
+[[ 10.56498754   5.30844169]
+ [  5.30844169   6.84287096]]
+
+The eigenvalues and eigenvectors:
+
+Value: 14.329	Vector: [ 0.81573339  0.57842808]
+Value: 3.079	Vector: [-0.57842808  0.81573339]

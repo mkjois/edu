@@ -1,0 +1,137 @@
+%%% Please replace what is within each curly bracket with the correct information below. %%%
+%%% The first field is already filled in for you.  %%%
+\def\ClassName {CS188} % Your course 
+\def\NameLast {Jois}  % Your last name
+\def\NameFirst {Manohar}  % Your first name
+\def\SID{23808180}  % Your SID
+\def\Email{m.k.jois@berkeley.edu} % Your pandagrader email
+\def\Collaborators{None} % Any collaborators
+
+\documentclass[twoside]{article}
+\usepackage{class}
+\usepackage{graphicx}
+\graphicspath{{./figs/}}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{enumerate}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage{pifont}
+\usepackage{mdwlist}
+\usepackage[lofdepth,lotdepth]{subfig}
+\usepackage{mdwlist}
+\usepackage{wasysym}
+\title{Written HW6}
+
+\usepackage{multirow}
+
+\pagestyle{myheadings}
+
+
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\eat}[1]{\ignorespaces}
+\newcommand{\todo}[1]{ {\color{blue} TODO: #1} }
+\newcommand{\X}{\ding{110}}
+\newcommand{\F}{$\bullet$}
+\newcommand{\Pac}{$<$}
+% Bubbles for multiple choice questions
+\newcommand{\mcqbubble}{\bigcirc}
+\newcommand{\mcqbubblefill}{\Large\newmoon}
+
+% shorthand
+\newcommand{\mcqb}{$\bigcirc$\ \ }
+\newcommand{\mcqs}{$\Large\newmoon$\ \ }
+
+\def\truefalse{\vspace{0.3in} \item (\emph{true} or \emph{false}) }
+\def\indep{\perp\!\!\!\perp}
+\def\sgn{\mathop{\mathrm{sign}}}
+
+\begin{document}
+\thispagestyle{empty}
+\maketitle
+
+
+\smallskip
+\smallskip
+\textbf{INSTRUCTIONS}
+
+\begin{itemize}
+\item \textbf{Due:} Monday, October 20th, 2014 11:59 PM
+\item \textbf{Policy:} Can be solved in groups (acknowledge collaborators) but must
+be written up individually. However,
+we strongly encourage you to first work alone for about 30 minutes total in order to simulate an exam environment.  Late homework
+will not be accepted.
+\item \textbf{Format:}  Submit the answer sheet pdf containing your answers. Page 1
+must be this page, with your name,
+SID, and gradescope email filled in.
+You should solve the questions on this handout (either through a pdf annotator, or by printing, then scanning; we recommend the latter to match exam setting). Alternatively, you can typeset a pdf on your own that has answers appearing in the same space (check edx/piazza for latex templating files and instructions).
+\textbf{Make sure that your answers (typed or handwritten) are within the
+dedicated regions for each question/part.  If you do not follow this format, we may deduct points.}
+
+\item \textbf{How to submit:}  Go to www.gradescope.com. Log in and click on the
+class CS188 Fall 2014. Click
+on the submission titled Written HW 6 and upload your pdf containing your answers. If this is your first time using
+gradescope, you will have to set your password before logging in the
+first time.  To do so, click on "Forgot your password" on the login
+page, and enter your email address on file with the registrar's office
+(usually your @berkeley.edu email address). You will then receive an
+email with a link to reset your password.
+
+\end{itemize}
+
+
+\begin{center}
+\begin{tabular}{|r|c|}
+\hline
+\begin{minipage}{3cm}~\\Last Name~\\~\\\end{minipage} & \begin{minipage}[c][1cm][c]{8cm} ~ \NameLast \end{minipage}  \\
+\hline
+\begin{minipage}{3cm}~\\First Name~\\~\\\end{minipage} & \NameFirst \\
+\hline
+\begin{minipage}{3cm}~\\SID~\\~\\\end{minipage} & \SID \\
+\hline
+\begin{minipage}{3cm}~\\Email~\\~\\\end{minipage} & \Email \\
+\hline
+\begin{minipage}{3cm}~\\Collaborators~\\~\\\end{minipage} & \Collaborators \\
+\hline
+
+\end{tabular}
+\end{center}
+
+
+
+\vfill
+
+\smallskip
+\smallskip
+\smallskip
+\smallskip
+\smallskip
+
+\begin{center}
+{\bf For staff use only}\\
+\begin{Large}
+\begin{tabular}{|r|r|r|r|}
+\hline
+Q. 1 & Q. 2 & Q. 3 & Total\\
+\hline
+
+\quad/11 &\quad/15 &\quad/15 &\qquad/41 \\
+\hline
+\end{tabular}\end{Large}
+\end{center}
+
+\begin{enumerate}
+
+\newpage
+\setcounter{subsection}{0}
+\input{q1}
+
+\newpage
+\setcounter{subsection}{0}
+\input{q2}
+
+\newpage
+\setcounter{subsection}{0}
+\input{q3}
+\end{enumerate}
+
+\end{document}

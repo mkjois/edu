@@ -1,0 +1,9 @@
+Name: Manohar Jois
+SID: 23808180
+Homework 7
+
+Problem 1:
+Run 'python p1.py' and observe output. Cluster center visualzations are in the 'images' directory for each run of k-means. Change the list 'KRANGE' and/or 'ITERS' at the top to run the process for different values of k and a different number of iterations.
+
+Problem 2:
+Run 'python p2.py' and observe output. Change the parameters at the top as desired.

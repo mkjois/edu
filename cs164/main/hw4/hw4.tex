@@ -1,0 +1,331 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{4} % Homework number - make sure to change for every homework!
+\def\Session{Fall 2014}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+
+\title{CS164\ \Session\  --- Answers to Homework \Homework}
+\author{\Name}
+\lhead{CS164\ \Session\  Homework \Homework\ Problem \theproblemnumber,\ \Name}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Exercise 1}
+\stepcounter{problemnumber}
+\begin{enumerate}[(P1)]
+\item \begin{verbatim}
+function fibCo(a, b)
+    coroutine.yield(a)
+    coroutine.yield(b)
+    fibCo(a+b, a + 2*b)
+end
+\end{verbatim}
+\item \begin{verbatim}
+function takeCo(stream, n)
+    while n > 0 do
+        coroutine.yield(stream())
+        n = n-1
+    end
+end
+\end{verbatim}
+\item \begin{verbatim}
+function filterCo(stream, prop)
+    while true do
+        local val = stream()
+        while not prop(val) do
+            val = stream()
+        end
+        coroutine.yield(val)
+    end
+end
+\end{verbatim}
+\item \begin{verbatim}
+function mapCo(stream, f)
+    while true do
+        coroutine.yield(f(stream()))
+    end
+end
+\end{verbatim}
+\end{enumerate}
+
+
+\newpage
+\section*{Exercise 2}
+\stepcounter{problemnumber}
+\begin{enumerate}[(P1)]
+\item After the call to \textbf{f} returns, (d) the call to \textbf{envBind} executes.\\
+(b) The JavaScript call stack is maintained so the interpreter knows to call \textbf{envBind} once all three of its arguments are evaluated.
+\item \begin{verbatim}
+1
+2
+\end{verbatim}
+\item Bytecode consists of a flat, sequential instruction space where each instruction can be referenced by a program counter. The coroutine \textbf{f} can maintain its own program counter in its state as it executes and reference where it left off when it is resumed.
+\item The interpreter should throw an error indicating that we can't resume into a coroutine that has completed execution. So we should track the state of each coroutine to be in one of three states: Running, Suspended or Terminated.
+\item The interpreter should throw an error indicating there is no other coroutine to yield to. An easy way to track this is to maintain a pointer to a coroutine's parent, setting the field upon resumption of a coroutine. All \textbf{yield} statements will pass control and data back to a coroutine's parent.
+\item \begin{verbatim}
+data type Coroutine {
+    Coroutine parent;
+    int state;        // constants: {SUSPENDED, RUNNING, TERMINATED}
+    int pc;           // program counter
+    List body;        // list of sequential bytecode instructions
+    Stack callStack;
+    Dict env;         // bindings at the top of the call stack
+}
+\end{verbatim}
+\item \textbf{Print statement at line 3:}\\
+Stack frames(top down): \begin{itemize}
+\item \texttt{feedCo} - line 29
+\end{itemize}
+Coroutines: \begin{verbatim}
+MAIN {
+    parent: null
+    state: RUNNING
+    pc: 3            // we'll go by line numbers instead of bytecode
+    body: [...]      // lines 1-33
+    callStack: {
+        feedCo       // line 29
+    }
+    env: {
+        feedCo: Lambda
+        process: Lambda
+        sourceCo: Lambda
+    }
+}
+
+sourceCoFun {
+    parent: null
+    state: SUSPENDED
+    pc: 22
+    body: [...]      // lines 22-24
+    callStack: {}
+    env: {}
+}
+\end{verbatim}
+Output: \texttt{Creating source coroutine.}\\\\
+\textbf{Print statement at line 10:}\\
+Stack frames (top down): \begin{itemize}
+\item \texttt{resume} - line 30
+\item \texttt{processCoFun} - line 8
+\end{itemize}
+Coroutines: \begin{verbatim}
+MAIN {
+    parent: null
+    state: SUSPENDED
+    pc: 30           // we'll go by line numbers instead of bytecode
+    body: [...]      // lines 1-33
+    callStack: {
+        resume       // line 30
+    }
+    env: {
+        feedCo: Lambda
+        process: Lambda
+        sourceCo: Lambda
+        fc: Coroutine
+    }
+}
+
+processCoFun {
+    parent: MAIN
+    state: RUNNING
+    pc: 10
+    body: [...]      // lines 9-15
+    callStack: {}
+    env: {
+        sc: Coroutine
+        unused: null
+        x1: 1
+    }
+}
+
+sourceCoFun {
+    parent: processCoFun
+    state: SUSPENDED
+    pc: 22
+    body: [...]      // lines 22-24
+    callStack: {
+        yield        // line 22
+    }
+    env: {
+        unused: null
+    }
+}
+\end{verbatim}
+Output: \texttt{Running process coroutine.}\\\\
+\textbf{Print statement at line 23:}\\
+Stack frames (top down): \begin{itemize}
+\item \texttt{resume} - line 31
+\item \texttt{processCoFun} - line 8
+\item \texttt{resume} - line 12
+\end{itemize}
+Coroutines: \begin{verbatim}
+MAIN {
+    parent: null
+    state: SUSPENDED
+    pc: 31           // we'll go by line numbers instead of bytecode
+    body: [...]      // lines 1-33
+    callStack: {
+        resume       // line 31
+    }
+    env: {
+        feedCo: Lambda
+        process: Lambda
+        sourceCo: Lambda
+        fc: Coroutine
+        r1: 1
+    }
+}
+
+processCoFun {
+    parent: MAIN
+    state: SUSPENDED
+    pc: 12
+    body: [...]      // lines 9-15
+    callStack: {
+        resume       // line 23
+    }
+    env: {
+        sc: Coroutine
+        unused: null
+        x1: 1
+    }
+}
+
+sourceCoFun {
+    parent: processCoFun
+    state: RUNNING
+    pc: 23
+    body: [...]      // lines 22-24
+    callStack: {}
+    env: {
+        unused: null
+    }
+}
+\end{verbatim}
+Output: \texttt{Running source coroutine.}\\\\
+\textbf{Print statement at line 15:}\\
+Stack frames (top down): \begin{itemize}
+\item \texttt{resume} - line 32
+\item \texttt{processCoFun} - line 8
+\end{itemize}
+Coroutines: \begin{verbatim}
+MAIN {
+    parent: null
+    state: SUSPENDED
+    pc: 32           // we'll go by line numbers instead of bytecode
+    body: [...]      // lines 1-33
+    callStack: {
+        resume       // line 32
+    }
+    env: {
+        feedCo: Lambda
+        process: Lambda
+        sourceCo: Lambda
+        fc: Coroutine
+        r1: 1
+        r2: 2
+    }
+}
+
+processCoFun {
+    parent: MAIN
+    state: RUNNING
+    pc: 15
+    body: [...]      // lines 9-15
+    callStack: {}
+    env: {
+        sc: Coroutine
+        unused: null
+        x1: 1
+        x2: 2
+        x3: null
+    }
+}
+
+sourceCoFun {
+    parent: processCoFun
+    state: TERMINATED
+    pc: 25
+    body: [...]      // lines 22-24
+    callStack: {}
+    env: {
+        unused: null
+    }
+}
+\end{verbatim}
+Output: \texttt{Finishing process coroutine.}\\\\
+\textbf{Print statement at line 33:}\\
+Stack frames (top down): None\\\\
+Coroutines: \begin{verbatim}
+MAIN {
+    parent: null
+    state: RUNNING
+    pc: 33           // we'll go by line numbers instead of bytecode
+    body: [...]      // lines 1-33
+    callStack: {}
+    env: {
+        feedCo: Lambda
+        process: Lambda
+        sourceCo: Lambda
+        fc: Coroutine
+        r1: 1
+        r2: 2
+        r3: null
+    }
+}
+
+processCoFun {
+    parent: MAIN
+    state: TERMINATED
+    pc: 16
+    body: [...]      // lines 9-15
+    callStack: {}
+    env: {
+        sc: Coroutine
+        unused: null
+        x1: 1
+        x2: 2
+        x3: null
+    }
+}
+
+sourceCoFun {
+    parent: processCoFun
+    state: TERMINATED
+    pc: 25
+    body: [...]      // lines 22-24
+    callStack: {}
+    env: {
+        unused: null
+    }
+}
+\end{verbatim}
+Output: \texttt{End.}
+\end{enumerate}
+
+\end{document}

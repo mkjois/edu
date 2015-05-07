@@ -1,0 +1,113 @@
+\begin{problem}[]{The nature of discounting}
+
+Pacman is stuck in a friendlier maze where he gets a reward every time he takes any action from state (0,0). This setup is a bit different from the one you've seen before: Pacman can get the reward multiple times; these rewards do not get "used up" like food pellets and there are no ``living rewards''.  As usual, Pacman can not move through walls and may take any of the following actions: go North ($\uparrow$), South ($\downarrow$), East ($\rightarrow$), West ($\leftarrow$), or stay in place ($\circ$). Actions give deterministic results (taking action East will always move Pacman East). State (0,0) gives a total reward of $1$ every time Pacman takes an action in that state regardless of the outcome, and all other states give no reward. The precise reward function is: $R((0,0),a,s') = 1$ for any action $a$ and $R(s,a,s')=0$ for all $s \neq (0,0)$. \\
+
+You should not need to use any other complicated algorithm/calculations to answer the questions below. We remind you that geometric series converge as follows:
+$ 1 + \gamma + \gamma^2 + \cdots = 1/(1-\gamma)$.
+
+\begin{question}[6]
+Assume finite horizon of $h = 10$ (so Pacman takes exactly 10 steps) and no discounting ($\gamma = 1$).
+\\
+
+{\newcommand{\sep}{1cm}
+\newcommand{\actionEast}{$\rightarrow$}
+\newcommand{\actionWest}{$\leftarrow$}
+\newcommand{\actionNorth}{$\uparrow$}
+\newcommand{\actionSouth}{$\downarrow$}
+\newcommand{\actionStay}{$\circ$}
+
+\begin{minipage}[t]{.5\textwidth}
+\centering
+
+Fill in an optimal policy:\\
+
+\begin{tikzpicture}
+\matrix[matrix of nodes,
+inner sep=0pt,
+anchor=south west,
+nodes={inner sep=0pt,text width=\sep,text centered,minimum height=\sep}
+]{
+2 & \polZeroTwo & \polOneTwo & \polTwoTwo & \\
+1 & \polZeroOne & \polOneOne & \polTwoOne &\\
+0 & \polZeroZero & \polOneZero & \polTwoZero &  \\
+  & 0 & 1 & 2 & ~ \\
+};
+\draw[xstep=\sep,ystep=\sep] (1,1) grid (4*\sep,4*\sep);
+\draw[line width = 5] (1,1) -- (1,4) -- (4,4) -- (4,1) -- (1,1) -- (1,4);
+\draw[line width = 5] (2,2) -- (2,3) -- (4,3);
+\end{tikzpicture}
+
+(available actions: $\uparrow, \downarrow, \rightarrow, \leftarrow, \circ$)
+\end{minipage}
+\begin{minipage}[t]{.5\textwidth}
+\centering
+
+Fill in the value function:
+
+\begin{tikzpicture}
+\matrix[matrix of nodes,
+inner sep=0pt,
+anchor=south west,
+nodes={inner sep=0pt,text width=\sep,text centered,minimum height=\sep}
+]{
+2 & \vZeroTwo & \vOneTwo & \vTwoTwo & \\
+1 & \vZeroOne & \vOneOne & \vTwoOne &\\
+0 & \vZeroZero & \vOneZero & \vTwoZero &  \\
+  & 0 & 1 & 2 & ~ \\
+};
+\draw[xstep=\sep,ystep=\sep] (1,1) grid (4*\sep,4*\sep);
+\draw[line width = 5] (1,1) -- (1,4) -- (4,4) -- (4,1) -- (1,1) -- (1,4);
+\draw[line width = 5] (2,2) -- (2,3) -- (4,3);
+\end{tikzpicture}
+\end{minipage}}\\
+
+\end{question}
+
+\begin{question}
+The following Q-values correspond to the value function you specified above.\\
+
+\begin{subquestion}[2]
+The Q value of state-action $(0,0)$, (East) is: \underline{\hspace{1cm}\TwoBi\hspace{1cm}}
+\end{subquestion}
+
+\begin{subquestion}[2]
+The Q value of state-action $(1,1)$, (East) is: \underline{\hspace{1cm}\TwoBii\hspace{1cm}}
+\end{subquestion}
+
+\end{question}
+
+
+\begin{question}
+Assume finite horizon of $h = 10$, no discounting, but the action to stay in place is temporarily (for this sub-point only) unavailable. Actions that would make Pacman hit a wall are not available. Specifically, Pacman can not use actions North or West to remain in state $(0,0)$ once he is there.
+\\
+
+{
+\renewcommand\truefalsepoints{2}
+\begin{truefalse}[\TwoCi]
+There is just one optimal action at state $(0,0)$. FALSE
+\end{truefalse}}
+
+\begin{subquestion}[2]
+The value of state $(0,0)$ is: \underline{\hspace{1cm}\TwoCii\hspace{1cm}}  
+\end{subquestion}
+
+
+\end{question}
+
+\begin{question}[2]
+Assume infinite horizon, discount factor $\gamma = 0.9$. 
+\\
+
+The value of state $(0,0)$ is: \underline{\hspace{1cm}\TwoD\hspace{1cm}}  \hfill \hfill
+\\
+
+\end{question}
+
+
+\begin{question}[2]
+Assume infinite horizon and no discount ($\gamma = 1$). At every time step, after Pacman takes an action and collects his reward, a power outage could suddenly end the game with probability $\alpha= 0.1$. \\
+
+The value of state $(0,0)$ is: \underline{\hspace{1cm}\TwoE\hspace{1cm}} 
+
+\end{question}
+\end{problem}

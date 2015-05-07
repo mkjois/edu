@@ -1,0 +1,15 @@
+(lambda(){
+    def %u1 = %iterable;
+    if (type(%iterable) == 'table') {
+        %u1 = _getIterator_(%iterable);
+    }
+    def %u2 = {};
+    def %u3 = 0;
+    for (%name in %u1) {
+        %u2[%u3] = %expression;
+        %u3 = %u3 + 1; 
+    }
+    %u2;
+})()
+
+(lambda(){def %u1 = %iterable; if (type(%iterable) == 'table') {%u1 = _getIterator_(%iterable);} def %u2 = {}; def %u3 = 0; for (%name in %u1) {%u2[%u3] = %expression; %u3 = %u3 + 1;} %u2;})()

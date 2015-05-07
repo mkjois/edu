@@ -1,0 +1,326 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,mathrsfs,enumerate}
+\addtolength{\evensidemargin}{-.5in}
+\addtolength{\oddsidemargin}{-.5in}
+\addtolength{\textwidth}{0.8in}
+\addtolength{\textheight}{0.8in}
+\addtolength{\topmargin}{-.4in}
+\newtheoremstyle{quest}{\topsep}{\topsep}{}{}{\bfseries}{}{ }{\thmname{#1}\thmnote{ #3}.}
+\theoremstyle{quest}
+\newtheorem*{definition}{Definition}
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{question}{Problem}
+\newtheorem*{exercise}{Exercise}
+\newtheorem*{challengeproblem}{Challenge Problem}
+\newcommand{\name}{%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% put your name here, so we know who to give credit to %%
+CS189: Introduction to Machine Learning
+}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\hw}{%%%%%%%%%%%%%%%%%%%%
+%% and which homework assignment is it? %%%%%%%%%
+%% put the correct number below              %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+2
+}
+\newcommand{\duedate}{Due date: }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{\vspace{-50pt}
+\huge \name
+\\\vspace{10pt}
+\Large Homework \hw
+\\\vspace{10pt}
+\large Due: February 17, 2015 at 11:59pm}
+\date{}
+\author{}
+
+\markright{\name\hfill Homework \hw\hfill}
+
+%% If you want to define a new command, you can do it like this:
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\lhood}{\mathscr{L}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\asdf}{\newline\newline}
+
+%% If you want to use a function like ''sin'' or ''cos'', you can do it like this
+%% (we probably won't have much use for this)
+% \DeclareMathOperator{\sin}{sin}   %% just an example (it's already defined)
+
+
+\begin{document}
+\maketitle
+
+\begin{picture}(0,0)
+\put(-20,180){
+\textbf{Name: Manohar Jois} \hspace{6cm}
+\textbf{Student ID: 23808180}  
+}
+\end{picture}
+
+\begin{question}[1]
+A target is made of 3 concentric circles of radii $1/{\sqrt{3}}$, $1$ and $\sqrt{3}$ feet. Shots within the inner circle are given 4 points, shots within the next ring are given 3 points, and shots within the third ring are given 2 points. Shots outside the target are given 0 points.
+
+Let $X$ be the distance of the hit from the center (in feet), and let the p.d.f of $X$ be
+\[
+f(x) =
+  \begin{cases}
+   \frac{2}{\pi (1+x^2)} & x>0 \\
+   0 &  \text{otherwise}
+  \end{cases}
+\]
+What is the expected value of the score of a single shot?
+
+\end{question}
+\vspace{12pt}
+\textbf{Solution:}
+% Write your solution to problem 1 here
+The pdf of $X$ integrates to $1$ over all $x$, so we can simply use linearity of expectation where the probability of a value of $X$ is given by integrating the pdf within the bounds of that value. \begin{align*}
+\E[X] &= 4\int_0^{\frac1{\sqrt3}}f(x)dx + 3\int_{\frac1{\sqrt3}}^1f(x)dx + 2\int_1^{\sqrt3}f(x)dx + 0\int_{\sqrt3}^{\infty}f(x)dx\\
+&= \frac8{\pi}\arctan x \bigg|_0^{\frac1{\sqrt3}} + \frac6{\pi}\arctan x \bigg|_{\frac1{\sqrt3}}^1 + \frac4{\pi}\arctan x \bigg|_1^{\sqrt3}\\
+&= \frac8{\pi}(\frac{\pi}6-0) + \frac6{\pi}(\frac{\pi}4-\frac{\pi}6) + \frac4{\pi}(\frac{\pi}3-\frac{\pi}4)\\
+&= \frac{13}6
+\end{align*}
+\newpage
+
+
+\begin{question}[2]
+Assume that the random variable $X$ has the exponential distribution
+\[
+f(x|\theta) = \theta e^{-\theta x} \ \ \ \ \ \ \ \ x > 0, \theta > 0
+\]
+where $\theta$ is the parameter of the distribution. Use the method of maximum likelihood to estimate $\theta$ if 5 observations of $X$ are $x_1 = 0.9$, $x_2 = 1.7$, $x_3 = 0.4$, $x_4 = 0.3$, and $x_5 = 2.4$, generated i.i.d.
+\end{question}
+\vspace{12pt}
+\textbf{Solution:}
+% Write your solution to problem 2 here
+Because the samples are generated i.i.d. the probability of the sequence is the product of individual probabilities given $\theta$. For maximum likelihood estimation, we use the assumed distribution as the probabilities: \begin{align*}
+\prod_{i=1}^n P(x_i|\theta) &= \prod_{i=1}^n \theta e^{-\theta x_i}\\
+\ln\lhood &= \ln{\prod_{i=1}^n \theta e^{-\theta x_i}}\\
+&= \sum_{i=1}^n \ln\theta - \theta x_i\\
+\frac{\partial[\ln\lhood]}{\partial\theta} &= \sum_{i=1}^n \frac1{\theta}-x_i\\
+0 &= \frac5{\theta}-(0.9+1.7+0.4+0.3+2.4)\\
+\theta &= \frac5{5.7} = 0.877
+\end{align*}
+This $\theta$ maximizes the log-likelihood because the first derivative is zero and the second derivative (a sum of $-\frac1{\theta^2}$ terms) is negative. Maximizing log-likelihood also maximizes likelihood.
+\newpage
+
+\begin{question}[3]
+The polynomial kernel is defined to be
+\[
+k(\bf{x},\bf{y}) = (\bf{x}^T\bf{y} + c)^d
+\]
+where $\bf{x},\bf{y} \in \mathbb{R}^n$, and $c \geq 0$. When we take $d=2$, this kernel is called the quadratic kernel.
+\begin{itemize}
+\item[(a)] Find the feature mapping $\Phi(\bf{z})$ that corresponds to the quadratic kernel.
+\item[(b)] How do we find the optimal value of $d$ for a given dataset?
+\end{itemize}
+\end{question}
+\vspace{12pt}
+\textbf{Solution:}
+% Write your solution to problem 3 here
+\begin{enumerate}[(a)]
+\item \begin{align*}
+k_2(x,y) &= (c+\sum_{i=1}^n x_iy_i)^2\\
+&= (\sum_{i=1}^n x_iy_i)^2 + 2c\sum_{i=1}^n x_iy_i + c^2\\
+&= \sum_{i=1}^n\sum_{j=1}^n x_ix_jy_iy_j + 2c\sum_{i=1}^n x_iy_i + c^2\\
+&= \begin{bmatrix}x_1x_1\\\vdots\\x_1x_n\\x_2x_1\\\vdots\\x_2x_n\\\vdots\\x_nx_n\\\sqrt{2c}x_1\\\vdots\\\sqrt{2c}x_n\\c\end{bmatrix}\cdot\begin{bmatrix}y_1y_1\\\vdots\\y_1y_n\\y_2y_1\\\vdots\\y_2y_n\\\vdots\\y_ny_n\\\sqrt{2c}y_1\\\vdots\\\sqrt{2c}y_n\\c\end{bmatrix}\\
+&= \Phi(x)\cdot\Phi(y)
+\end{align*}
+\item Similar to the way we optimize the parameter $C$ in the soft-margin SVM, we can do logarithmic searches over ranges of $d$ to close in on a particular value. We would use cross-validation to obtain the accuracy on the dataset for a particular value of $d$.
+\end{enumerate}
+\newpage
+
+\noindent
+\textbf{Def}: Let $A \in \mathbb{R}^{n \times n}$ be a symmetric matrix. We say that $A$ is positive definite if $\forall x\in \mathbb{R}^n,\ x^\top Ax > 0$. Similarly, we say that $A$ is positive semidefinite if $\forall x \in \mathbb{R}^n,\ x^\top Ax \geq 0$.
+
+\begin{question}[4]
+Let $x = \begin{bmatrix}x_1 & \cdots & x_n\end{bmatrix}^\top \in \mathbb{R}^n$, and let $A \in \mathbb{R}^{n \times n}$ be the square matrix
+\begin{equation*}
+A = \begin{bmatrix}
+  a_{11} & a_{12} & \cdots & a_{1n} \\
+  a_{21} & a_{22} & \cdots & a_{2n} \\
+  \vdots  & \vdots  & \ddots & \vdots  \\
+  a_{n1} & a_{n2} & \cdots & a_{nn}
+\end{bmatrix}
+\end{equation*}
+
+\begin{itemize}
+\item[(a)]
+Give an explicit formula for $x^\top A x$. Write your answer as a sum involving the elements of $A$ and $x$. \\
+\vspace{12pt}
+\textbf{Solution:}
+% Write your solution to problem 4a here
+\begin{align*}
+x^{T}Ax &= \begin{bmatrix}x_1&x_2&\cdots&x_n\end{bmatrix}\begin{bmatrix}a_{11}&a_{12}&\cdots&a_{1n}\\a_{21}&a_{22}&\cdots&a_{2n}\\\vdots&\vdots&\ddots&\vdots\\a_{n1}&a_{n2}&\cdots&a_{nn}\end{bmatrix}\begin{bmatrix}x_1\\x_2\\\vdots\\x_n\end{bmatrix}\\
+&= \begin{bmatrix}\sum_{i=1}^na_{i1}x_i&\sum_{i=1}^na_{i2}x_i&\cdots&\sum_{i=1}^na_{in}x_i\end{bmatrix}\begin{bmatrix}x_1\\x_2\\\vdots\\x_n\end{bmatrix}\\
+&= \sum_{j=1}^n \sum_{i=1}^n a_{ij}x_ix_j
+\end{align*}
+\vspace{1in}
+
+\item[(b)] Show that if $A$ is positive definite, then the entries on the diagonal of $A$ are positive (that is, $a_{ii} > 0$ for all $1 \leq i \leq n$). \\
+\textbf{Solution:}
+% Write your solution to problem 4b here
+Let $A$ be a positive definite $n\times n$ matrix where the $k^{\text{th}}$ diagonal entry is non-positive ($a_{kk}\leq 0$). Now let $x\in \R^n$ be a vector of all zeros except for an arbitrary nonzero value at position $k$. When we calculate $x^TAx$, all the $x_ix_j$ terms go to zero except $x_k^2$, which will always be positive. Multiplying this by $a_{kk}$ gives us a non-positive value for $x^TAx$, and since this quantity must be positive for all nonzero $x\in\R^n$, we prove by contradiction that there cannot be a non-positive entry on the diagonal of $A$.
+\end{itemize}
+\end{question}
+\newpage
+
+\begin{question}[5]
+Let $B$ be a positive semidefinite matrix. Show that $B + \gamma I$ is positive definite for any $\gamma > 0$.
+\end{question}
+\vspace{12pt}
+\textbf{Solution:}
+% Write your solution to problem 5 here
+First we factor $x^T(B+\gamma I)x=(x^TB+\gamma x^TI)x=x^TBx + \gamma x^TIx$. Given $B$ is positive semidefinite, the first term is always non-negative, so we simply need to show that the second term is always positive. \begin{align*}
+\gamma x^TIx &= \gamma\sum_{j=1}^n\sum_{i=1}^n I_{ij}x_ix_j\\
+&= \gamma\sum_{i=1}^n 1\cdot x_i^2
+\end{align*}
+Each $x_i^2$ term must be non-negative and at least one must be non-zero since when considering positive definite matrices we exclude $x=0_n$. For any $\gamma > 0$ the whole quantity must therefore be positive and so $B+\gamma I$ is positive definite.
+\newpage
+
+
+\begin{question}[6]
+Suppose we have a classification problem with classes labeled $1, \dotsc, c$ and an additional doubt category labeled as $c+1$.
+Let the loss function be the following:\\
+\[
+\ell(f(x) = i, y = j) =
+  \begin{cases}
+   0 &  \mathrm{if}\ i=j \quad i,j\in\{1,\dotsc,c\} \\
+   \lambda_r       & \mathrm{if}\ i=c+1 \\
+   \lambda_s       & \text{otherwise}
+  \end{cases}
+\]
+where $\lambda_r$ is the loss incurred for choosing doubt and $\lambda_s$ is the loss incurred for making a misclassification. Note that $\lambda_r \ge 0$ and $\lambda_s \ge 0$. 
+
+\begin{itemize}
+\item[(a)] Show that the minimum risk is obtained if we follow this policy: (1) choose class~$i$ if $P(\omega_i|x) \geq P(\omega_j|x)$ for all $j$ and $P(\omega_i|x) \geq 1-\lambda_r/\lambda_s$, and (2) choose doubt otherwise.\\
+\textbf{Solution:}
+% Write your solution to problem 6a here
+Keeping in mind that we choose doubt class $c+1$ if $\sum_{j\neq i} P(\omega_j|x) > \frac{\lambda_r}{\lambda_s}$, we write out the risk: \begin{align*}
+R(f) &= \E[l(f(X),Y)]\\
+&= \E[\E[l(f(X),Y)|X]]\\
+&= \E[\sum_{j\in \{1\ldots c\}} l(f(X),j)P(Y=j|X)]\\
+&= \E[\sum_{j\in \{1\ldots c\}} P(Y=j|X)(\lambda_rP(f(X)=c+1)+\lambda_s\sum_{i\neq j} P(f(X)=i))]
+\end{align*}
+We incur a loss of $\lambda_r$ by choosing doubt, but by not choosing doubt we incur a loss equal to the $\lambda_s\sum_{i\neq j}$ term above. If we choose doubt according to the threshold above, then this expected loss won't be above $\lambda_s\cdot\frac{\lambda_r}{\lambda_s}=\lambda_r$, which is what we get for choosing doubt anyway, so this policy is optimal.
+\vspace{0.5in}
+\item[(b)] What happens if $\lambda_r=0$? What happens if $\lambda_r>\lambda_s$?\\
+\textbf{Solution:}
+% Write your solution to problem 6b here
+If $\lambda_r=0$, then $P(\omega_i|x)\geq 1-\lambda_r/\lambda_s$ would never be true unless $P(\omega_i|x)=1$. In other words, unless we were certain of a class it would be less risky to choose doubt, which defeats the purpose of classification. If $\lambda_r>\lambda_s$, then the doubt condition would always be true and this reduces to a regular classification problem without the doubt category.
+\end{itemize}
+\end{question}
+\vspace{25pt}
+
+\pagebreak
+\begin{question}[7]
+Let $p(x|\omega_i)  \sim \mathcal{N}(\mu_i,\sigma^2)$ for a two-category one-dimensional classification problem with $P(\omega_1)=P(\omega_2)=1/2$.
+\begin{itemize}
+\item[(a)] Show that the minimum probability of error is
+\begin{equation*}
+P_e=\frac{1}{\sqrt{2\pi}}\int_{a}^{\infty} e^{-(1/2)u^{2}}du
+\end{equation*}
+where $a=|\mu_2 - \mu_1|/2\sigma$.\\
+\textbf{Solution:}
+% Write your solution to problem 7a here
+By symmetry, the decision boundary will be $d=\frac{\mu_1+\mu_2}2$. The minimum probability of error is given by integrating the regions of the distributions where we would misclassify, scaling them by their priors and adding them. First assume $\mu_2>\mu_1$ and let $u(x)=\frac{x-\mu_1}{\sigma}$ and $du=\frac1{\sigma}dx$: \begin{align*}
+P_e &= P(f(x)=\omega_2|y=\omega_1)P(y=\omega_1)+P(f(x)=\omega_1|y=\omega_2)P(y=\omega_2)\\
+&= \frac12\int_d^{\infty}\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu_1)^2}{2\sigma^2}}dx + \frac12\int_{-\infty}^d\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu_2)^2}{2\sigma^2}}dx\\
+&= \int_d^{\infty}\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu_1)^2}{2\sigma^2}}dx \qquad \text{by symmetry}\\
+&= \frac1{\sqrt{2\pi}}\int_{u(d)}^{\infty}e^{-\frac12u^2}du
+\end{align*}
+Notice that $u(d)=\frac{\mu_2-\mu_1}{2\sigma}$. Since this holds for $\mu_2>\mu_1$ and by symmetry the bound would be $\frac{\mu_1-\mu_2}{2\sigma}$ if $\mu_1>\mu_2$, the general bound would be $a=\frac{|\mu_2-\mu_1|}{2\sigma}$. 
+\vspace{0.5in}
+\item[(b)] Use the inequality
+\begin{equation*}
+\frac{1}{\sqrt{2\pi}}\int_{a}^{\infty} e^{-(1/2)u^{2}}du \leq \frac{1}{\sqrt{2\pi}a}e^{-(1/2)a^{2}}du
+\end{equation*}
+to show that $P_e$ goes to zero as $a=|\mu_2 - \mu_1|/\sigma$ goes to infinity. \\
+\textbf{Solution:}
+% Write your solution to problem 7b here
+Using the inequality we have \begin{align*}
+P_e &\leq \frac1{\sqrt{2\pi}ae^{a^2/2}}\\
+&\leq \frac1a
+\end{align*}
+which clearly goes to zero as $a\rightarrow\infty$.
+\end{itemize}
+\end{question}
+\newpage
+
+
+\begin{question}[8]
+Recall that the probability mass function of a Poisson random variable is
+\begin{equation*}
+P(X=x)=e^{-\lambda} \frac{\lambda^x}{x!} \quad\quad x \in \{0,1,\dotsc,\infty\}
+\end{equation*}
+You are given two \textit{equally likely} classes of Poisson data with parameters $\lambda_1 = 10$ and $\lambda_2 = 15$. This means that $x|\omega_1 \sim \mathrm{Poisson}(\lambda_1)$ and $x|\omega_2 \sim \mathrm{Poisson}(\lambda_2)$.
+\begin{itemize}
+\item[(a)] Given the class conditionals, $x|\omega_1$ and $x|\omega_2$, find $P(\omega_1|x)$ in terms of $\lambda_1$, $\lambda_2$, $P(\omega_1)$, and $P(\omega_2)$. What type of function is the posterior? \\
+\textbf{Solution:}
+% Write your solution to problem 8a here
+We use Bayes' rule along with the fact that the class priors are equal.
+\begin{align*}
+P(\omega_1|x) &= \frac{P(x|\omega_1)P(\omega_1)}{P(x|\omega_1)P(\omega_1)+P(x|\omega_2)P(\omega_2)}\\
+&= \frac{e^{-\lambda_1}\frac{\lambda_1^x}{x!}}{e^{-\lambda_1}\frac{\lambda_1^x}{x!}+e^{-\lambda_2}\frac{\lambda_2^x}{x!}}\\
+&= \frac1{1+e^{-(\lambda_2-\lambda_1)}(\frac{\lambda_2}{\lambda_1})^x}\\
+&= \frac1{1+e^{-5}\cdot 1.5^x}\\
+&= \frac1{1+e^{\ln(1.5)x-5}}
+\end{align*}
+\item[(b)] Find the optimal rule (decision boundary) for allocating an observation $x$ to a particular class. Calculate the probability of correct classification for each class. Calculate the total error rate for this choice of decision boundary. \\
+\textbf{Solution:}
+% Write your solution to problem 8b here
+We set the posteriors equal to each other and solve for $x$: \begin{align*}
+P(\omega_1|x) &= P(\omega_2|x)\\
+\frac1{1+e^{-(\lambda_2-\lambda_1)}(\frac{\lambda_2}{\lambda_1})^x} &= \frac1{1+e^{-(\lambda_1-\lambda_2)}(\frac{\lambda_1}{\lambda_2})^x}\\
+e^{-(\lambda_2-\lambda_1)}(\frac{\lambda_2}{\lambda_1})^x &= e^{-(\lambda_1-\lambda_2)}(\frac{\lambda_1}{\lambda_2})^x\\
+-(\lambda_2-\lambda_1)+x\cdot\ln{\frac{\lambda_2}{\lambda_1}} &= -(\lambda_1-\lambda_2)+x\cdot\ln{\frac{\lambda_1}{\lambda_2}}\\
+x(\ln{\frac{\lambda_2}{\lambda_1}}-\ln{\frac{\lambda_1}{\lambda_2}}) &= 2(\lambda_2-\lambda_1)\\
+2x\cdot\ln{\frac{\lambda_2}{\lambda_1}}&= 2(\lambda_2-\lambda_1)\\
+x &= \frac{\lambda_2-\lambda_1}{\ln{\frac{\lambda_2}{\lambda_1}}}\\
+&= 12.33
+\end{align*}
+Classification and error rates are: \begin{align*}
+P(f(x)=\omega_1|y=\omega_1)P(y=\omega_1) &= \frac12\sum_{x=0}^{12} e^{-10}\frac{10^x}{x!}\\
+&= 0.396\qquad\text{(Wolfram Alpha)}\\
+P(f(x)=\omega_2|y=\omega_2)P(y=\omega_2) &= \frac12\sum_{x=13}^{\infty} e^{-15}\frac{15^x}{x!}\\
+&= \frac12(1-\sum_{x=0}^{12} e^{-15}\frac{15^x}{x!})\\
+&= 0.366\qquad\text{(Wolfram Alpha)}\\
+P(\text{correct}) &= 0.396+0.366=0.762\\
+P(\text{error}) &= 1-0.762 = 0.238
+\end{align*}
+\vspace{0.5in}
+\item[(c)] Suppose instead of one, we can obtain two independent measurements $x_1$ and $x_2$ for the object to be classified. How do the allocation rules and error rates change? Calculate the revised probability of correct classification for each class. Calculate the new total error in this case. 
+\end{itemize}
+
+\textit{Hint:} Always keep in mind that the Poisson distribution is defined for nonnegative integral values. Moreover, you can't be sure how much error you accumulate by erring on either side unless you explicitly calculate it.\\
+\textbf{Solution:}
+% Write your solution to problem 8c here
+
+\end{question}
+\newpage
+
+\begin{question}[9 (\textbf{Optional: Extra for Experts)}
+]
+
+\vspace{5mm}
+
+Let $X_1,X_2,...,X_n$ be a sequence of points chosen independently and uniformly from within a 2-dimensional unit ball $B = \{x\in \mathbb{R}^2 : {x_1}^2 + {x_2}^2 \leq 1\}$. A set of points $X_1,X_2,...X_n$ lie in a hemisphere if there is a line passing through the origin for which all $n$ points lie on a particular side of the hemisphere. Define the event:
+
+$$A_n = \{X_1,X_2...X_n \textnormal{ lie in a hemisphere}\}$$
+
+\noindent Compute Pr$\{A_n\}$. (There are multiple ways of doing this. Some are simpler than others)\\
+
+\noindent Credit and Thanks to Professor Thomas Courtade for writing this question
+\end{question}
+\vspace{12pt}
+\textbf{Solution:}
+% Write your solution to problem 9 here
+
+
+\end{document}

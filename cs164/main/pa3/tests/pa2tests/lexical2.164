@@ -1,0 +1,15 @@
+def x = 1
+def y = 2
+
+def f() {
+    print y
+}
+
+def g(y) {
+	print x
+	print y
+	f()
+}
+
+g(3)
+print y

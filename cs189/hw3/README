@@ -1,0 +1,12 @@
+Name: Manohar Jois
+SID: 23808180
+Slip days used: 2
+
+Problem 1:
+Simply run 'python p1.py' with Python 2.7 and observe the text output in 'p1out.txt'. Figures for parts (d) and (e) are saved in 'images/' as 'p1d.png' and 'p1e.png'.
+
+Problem 3:
+Run 'python p3.py' and the figures will be saved in 'images/' as 'p3a.png' through 'p3e.png' (ignore the 'UnicodeWarning' messages if they appear).
+
+Problem 4:
+Change the two 'TRAIN_*' variables at the top of 'p4.py' and run it to run digit and spam classification accordingly. Relevant images are saved in 'images/' as 'p4*.png'.

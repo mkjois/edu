@@ -1,0 +1,60 @@
+digraph{kid12981 -> aid12980 -> cid12970 -> cid12968 -> cid12966 -> cid12964 -> cid12962 -> aid12960 -> cid12949 -> cid12947 -> cid12945 -> cid12943 -> hid12941
+hid12941 [label="h"]
+cid12943 -> eid12942
+eid12942 [label="e"]
+cid12943 [label="."]
+cid12945 -> lid12944
+lid12944 [label="l"]
+cid12945 [label="."]
+cid12947 -> lid12946
+lid12946 [label="l"]
+cid12947 [label="."]
+cid12949 -> oid12948
+oid12948 [label="o"]
+cid12949 [label="."]
+aid12960 -> cid12959 -> cid12956 -> cid12954 -> cid12952 -> wid12950
+wid12950 [label="w"]
+cid12952 -> oid12951
+oid12951 [label="o"]
+cid12952 [label="."]
+cid12954 -> rid12953
+rid12953 [label="r"]
+cid12954 [label="."]
+cid12956 -> lid12955
+lid12955 [label="l"]
+cid12956 [label="."]
+cid12959 -> kid12958 -> did12957
+did12957 [label="d"]
+kid12958 [label="*"]
+cid12959 [label="."]
+aid12960 [label="|"]
+cid12962 -> rid12961
+rid12961 [label="r"]
+cid12962 [label="."]
+cid12964 -> eid12963
+eid12963 [label="e"]
+cid12964 [label="."]
+cid12966 -> gid12965
+gid12965 [label="g"]
+cid12966 [label="."]
+cid12968 -> eid12967
+eid12967 [label="e"]
+cid12968 [label="."]
+cid12970 -> xid12969
+xid12969 [label="x"]
+cid12970 [label="."]
+aid12980 -> kid12979 -> kid12978 -> cid12977 -> cid12975 -> cid12973 -> tid12971
+tid12971 [label="t"]
+cid12973 -> eid12972
+eid12972 [label="e"]
+cid12973 [label="."]
+cid12975 -> sid12974
+sid12974 [label="s"]
+cid12975 [label="."]
+cid12977 -> tid12976
+tid12976 [label="t"]
+cid12977 [label="."]
+kid12978 [label="*"]
+kid12979 [label="*"]
+aid12980 [label="|"]
+kid12981 [label="*"]}

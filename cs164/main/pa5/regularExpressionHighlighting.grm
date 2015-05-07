@@ -1,0 +1,29 @@
+%ignore /\n+/
+
+%%
+
+R ->  CHAR               %{ return n1.val; %}
+
+  | R '*'      %dprec 1  %{ var op_uid = genUID();
+                            var exp_uid = genUID();
+                            return makeSpan(exp_uid, n1.val)
+                                 + makeSpan(op_uid, "*")
+                                 + makeScript(op_uid, exp_uid, "star"); %}
+
+  | R R        %dprec 2  %{ return n1.val + n2.val; %}
+
+  | R '|' R    %dprec 3  %{ var op_uid = genUID();
+                            var exp_uid = genUID();
+                            return makeSpan(exp_uid, n1.val)
+                                 + makeSpan(op_uid, "|")
+                                 + makeSpan(exp_uid, n3.val)
+                                 + makeScript(op_uid, exp_uid, "or"); %}
+
+  | '(' R ')'            %{ var uid = genUID();
+                            return makeSpan(uid, "(")
+                                 + n2.val
+                                 + makeSpan(uid, ")")
+                                 + makeScript(uid, uid, "paren"); %}
+  ;
+
+CHAR -> /[A-Za-z0-9]/ ;

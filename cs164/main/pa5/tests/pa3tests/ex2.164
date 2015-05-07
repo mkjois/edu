@@ -1,0 +1,5 @@
+def t = {}
+t[0] = "Hello"
+t[1] = "world"
+print len(t)
+print t[0] + " " + t[1]

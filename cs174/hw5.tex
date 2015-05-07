@@ -1,0 +1,161 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\usepackage{titling}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{5} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\emf}{\mathcal{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+\begin{enumerate}[1.]
+\item First note that for a constant $c$, $M_{cX}(t) = \E[e^{tcX}] = M_X(ct)$. Let $t_1=a>0$ and $t_2=-a<0$: \begin{align*}
+\Pr[|X|\geq a] &= \Pr[X\geq a]+\Pr[X\leq -a]\\
+&\leq \frac{\E[e^{t_1X}]}{e^{t_1a}} + \frac{\E[e^{t_2X}]}{e^{t_2(-a)}}\\
+&= \frac{e^{t_1^2/2}}{e^{t_1a}} + \frac{e^{t_2^2/2}}{e^{t_2(-a)}}\\
+&= \frac{e^{a^2/2}}{e^{a^2}} + \frac{e^{a^2/2}}{e^{a^2}}\\
+&= 2e^{-a^2/2}
+\end{align*}
+\item The $i^{\text{th}}$ moment is given by the $i^{\text{th}}$ derivative of the mgf evaluated at $t=0$. \begin{align*}
+M_x'(t) &= te^{t^2/2} & \E[X] &= M_x'(0) = 0\\
+M_x''(t) &= e^{t^2/2}+t^2e^{t^2/2} & \E[X^2] &= M_x''(0) = 1\\
+M_x^{(3)}(t) &= te^{t^2/2}+2te^{t^2/2}+t^3e^{t^2/2} & &\\
+&= (t^3+3t)e^{t^2/2} & \E[X^3] &= M_x^{(3)}(0) = 0\\
+M_x^{(4)}(t) &= (3t^2+3)e^{t^2/2}+(t^4+3t^2)e^{t^2/2} & \E[X^4] &= M_x^{(4)}(0) = 3
+\end{align*}
+\item The $X_i$ are independent and have the same distribution as $X$. \begin{align*}
+M_{(X_1+X_2)/\sqrt{2}}(t) &= \E[e^{t(X_1+X_2)/\sqrt{2}}]\\
+&= \E[e^{(\frac t{\sqrt{2}})X_1}]\E[e^{(\frac t{\sqrt{2}})X_2}]\\
+&= M_{X_1}(\frac t{\sqrt2})M_{X_2}(\frac t{\sqrt2})\\
+&= (M_{X_1}(\frac t{\sqrt2}))^2\\
+&= (e^{\frac{(t/\sqrt2)^2}2})^2\\
+&= e^{t^2/2}
+\end{align*}
+\item We show that $Y$ has the same mgf as $X$, indicating it has the same distribution: \begin{align*}M_Y(t) &= \prod_{i=1}^n M_{a_iX_i}(t)\\
+&= \prod_{i=1}^n M_X(a_it)\\
+&= \prod_{i=1}^n e^{\frac{a_i^2t^2}2}\\
+&= \exp{\left(\sum_{i=1}^n \frac{a_i^2t^2}2\right)}\\
+&= \exp{\left(\frac{t^2}2 \cdot 1\right)}
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+First we compute the mgf of $X$: \begin{align*}
+\E[e^{tX}] &= \prod_{i=1}^n\E[e^{tX_i}]\\
+&= \prod_{i=1}^np_ie^{t(1-p_i)}+(1-p_i)e^{-tp_i}\\
+&\leq \prod_{i=1}^ne^{t^2/8} \qquad\text{(every term is positive)}\\
+&= e^{nt^2/8}
+\end{align*}
+Now let $t_1=\frac{4a}n>0$ and $t_2=-\frac{4a}n<0$: \begin{align*}
+\Pr[|X|>a] &= \Pr[X>a]+\Pr[X<-a]\\
+&\leq \frac{\E[e^{t_1X}]}{e^{t_1a}}+\frac{\E[e^{t_2X}]}{e^{t_2(-a)}}\\
+&= \frac{e^{nt_1^2/8}}{e^{t_1a}}+\frac{e^{nt_2^2/8}}{e^{t_2(-a)}}\\
+&= \frac{e^{2a^2/n}}{e^{4a^2/n}}+\frac{e^{2a^2/n}}{e^{4a^2/n}}\\
+&= e^{-2a^2/n}+e^{-2a^2/n}\\
+&= 2e^{-2a^2/n}
+\end{align*}
+The values of $t_1$ and $t_2$ were calculated by leaving them in the expression and comparing to the final answer, which led to solving a simple quadratic equation.
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+\begin{enumerate}[(i)]
+\item Each game is independent, so the loss variables $X_i$ are independent. We'll define casino loss (and therefore the player's gain) as positive. \begin{align*}
+\E[e^{tX}] &= \prod_{i=1}^{10^6} \E[e^{tX_i}]\\
+&= \prod_{i=1}^{10^6} \left(\frac{4}{25}e^{(3-1)t}+\frac{1}{200}e^{(100-1)t}+\frac{167}{200}e^{(0-1)t}\right)
+\end{align*}
+\item Using $t=0.0006$, \begin{align*}
+\Pr[X\geq 10000] &\leq \frac{\E[e^{tX}]}{e^{10000t}}\\
+&= \frac1{e^6}\prod_{i=1}^{10^6} \left(\frac{4}{25}e^{0.0012}+\frac{1}{200}e^{0.0594}+\frac{167}{200}e^{-0.0006}\right)\\
+&\leq 0.000161 \qquad \text{(Wolfram Alpha)}
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item The probability of $X\geq (1+\delta)2n$ is equivalent to having fewer than $n$ heads show up after $(1+\delta)2n-1$ independent fair coin tosses. This basically means you haven't completed your $n$ geometric trials represented by the $X_i$. Let $Y_i$ be indicator random variables for toss $i$ showing heads, let $Y$ be the sum of the $Y_i$ and let $L=(1+\delta)2n-1$. \begin{align*}
+\Pr[Y<n] &= \Pr[Y\leq n-1]\\
+&\leq \frac{\E[e^{tY}]}{e^{t(n-1)}}\\
+&= \frac1{e^{t(n-1)}}\prod_{i=1}^L\E[e^{tY_i}]\\
+&= \frac1{e^{t(n-1)}}\prod_{i=1}^L\frac12(e^t+1)\\
+&= e^{t(1-n)}\left(\frac{e^t+1}2\right)^{(1+\delta)2n-1}\\
+&= \left(\frac{e^t+1}{2e^t}\right)^{n-1}\left(\frac{e^t+1}2\right)^{(1+2\delta)n}
+\end{align*}
+\item First we need the mgf of a geometric RV $X_i$ with parameter $p=1/2$. We can do the following provided $0<t<\ln2$: $$\E[e^{tX_i}]=\sum_{i=1}^{\infty}(\frac12)^{i-1}(\frac12)e^{ti}=\sum_{i=1}^{\infty}(\frac{e^t}2)^i=\frac1{1-e^t/2}-1=\frac{e^t}{2-e^t}$$ Now we can bound the original probability: \begin{align*}
+\Pr[X\geq(1+\delta)2n] &\leq \frac{\E[e^{tX}]}{e^{t(1+\delta)2n}}\\
+&= \frac1{e^{t(1+\delta)2n}}\prod_{i=1}^n\left(\frac{e^t}{2-e^t}\right)\\
+&= \frac1{e^{t(1+\delta)2n}}\left(\frac{e^t}{2-e^t}\right)^n\\
+&= \left(\frac1{e^{1+2\delta}(2-e^t)}\right)^n
+\end{align*}
+\item The bound in (b) seems better because we can take values of $t$ very close to $0$ and get fast exponential decay in $n$ for the tail bound, whereas in (a) the second term has a higher base and exponent for all $t>0,\delta>0$ and it grows higher with increasing $n$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+\begin{enumerate}[1.]
+\item Along a given root-to-leaf path, every good node reduces the set size to at most $2/3$ of the current size. Since bad nodes don't grow the set size, this means there can be at most $\logb{3/2}{n}$ good nodes in the path. By change of base, this is upper bounded by $c\cdot\logb2n$ where $c=\frac1{\logb2{3/2}}$.
+\item 
+\item There are $n$ nodes in the tree. This can be seen because at each node we choose exactly one pivot and remove it from consideration from deeper nodes. This includes the leaf nodes, whose single elements are trivially their own pivots. From this we can deduce that there are at most $n$ leaves in the tree and thus at most $n$ root-to-leaf paths. From (b) we know that the probability of a certain path having greater than $c'\cdot\logb2n$ nodes is at most $\frac1{n^2}$.\asdf
+Because the events of the \textit{longest} root-to-leaf path being greater than $c'\cdot\logb2n$ nodes and \textit{at least one} path being greater are equivalent, we can find the probability of the latter. We use a union bound, where the probability is upper bounded by the sum of probabilities across all paths. This is at most $n\cdot\frac1{n^2}=\frac1n$, so the probability of the longest path being at most $c'\cdot\logb2n$ nodes is at least $1-\frac1n$.
+\item Across any horizontal level of the tree we do $\BigOh{n}$ work since we do one comparison for each element to one pivot each, and the number of elements across a level can't be more than the size of the original array. We know from (c) that the max depth of the tree is at most $c'\cdot\logb2n$ with probability at least $1-\frac1n$, so with the same probability Quicksort does at most $c'\cdot\logb2n\cdot\BigOh{n}=\BigOh{n\cdot\log n}$ work.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+% PUT PROBLEM 6 SOLUTION HERE
+First we prove the inequality $e^{at}-1\leq a(e^t-1)$ for $a\in[0,1]$: \begin{align*}
+f(a) &= e^{at}-ae^t+a-1\\
+f'(a) &= te^{at}-e^t+1\\
+f''(a) &= t^2e^{at} > 0 \quad \forall t>0
+\end{align*}
+We can calculate $f(0)=0$ and $f(1)=0$ and since the second derivative tells us that $f$ is convex on this interval, the inequality holds.\asdf
+Now we calculate the mgf of each weighted Poisson trial: $$M_{a_iX_i}(t) = \E[e^{ta_iX_i}] = p_ie^{a_it}+(1-p_i)e^0 = 1+p_i(e^{a_it}-1) \leq e^{p_i(e^{a_it}-1)} \leq e^{a_ip_i(e^t-1)}$$ We also need to recalculate $\mu=\E[X]=\sum_{i=1}^n \E[a_iX_i] = \sum_{i=1}^n a_ip_i$. The proof of the upper bound on $\Pr[X\geq (1+\delta)\mu]$ then follows the same format as the book, where the mgf of $X$ is the product of that of the $X_i$, and we set $t=\ln{1+\delta}$.
+
+\end{document}

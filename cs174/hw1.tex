@@ -1,0 +1,145 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{1} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item When the number of heads and tails are equals, this is simply 5 heads. Let $h$ be the number of heads and $t$ be the number of tails. The probability is the number of ways to choose 5 heads divided by the number of outcomes. $P(h=t) = {10 \choose 5}/ 2^{10} = 0.246$.
+\item In the entire probability space, consider the complement of equal heads and tails. Since the outcomes of heads and tails are symmetric, we can take half this probability to get the chance of more heads than tails. $P(h>t) = (1-{10 \choose 5}/ 2^{10})/2 = 0.377$.
+\item The only condition is that flips 6-10 match one certain sequence, determined by flips 1-5. The probability of one given sequence of 5 fair flips is $1/2^5$.
+\item Let $L(k)$ be the number of outcomes where the longest consecutive subsequence of heads is of length $k$. Consider $L(4)$, where we have at least one HHHH bordered by two tails. If the heads occur at the ends, we have five spots in which we can take any flip (more on double counting later). This gives $2\times 2^5$ outcomes. If the heads occur in the middle somewhere, we only have four spots for any flip, and this can occur in five separate areas between the ends: $5\times 2^4$ outcomes. This thought process leads to a general formula for $L(k)$ for $4\leq k \leq 9$ where $L(k) = 2\times 2^{10-k-1} + (10-k-1)\times 2^{10-k-2}$. We also note the trivial case where $L(10)=1$. However there are five sequences we double counted, namely HHHHTHHHHT, HHHHTTHHHH, THHHHTHHHH, HHHHHTHHHH and HHHHTHHHHH. Thus the number of outcomes where we have at least four consecutive heads is:
+\begin{align*}
+(\sum_{k=4}^{10} L(k)) - 5 = 144 + 64 + 28 + 12 + 5 + 2 + 1 - 5 = 251
+\end{align*}
+So the probability is $251/2^{10} = 0.245$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+Consider the probability of having $k$ white balls at the end, where $1 \leq k \leq n-1$. First of all, there are ${n-2 \choose k-1}$ orders in which the extra $k-1$ white and $n-2-(k-1)$ black balls are added to produce the desired result of $k$ white balls. \asdf
+Now consider an arbitrary ordering $\{x_0,x_1,\ldots,x_{n-3}\}$ of the insertion of the remaining $n-2$ balls from the beginning. The probability of each $x_i$ being a color $c$ can inherently be expressed as a ratio $\frac {a_{i,c}}{b_i}$, where $a_{i,c}$ is the number of balls of color $c$ currently in the bag after $i$ insertions and $b_i$ is the total number of balls in the bag after $i$ insertions. For any ordering, the probability of attaining that ordering is the product of all $\frac {a_{i,c}}{b_i}$. It's not hard to see that $\Pi_{i=0}^{n-3} a_i = (k-1)!(n-2-(k-1))!$ because each time we add a ball of a certain color, the next $a_{i,c}$ increases by one. Also note that $\Pi_{i=0}^{n-3} b_i = (n-1)!$. Both these products are equal for any ordering of a given $k$. So the total probability of having $k$ white balls in the end is the number of orderings to insert $k-1$ white balls out of $n-2$ total insertions times the probability of an ordering, which is
+\begin{align*}
+P(k\text{ white, }n-k\text{ black}) &= {n-2 \choose k-1}\cdot \frac{(k-1)!(n-2-(k-1))!}{(n-1)!}\\
+&= \frac{(n-2)!}{(k-1)!(n-2-(k-1))!} \cdot \frac{(k-1)!(n-2-(k-1))!}{(n-2)!} \cdot \frac1{n-1}\\
+&= \frac1{n-1}
+\end{align*}
+regardless of what $k$ is.
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item Minimum is zero since the second and third coins might have $P(H|c_1=H) = 0$. Maximum is $1/2$ because $P(3\text{ heads}) = P(c_1=H)P(c_2=H|c_1=H)P(c_3=H|c_1=H)$. The first term is always $1/2$ and the last two terms can't exceed $1$.
+\item The minimum is still zero since $P(c_3=H|c_2=H,c_1=H)$ could be zero. The maximum is $1/4$ because the first two coin flips are mutually independent, and the probability of the third flip being heads given the first two cannot exceed $1$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+Let $A$ be the event of a person having the disorder and $B$ the event that he or she tests positive. The probability of a person chosen uniformly at random from the population having the disorder, given that they tested positive, can be expressed using a simple application of Bayes' rule:
+\begin{align*}
+P(A \mid B) &= \frac{P(B \mid A)P(A)}{P(B)}\\
+&= \frac{P(B \mid A)P(A)}{P(B \mid A)P(A)+P(B \mid \overline{A})P(\overline{A})}\\
+&= \frac{0.98 \times 0.02}{0.98 \times 0.02 + 0.04 \times 0.98}\\
+&= \frac 13
+\end{align*}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+Consider a subsequence of consecutive heads of fixed length $L = \logb2n + k$ within our sequence of length $n$. There are $n-L+1$ places where this fixed subsequence can start. We can insert the subsequence starting at each of these places and have the remaining $n-L$ slots be either heads or tails. So for each subsequence starting point, there are $2^{n-L}$ outcomes where the sequence has at least $L$ consecutive heads, out of $2^n$ total outcomes. The cases of more than $L$ consecutive heads are already counted by the fact that the other $n-L$ slots can be anything. Clearly this approach counts some possible sequences multiple times, but this is fine because we are only interested in an upper bound. We calculate this bound as follows:
+\begin{align*}
+P(\text{at least }L\text{ consecutive heads}) &\leq (n-L+1)\cdot\frac{2^{n-L}}{2^n}\\
+&= (n-L+1)\cdot\frac1{2^L}\\
+&= (n-\logb2n-k+1)\cdot\frac1{2^{\logb2n + k}}\\
+&\leq n\cdot\frac{1}{2^{\logb2n}\cdot 2^k}\qquad \text{for } n,k > 0\\
+&= \frac n{n\cdot 2^k}\\
+&= \frac1{2^k}
+\end{align*}
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+% PUT PROBLEM 6 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item Since we are proving an "if and only if" statement, we begin by assuming $E_1,\ldots,E_k$ are mutually independent.
+%\begin{align*}
+%P(\bigcap_{i=1}^k E_i) &= P(E_k \cap \bigcap_{i=1}^{k-1} E_i) &= P(E_k \mid %\bigcap_{i=1}^{k-1} E_i) \cdot P(\bigcap_{i=1}^{k-1} E_i)
+%\end{align*}
+We also note from basic probability that no matter what combination of variables $X$ are given $P(\overline{E_k} \mid X) = 1 - P(E_k \mid X)$, so we can use the intersection of any subset $I \subseteq \{1,\ldots,k-1\}$ of the other $k-1$ variables and the given independence to our advantage:
+\begin{align*}
+P(\overline{E_k} \mid \bigcap_{i\in I} E_i) &= 1 - P(E_k \mid \bigcap_{i\in I} E_i)\\
+&= 1 - P(E_k)\\
+&= P(\overline{E_k})
+\end{align*}
+If we are given that $E_1,\ldots,E_{k-1},\overline{E_k}$ are mutually independent, we do the exact same analysis replacing $E_k$ with $\overline{E_k}$ and vice versa. This proves both sides of the statement.
+\item We use induction on the number of events $k$. For the first non-trivial base case $k=2$, if $P(E_1\cap E_2)=P(E_1)P(E_2)$, then by definition they are mutually independent. \asdf
+Now assume $E_1,\ldots,E_{k-1}$ are mutually independent if the probability equality holds for any subset $I \subseteq \{1,\ldots,k-1\}$. If we add event $E_k$ to the mix,
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 7}
+\stepcounter{problemnumber}
+% PUT PROBLEM 7 SOLUTION HERE
+Pick two numbers $0 \leq a,b \leq n-1$ such that $a+b \equiv z \bmod n$, then return $(F(a)+F(b))\bmod m$. The selection of $a$ and $b$ can take constant time since one can be chosen at random and the other is obtained by subtracting from $z$. Here we only do two lookups and by the property of $F$, this will return the correct value of $F(z)$ if the two lookups are correct, which occurs with probability $\frac45 \cdot \frac45 = \frac{16}{25} > \frac12$. \asdf
+Given the chance to execute this algorithm three times, we do just that and output the mode of the three results. This gives the correct answer with probability $$3\cdot \frac{9\cdot 16^2}{25^3} + \frac{16^3}{25^3} = 0.705$$.
+
+
+\newpage
+\section*{Problem 8}
+\stepcounter{problemnumber}
+% PUT PROBLEM 8 SOLUTION HERE
+Let the probabilities of each face of the biased die be $p_1,\ldots,p_6$, where their sum is $1$. Let $p_o = p_1+p_3+p_5$ and $p_e = p_2+p_4+p_6$ be the probabilities of rolling an odd or even number. To generate a coin flip, roll the die twice in succession. If the outcome is both odd or both even, discard this iteration because the probabilities of two odds and two evens may not be equal. If the outcome is odd-then-even, output "heads" and if even-then-odd output "tails" because the probabilities of these two outcomes are necessarily the same due to the independence of the two rolls. \asdf
+The probability of a valid outcome (as opposed to an outcome we should discard) is $p_op_e + p_ep_o = 2p_op_e$ so the expected number of iterations needed is $\frac1{2p_op_e}$. There are two rolls per iteration, so the expected number of rolls for an unbiased coin flip is $\frac1{p_op_e}$. \asdf
+To generate an unbiased die roll from a biased die, we use a similar principle. Let each iteration be four die rolls. Only count the iteration if we get two odds and two evens, where the order of the rolls matters. Because the rolls are independent, each of the ${4 \choose 2}=6$ orderings has equal probability given we do roll two odds and two evens, so each ordering can correspond to a face on an unbiased die. \asdf
+The probability of a valid iteration is $6p_o^2p_e^2$ and there are four rolls per iteration, so the expected number of die rolls is $\frac2{3p_o^2p_e^2}$.
+
+\end{document}

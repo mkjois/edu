@@ -1,0 +1,60 @@
+digraph{kid41 -> aid40 -> cid30 -> cid28 -> cid26 -> cid24 -> cid22 -> aid20 -> cid9 -> cid7 -> cid5 -> cid3 -> hid1
+hid1 [label="h"]
+cid3 -> eid2
+eid2 [label="e"]
+cid3 [label="."]
+cid5 -> lid4
+lid4 [label="l"]
+cid5 [label="."]
+cid7 -> lid6
+lid6 [label="l"]
+cid7 [label="."]
+cid9 -> oid8
+oid8 [label="o"]
+cid9 [label="."]
+aid20 -> cid19 -> cid16 -> cid14 -> cid12 -> wid10
+wid10 [label="w"]
+cid12 -> oid11
+oid11 [label="o"]
+cid12 [label="."]
+cid14 -> rid13
+rid13 [label="r"]
+cid14 [label="."]
+cid16 -> lid15
+lid15 [label="l"]
+cid16 [label="."]
+cid19 -> kid18 -> did17
+did17 [label="d"]
+kid18 [label="*"]
+cid19 [label="."]
+aid20 [label="|"]
+cid22 -> rid21
+rid21 [label="r"]
+cid22 [label="."]
+cid24 -> eid23
+eid23 [label="e"]
+cid24 [label="."]
+cid26 -> gid25
+gid25 [label="g"]
+cid26 [label="."]
+cid28 -> eid27
+eid27 [label="e"]
+cid28 [label="."]
+cid30 -> xid29
+xid29 [label="x"]
+cid30 [label="."]
+aid40 -> kid39 -> kid38 -> cid37 -> cid35 -> cid33 -> tid31
+tid31 [label="t"]
+cid33 -> eid32
+eid32 [label="e"]
+cid33 [label="."]
+cid35 -> sid34
+sid34 [label="s"]
+cid35 [label="."]
+cid37 -> tid36
+tid36 [label="t"]
+cid37 [label="."]
+kid38 [label="*"]
+kid39 [label="*"]
+aid40 [label="|"]
+kid41 [label="*"]}

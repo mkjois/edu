@@ -1,0 +1,16 @@
+def iter() {
+     def i = 16
+     lambda () {
+         if (i > 1) {
+             i = i / 2
+             i
+        } else {
+             null
+        }
+    } 
+} 
+
+for (x in iter()) {     
+    x = 3
+    print x
+}

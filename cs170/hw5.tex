@@ -1,0 +1,117 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{5} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2014}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+
+\title{CS170--Spring 2014 --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS170--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Let the graph be $G=(V,E)$, where $V$ are the currencies $c_i$ and $E$ is the set of directed edges $(c_i,c_j)$ with weight representing the exchange rate $r_{i,j}$. Now we simply run the Bellman-Ford algorithm with a few minor differences:
+\begin{itemize}
+\item Let $dist(v)$ be the cost of transaction of converting 1 unit of source currency $s$ to currency $v$ through the path from $s$ to $v$. Set $dist(s)=0$ initially, along with $dist(u)=\infty$ and $prev(u)=$ nil for all other $u\in E$.
+\item Define $update(e)$ for an edge $(c_i,c_j)\in E$ to set:\\
+$dist(c_j)=min\{dist(c_j),dist(c_i)\cdot (1-r_{i,j})\}$. 
+\end{itemize}
+The correctness follows from the property of updating every edge in every iteration. Each update is safe, never making $dist(v)$ too small, and the problem is exactly equivalent to finding the least-weight path of transaction cost between currencies $s$ and $t$, which Bellman-Ford does. There are no negative cycles, or even negative edges, since all $r_{i,j}<1$, so the algorithm terminates in at most $|V|-1$ iterations. \\\\
+The runtime follows from that of the Bellman-Ford algorithm, since $update()$ is a constant-time operation called $|E|$ times per iteration for $|V|-1$ iterations, which is $\BigOh{|V|\cdot |E|}$.
+\item Using the same graph representation, there will be a negative cycle since all $r_{i,j}>1$ along the specified path: the value of the transaction cost $dist(c_i)\cdot (1-r_{i,j})$ will be negative along each edge of the cycle. Bellman-Ford can detect the presence of a negative cycle if it still manages to update an edge after $|V|-1$ iterations of $|E|$ updates, so running the same algorithm can check for such a risk-free profit cycle in $\BigOh{|V|\cdot |E|}$ time.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+Since all directed edges in $G$ are not part of a cycle, $G$ can be seen as a dag whose vertices are undirected and connected graphs of roads--let's call them components of the directed acyclic metagraph--with the property that there can be multiple same-direction planes from one component to another.
+\begin{itemize}
+\item Construct the metagraph using the directed strongly connected component algorithm in linear time. This can be done by modeling each undirected edge as two opposing directed edges to maintain connectivity.
+\item Run DFS on the metagraph and store each component's post number, done in linear time.
+\item Go through all edges $(u,v)\in P$ and mark $u$ a "departure city" and $v$ an "arrival city," done in linear time.
+\item Create a priority queue $Q$ of components which dequeues the component with the highest post number. In other words, it supports a \texttt{deleteMax()} operation instead of \texttt{deleteMin()}, a symmetric implementation so the same operation times hold.
+\item Relevant pseudocode:
+\begin{verbatim}
+dist(s) = 0
+prev(s) = nil
+
+procedure update((u,v) in E):
+    if dist(u) + l(u,v) < dist(v):
+        dist(v) = dist(u) + l(u,v)
+        prev(v) = u
+\end{verbatim}
+\item Starting from $s$, run Dijkstra's algorithm using all edges. If the next edge $(u,v)$ to be processed is in $R$, call \texttt{update()} on it normally. If $(u,v)$ is in $P$ and in the correct direction, call \texttt{update()} on it and insert the opposite vertex's component into $Q$, associating with it the arrival city $v$. Then continue running Dijkstra's in the former component.
+\item When finished with one component, mark it as processed and dequeue components from the priority queue until you get one that hasn't been processed and repeat the above step starting from the associated arrival city. The reason you dequeue until you get a component that hasn't been processed is because there could be multiple planes between two components. But you can resume Dijkstra's from any arrival city because distances are relative to $s$ and you already have a working value of $dist(v)$ for any arrival city $v$.
+\end{itemize}
+To prove correctness of the algorithm, notice that once an entire component is processed, we know the shortest paths from $s$ to every vertex in that component. This is because we process the components in linearized order (by decreasing post number), so there aren't any paths from yet-to-be-processed components to this component. Once we process the component that contains $t$, we can terminate and follow the $prev()$ pointers back to $s$ to get the shortest path. \\\\
+The first three operations are done in linear time. We also do $|P|$ inserts and delete-max operations each on our priority queue, one for each directed plane edge we encounter, in $\BigOh{|P|\log{|V|}}$ time, since there can be at most $|V|$ components. Finally, if we sum over all the vertices and edges, running our version of Dijkstra's calls $|V|$ delete-min and $|V|+|E|$ insert/decrease-key operations, all on priority queues of smaller size than if we were to run it on a normal graph of comparable size to $G$. So the running time of Dijkstra's doesn't change, and the running times of the other steps are asymptotically lesser, so this algorithm runs in Dijkstra's $\BigOh{|E|\log{|V|}}$ time.
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Assume toward contradiction that $e$ is in a minimum spanning tree $T$. Then $e$ must divide $T$ into two connected components $S$ and $T-S$. If $e=(u,v)$, then one of the vertices lies in $S$ and the other lies in $T-S$. But because $e$ is part of a cycle, there is a different path from $u$ to $v$ which clearly must use the minimum edge across the cut $d$ (distinct from $e$) which is in the original graph $G$ but not in $T$. In an MST, we can only have one edge crossing any given cut (otherwise we would create a cycle), and since $w_d \leq w_e$, we can replace $e$ with $d$ to create a valid MST without $e$.
+\item Looking at the first edge $e_1$ in the sorted list, we know if it's in a cycle, it's the largest edge in the cycle because it's the largest edge in the graph, and we remove it. If it's not in a cycle, it will never be in a cycle since we only remove edges in subsequent iterations, guaranteed to never create cycles. Every successive edge is either not in a cycle or is the largest edge in its cycle. This follows inductively from the fact that all previously processed edges (all larger) are either not in any cycle or don't exist in the graph anymore. By part (a), even after successively removing all edges that were the largest part of their respective cycle, an MST for the original graph still exists. Since we have only removed cycle edges, the graph is still connected, and the graph can't have any cycles because this would mean we failed to remove an edge that was part of a cycle. After all iterations, since the graph is connected and acyclic, it must be a tree. Removing any more edges would compromise connectivity, and since this tree must contain the MST, this tree must be the MST.
+\item Let $e=(u,v)$. Temporarily remove $e$ from $G$ and use DFS to check if there is a path from $u$ to $v$. This is done by starting at $u$ and checking if $post(u)>post(v)$. If a path is found, call it $p$, then $p\cup e$ is a cycle, and if no path is found, then there is only one path, $e$, from $u$ to $v$, meaning the edge is not part of a cycle. This algorithm simply uses DFS as is, which runs in $\BigOh{|V|+|E|}$ time.
+\item Sorting the edges by weight realistically takes $\BigOh{|E|\log{|E|}}$ time using mergesort or quicksort. Throughout the algorithm, the graph remains connected, so $|V| \in \BigOh{|E|}$. In the loop, we run $|E|$ iterations of linear time DFS which is $\BigOh{|V|+|E|} = \BigOh{|E|}$. Therefore the running time is dominated by the loop, which is $\BigOh{|E|^2}$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+\begin{itemize}
+\item Divide $V$ into the cut $(U,V-U)$ in $\BigOh{|V|}$ time. In our final tree, we can't have any edges between two vertices in $U$ because they would be disconnected from $V-U$ unless we connect at least one more edge to one of them, contradicting the requirement that they be leaves. The only way for all vertices in $U$ to be leaves is to have each one connect to $V-U$ across the cut separately. This will never create a cycle with $V-U$ because we are only adding leaves.
+\item Make a priority queue $Q$ of all edges across the cut in $\BigOh{|E|\log{|V|}}$ time, since determining whether an edge crosses the cut takes constant time.
+\item Find the minimum spanning tree on $V-U$ in $\BigOh{|E|\log{|V|}}$ time using Kruskal's with disjoint sets.
+\item Repeatedly dequeue edges from $Q$ and add them to the MST until all vertices in $U$ have been represented exactly once, done in $\BigOh{|V|\log{|V|}}$ time. This is done with a boolean flag set for each vertex when an edge incident to it is added to the graph. If we dequeue all edges from $Q$ and not all vertices in $U$ are connected, then no such spanning tree exists because some vertex in $U$ has no connection with any vertex in $V-U$.
+\item This new graph is connected because every vertex is either in the MST of $V-U$ or can reach the MST across the cut. It is a tree because the MST on $V-U$ has $|V-U|-1$ edges and we connect $|U|$ more edges across the cut for a total of $|V|-1$ edges. Now assume toward contradiction that this isn't the lightest such spanning tree. Then there must be a lighter edge that either 1) connects two vertices in $V-U$ without creating a cycle, or 2) connects two vertices across the cut. (1) is false because we constructed an MST on $V-U$ using a known algorithm, and (2) is false because we would have dequeued such an edge and noticed its end in $U$ hasn't been connected yet, and thus added it to the graph. So this algorithm produces the lighest spanning tree where the vertices in $|U|$ are leaves.
+\end{itemize}
+The runtime follows from the maximum runtime of its sequential steps, which is $\BigOh{|E|\log{|V|}}$.
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item $f_a=10,f_b=5,f_c=5$.
+\item No set of frequencies, because Huffman's algorithm produces a \textit{prefix-free} encoding, and in this example $a\rightarrow0$ is a prefix of $c\rightarrow00$.
+\item No set of frequencies, because Huffman's should have created an encoding of 11 for there to be an encoding of 10, since the node 1 must have either zero or two children to be valid.
+\end{enumerate}
+
+\end{document}

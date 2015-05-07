@@ -1,0 +1,138 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\usepackage{titling}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{4} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\emf}{\mathcal{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+\begin{enumerate}[1.]
+\item To get the Monte Carlo algorithm B, simply run the Las Vegas algorithm A up until $2T(n)$ time has passed. If it hasn't returned an answer by that time, output failure. Let $R_A$ be the runtime of algorithm A. By Markov's inequality $$\Pr[R_A \geq 2T(n)] \leq \frac{\E[R_A]}{2T(n)} = \frac{T(n)}{2T(n)} = \frac12$$ so by the construction of algorithm B, we only output failure with probability at most $\frac12$ and when we succeed, we always do so correctly and in $2T(n)$ time.
+\item To get the Las Vegas algorithm C, simply run algorithm B until it succeeds. The number of iterations of B needed is a geometric random variable $X$ with $p\geq\frac12$, and so the expected number of iterations is $\E[X] \leq \frac1p = 2$. Each iteration of B takes $2T(n)$ time, so the expected runtime of C is at most $4T(n)$. 
+\item We don't have any information about algorithm A other than its expected runtime, so we can only achieve a Markov bound: $$\Pr[R_A \geq 20T(n)] \leq \frac{\E[R_A]}{20T(n)} = \frac1{20}$$A Markov bound on algorithm C would produce an upper bound of $\frac4{20}=\frac15$, but we can do better with Chebyshev's inequality: \begin{align*}
+\Pr[R_C \geq 20T(n)] &= \Pr[R_C - 4T(n) \geq 16T(n)]\\
+&= \Pr[|R_C - 4T(n)| \geq 16T(n)] \qquad\rightarrow\text{(runtime must be positive)}\\
+&\leq \frac{\Var[R_C]}{256(T(n))^2}\\
+&= (2T(n))^2\cdot\frac{\Var[X]}{256(T(n))^2}\\
+&= \frac{(1-p)/p^2}{64}\\
+&\leq \frac{(1-\frac12)/(\frac12)^2}{64}\\
+&= \frac1{32}
+\end{align*} 
+The last bound comes from the variance of a geometric random variable decreasing as $p$ increases within $(0,1)$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+\begin{enumerate}[(i)]
+\item Run the same randomized algorithm as in the textbook with the following adjustments: \begin{itemize}
+\item Let $d$ be the $\lfloor\frac knn^{3/4}-\sqrt n\rfloor^{\text{th}}$ smallest element and $u$ the $\lceil\frac knn^{3/4}+\sqrt n\rceil^{\text{th}}$ smallest element in the sorted $R$. This effectively shifts $d$ and $u$ to surround the $k^{\text{th}}$ smallest element of $S$ instead of the median.
+\item Fail if $\ell_d>k-1$ or if $\ell_u>n-k$, meaning the $k^{\text{th}}$ element is outside $C$.
+\item Output the $(k-\ell_d)^{\text{th}}$ element of the sorted set $C$ at the end.
+\end{itemize}
+\item Let $z$ be the $k^{\text{th}}$ smallest element of $S$.\begin{itemize}
+\item $\emf_1$: $Y_1=|\{r\in R : r\leq z\}| < \frac knn^{3/4}-\sqrt n$
+\item $\emf_2$: $Y_2=|\{r\in R : r\geq z\}| < \frac {n-k}nn^{3/4}-\sqrt n$
+\item $\emf_{3.1}$: at least $2n^{3/4}$ elements of $C$ are greater than $z$.
+\item $\emf_{3.2}$: at least $2n^{3/4}$ elements of $C$ are smaller than $z$.
+\end{itemize}
+Define $X_i$ to be the indicator random variable for the $i^{\text{th}}$ sample being less than or equal to $z$. So $\Pr[X_i=1]=\frac kn$. Then $Y_1=\sum_{i=1}^{n^{3/4}} X_i$ is a binomial RV with parameters $n^{3/4}$ and $\frac kn$ and expectation $\frac knn^{3/4}$. \begin{align*}
+\Pr[\emf_1] &= \Pr[Y_1 < \frac knn^{3/4}-\sqrt n]\\
+&\leq \Pr[|Y_1-\E[Y_1]| > \sqrt n]\\
+&\leq \frac{\Var[Y_1]}n
+\end{align*}
+Simply replace $\frac kn$ with $\frac{n-k}n$ to calculate $\Pr[\emf_2]$. Now for the other two events: If there are at least $2n^{3/4}$ elements of $C$ above $z$, then $u$ was at position at least $k+2n^{3/4}$ in the sorted $S$, meaning $R$ had at least $\frac {n-k}nn^{3/4}-\sqrt n$ samples among the largest $n-k-2n^{3/4}$ elements of $S$. Redefine $X_i$ to be the indicator variable for the $i^{\text{th}}$ sample being among these elements of $S$, and let $X=\text{Binom}(n^{3/4}, \frac{n-k}n-2n^{3/4})$ be their sum. Of course $\E[X]$ is the product of those two binomial parameters. \begin{align*}
+\Pr[\emf_{3.1}] &= \Pr[X \geq \frac {n-k}nn^{3/4}-\sqrt n]\\
+&\leq \Pr[|X-\E[X]| \geq \sqrt n]\\
+&\leq \frac{\Var[X]}n
+\end{align*}
+Again switch $k$ and $n-k$ to calculate $\Pr[\emf_{3.2}]$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+\begin{enumerate}[1.]
+\item Let $B_i$ be the array to be next considered after the $i^{\text{th}}$ success. The $X_i$ are independent because once we have a successful iteration, we get a new instance of the same problem, namely find the $j_i^{\text{th}}$ smallest element of a new array $B_i$. At each iteration, we automatically succeed if we pick one of the middle $|A_i|/2$ elements as the pivot. This means both the left and right subarrays will have $\leq (3/4)|A_i|$ elements, and this happens with probability $\frac{|A_i|/2}{|A_i|}=\frac12$. We also succeed if we pick an extreme pivot and the $j^{\text{th}}$ element is more extreme, but we are already satisfied that the success probability of an iteration is at least $1/2$. Since the $X_i$ are the number of iterations between the $(i-1)^{\text{th}}$ and $i^{\text{th}}$ success, they are independent geometric random variables with $p\geq\frac12$.
+\item Note that we can't have more than $\logb{4/3}n$ \textit{successes} within the problem since each success creates a new problem at most $3/4$ times the size of the previous one. The expected runtime of Quickselect is the sum of expected runtimes of all successes, each of which is upper bounded by the number of iterations needed for that success times $O(n_i)$ time to partition the array. \begin{align*}
+\E[T(n)] &\leq \sum_{i=1}^{\logb{4/3}n} \E[X_i]O(n_i)\\
+&= \sum_{i=1}^{\logb{4/3}n} \frac1{p_{\text{success}}}Cn(\frac34)^i\\
+&\leq Cn\sum_{i=1}^{\logb{4/3}n} \frac1{\frac12}(\frac34)^i\\
+&\leq 2Cn\sum_{i=0}^{\infty} (\frac34)^i\\
+&\leq 8Cn\\
+&= O(n)
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+The second inequality is a straighforward application of Markov: $$\Pr[Y\neq 0]=\Pr[Y\geq 1]\leq\frac{\E[Y]}{1}=\E[Y]$$
+We start our proof of the first inequality using Jensen's with the convex function $f(x)=x^2$: \begin{align*}
+\E[Y]^2 &\leq \E[Y^2]\\
+\E[Y|Y\neq0]^2 &\leq \E[Y^2|Y\neq0]\\
+\left(\sum_{i=0}^{\infty}i\Pr[Y=i|Y\neq0]\right)^2 &\leq \sum_{i=0}^{\infty}i^2\Pr[Y=i|Y\neq0]\\
+\left(\frac1{\Pr[Y\neq0]}\sum_{i=0}^{\infty}i\Pr[Y=i,Y\neq0]\right)^2 &\leq \frac1{\Pr[Y\neq0]}\sum_{i=0}^{\infty}i^2\Pr[Y=i,Y\neq0]\\
+\left(\frac1{\Pr[Y\neq0]}\sum_{i=1}^{\infty}i\Pr[Y=i]\right)^2 &\leq \frac1{\Pr[Y\neq0]}\sum_{i=1}^{\infty}i^2\Pr[Y=i]\\
+\left(\frac1{\Pr[Y\neq0]}\sum_{i=0}^{\infty}i\Pr[Y=i]\right)^2 &\leq \frac1{\Pr[Y\neq0]}\sum_{i=0}^{\infty}i^2\Pr[Y=i]\\
+\frac{\E[Y]^2}{(\Pr[Y\neq0])^2} &\leq \frac{\E[Y^2]}{\Pr[Y\neq0]}\\
+\frac{\E[Y]^2}{\E[Y^2]} &\leq \Pr[Y\neq0]
+\end{align*}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item \begin{align*}
+\Pr\left[|X-\E[X]|\geq t\sqrt[k]{\E[(X-\E[X])^k]}\right] &\leq \Pr\left[(X-\E[X])^2\geq t^2(\E[(X-\E[X])^k])^{\frac2k}\right]\\
+&= \Pr\left[((X-\E[X])^2)^{\frac k2}\geq t^k\E[(X-\E[X])^k]\right]\\
+&\leq \frac{\E[(X-\E[X])^k]}{t^k\E[(X-\E[X])^k]}\\
+&= \frac1{t^k}
+\end{align*}
+\item When $k$ is even the quantity $(X-\E[X])^k$ is always positive, so taking the expected value--which is the weighted sum over all the values--gives a much higher number than it does if $k$ is odd, where the expectation could be much closer to zero (especially if $X$ is symmetrically distributed around its mean). When we try to bound the positive quantity $|X-\E[X]|$, we can get much tighter bounds when we know the expectation on the right side is a much bigger number when $k$ is even.
+\end{enumerate}
+
+\end{document}

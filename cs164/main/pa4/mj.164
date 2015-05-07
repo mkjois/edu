@@ -1,0 +1,76 @@
+def subsequences(seq) {
+  def subs = {}
+  subs[0] = {}
+  if (not(is_empty(seq))) {
+    def first = head(seq)
+    def rest = tail(seq)
+    subs = subsequences(rest)
+    for (s in subs) {
+      def S = cons(first, s)
+      append(subs, S)
+      yield(S)
+    }
+  } else {
+    yield({})
+  }
+  subs
+}
+
+def head(seq) {
+  seq[0]
+}
+
+def tail(seq) {
+  def rest = {}
+  def i = 1
+  while (i in seq) {
+    rest[i-1] = seq[i]
+    i = i+1
+  }
+  rest
+}
+
+def cons(x, seq) {
+  def new = {}
+  new[0] = x
+  def i = 0
+  while (i in seq) {
+    new[i+1] = seq[i]
+    i = i+1
+  }
+  new
+}
+
+def is_empty(seq) {
+  len(seq) == 0
+}
+
+def wrap(lam, arg) {
+  def co = coroutine(lam)
+  lambda() {resume(co, arg)}
+}
+
+def str_obj(obj) {
+  if (is_empty(obj)) {
+    "{}"
+  } else {
+    def str = "{" + obj[0]
+    def i = 1
+    while (i in obj) {
+      str = str + ", " + obj[i]
+      i = i + 1
+    }
+    str + "}"
+  }
+}
+
+def seq = {}
+seq[0] = "a"
+seq[1] = "b"
+seq[2] = "c"
+
+print str_obj(seq)
+
+for (s in wrap(subsequences, seq)) {
+  print str_obj(s)
+}

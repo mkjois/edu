@@ -1,0 +1,57 @@
+\newcommand{\cross}[1]{{\color{blue}\sout{#1}}}
+\begin{problem}{Pacman's new house}
+
+After years of struggling through mazes, Pacman has finally made peace with the ghosts, Blinky, Pinky, Inky, and Clyde, and invited them to live with him and Ms. Pacman. The move has forced Pacman to change the rooming assignments in his house, which has 6 rooms. He has decided to figure out the new assignments with a CSP in which the variables are Pacman \textbf{(P)}, Ms. Pacman \textbf{(M)}, Blinky \textbf{(B)}, Pinky \textbf{(K)}, Inky \textbf{(I)}, and Clyde \textbf{(C)}, the values are which room they will stay in, from 1-6, and the constraints are:\\
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+i) No two agents can stay in the same room&\\
+ii) \textbf{P} $>$ 3 &
+vi) \textbf{B} is even\\
+iii) \textbf{K} is less than \textbf{P}&
+vii) \textbf{I} is not 1 or 6\\
+iv) \textbf{M} is either 5 or 6&
+viii) $\vert$\textbf{I}-\textbf{C}$\vert$ = 1\\
+v) \textbf{P} $>$ \textbf{M}&
+ix) $\vert$\textbf{P}-\textbf{B}$\vert$ = 2
+\end{tabular}
+\end{table}
+
+\begin{question}[10]{\bf Unary constraints}
+On the grid below cross out the values from each domain that are eliminated by enforcing unary constraints.
+\begin{center}
+\AnswerTwoAi
+\end{center}
+\end{question}
+
+\begin{question}[3]{\bf MRV}
+According to the Minimum Remaining Value (MRV) heuristic, which variable should be assigned first?\\\\
+\AnswerTwoAii
+\end{question}
+
+\begin{question}[10]{\bf Forward Checking}
+For the purposes of decoupling this problem from your solution to the
+previous problem, assume we choose to assign P first, and assign it the value 6. What are the resulting domains after enforcing unary constraints (from part i) and running forward checking for this assignment?
+\begin{center}
+\AnswerTwoAiii
+\end{center}
+\end{question}
+
+\begin{question}[12]{\bf Iterative Improvement}
+Instead of running backtracking search, you decide to start over and run
+iterative improvement with the min-conflicts heuristic for value selection. Starting with the following assignment:\\\\
+P:6, B:4, C:3, K:2, I:1, M:5\\\\
+First, for each variable write down how many constraints it violates in the table below.\\
+Then, in the table on the right, for all variables that could be selected for assignment, put an x in any box that corresponds to a possible value that could be assigned to that variable according to min-conflicts. When marking next values a variable could take on, only mark values different from the current one.
+
+\begin{center}
+\begin{tabular}{cc}
+\AnswerTwoAivPartOne
+\hspace{2cm} &
+\AnswerTwoAivPartTwo
+\end{tabular}
+\end{center}
+\end{question}
+
+\end{problem}
+

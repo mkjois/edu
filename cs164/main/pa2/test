@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "--------"
+echo "--MAIN--"
+echo "--------"
+node main.js mj.164
+echo "-------------"
+echo "--REFERENCE--"
+echo "-------------"
+node reference.js mj.164

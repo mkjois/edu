@@ -1,0 +1,9 @@
+def f() {
+    def x = 2
+    y = x  # y is now 2
+    lambda(z) {x + y + z}  # 2+2+3
+}
+
+def x = 0
+def y = 1
+print f()(3)

@@ -1,0 +1,48 @@
+draw box 0 0 800 600 green 0 63
+draw box 0 0 180 600 green 0 63
+draw box 0 0 180 65 green 10 63
+draw text 0 65 10 Brazil
+draw box 0 65 180 303 green 31 63
+draw text 0 368 10 USA
+draw box 0 368 180 139 green 12 63
+draw text 0 507 10 Mexico
+draw box 0 507 180 93 red 23 63
+draw text 0 600 10 Canada
+draw box 180 0 232 600 green 0 63
+draw box 180 0 232 190 red 11 63
+draw text 180 190 10 France
+draw box 180 190 232 140 red 2 63
+draw text 180 330 10 Germany
+draw box 180 330 232 100 red 13 63
+draw text 180 430 10 Sweden
+draw box 180 430 232 76 green 4 63
+draw text 180 506 10 Italy
+draw box 180 506 232 94 red 5 63
+draw text 180 600 10 UK
+draw box 412 0 247 600 green 0 63
+draw box 412 0 247 153 green 4 63
+draw text 412 153 10 China
+draw box 412 153 247 85 red 12 63
+draw text 412 238 10 Japan
+draw box 412 238 247 170 green 63 63
+draw text 412 408 10 India
+draw box 412 408 247 16 green 34 63
+draw text 412 424 10 Laos
+draw box 412 424 247 4 red 5 63
+draw box 412 428 247 50 green 24 63
+draw text 412 478 10 Israel
+draw box 412 478 247 76 green 13 63
+draw text 412 554 10 Iran
+draw box 412 554 247 46 red 52 63
+draw text 412 600 10 Pakistan
+draw box 659 0 141 600 green 0 63
+draw box 659 0 141 156 green 0 63
+draw text 659 156 10 Egypt
+draw box 659 156 141 223 green 43 63
+draw text 659 379 10 S_Africa
+draw box 659 379 141 88 green 2 63
+draw text 659 467 10 Sudan
+draw box 659 467 141 74 green 12 63
+draw text 659 541 10 Congo
+draw box 659 541 141 59 green 10 63
+draw text 659 600 10 Zaire

@@ -1,0 +1,173 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\newcounter{problemnumber}
+\def\Name{Manohar Jois}
+\def\Homework{2} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2014}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+
+\title{CS170--Spring 2014 --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS170--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Given that $a$ is a non-zero quadratic residue modulo $N$, we already know at least one solution $x\neq 0$ to the relation $x^2 \equiv a \bmod N$ exists. Now note that $x^2 = a+kN$ for some integer $k$. This is a quadratic equation and so has either $0$ or $2$ real roots. Since $x$ is a real root, it must have another real root, which happens to be $N-x$, since $(N-x)^2 = N^2-2Nx+x^2 \equiv x^2 \equiv a \bmod N$. So there are exactly $2$ solutions to the relation, no more and no less.
+\item Every $x \in \{0,1,2,\ldots,N-1\}$ satisfies $x^2 \equiv a \bmod N$ for some $a$, simply by evaluating the squares modulo $N$ directly. For every possible non-zero $x$, we have shown in part (a) that $x^2 \equiv (N-x)^2 \bmod N$, and only the two numbers $x$ and $N-x$ can evaluate to a unique non-zero $a$ when squared. There are $\frac{N-1}2$ such pairs of numbers for $N>2$ and $N$ odd. We also include the zero quadratic residue since $0^2 = 0 \bmod N$. No other $x$ can evaluate to $0 \bmod N$ since $N$ is prime and shares no factors with $x$ and thus shares none with $x^2$. So the total number of quadratic residues is $\frac{N-1}2 + 1 = \frac{N+1}2$.
+\item Take $a=1$ and $N=15$. Then $x^2 \equiv a \bmod N$ has four solutions: $1,4,11,14$. This can happen when $N$ is not prime.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item \begin{align*}
+2014^{2015}-2012^{2013} &\equiv 19^{2015}-17^{2013} \bmod 35 \\
+&\equiv 19^{2015\bmod(7-1)(5-1)}-17^{2013\bmod(7-1)(5-1)} \bmod (7\cdot 5) \\
+&\equiv 19^{2015 \bmod 24}-17^{2013 \bmod 24} \bmod 35 \\
+&\equiv 19^{23}-17^{21} \bmod 35 \\
+&\equiv 19\cdot 19^2\cdot (19^2)^2\cdot (((19^2)^2)^2)^2 - 17\cdot (17^2)^2\cdot (((17^2)^2)^2)^2 \bmod 35 \\
+&\equiv 19\cdot 11\cdot 11^2\cdot ((11^2)^2)^2 - 17\cdot 9^2\cdot ((9^2)^2)^2 \bmod 35 \\
+&\equiv 34\cdot 16\cdot (16^2)^2 - 17\cdot 11\cdot (11^2)^2 \bmod 35 \\
+&\equiv 19\cdot 11^2 - 12\cdot 16^2 \bmod 35 \\
+&\equiv 19\cdot 16 - 12\cdot 11 \bmod 35 \\
+&\equiv 24 - 27 \bmod 35 \\
+&\equiv 32 \bmod 35
+\end{align*}
+So $35$ does not divide $2014^{2015}-2012^{2013}$.
+\item \begin{align*}
+2^{170^{70}} &\equiv 2^{170^{70} \bmod (5-1)} \bmod 5 \\
+&\equiv 2^{170^{68}\cdot 85^2 \cdot 2^2 \bmod 4} \bmod 5 \\
+&\equiv 2^0 \bmod 5 \\
+&\equiv 1
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+From RSA, we know $ed \equiv 1 \bmod (p-1)(q-1)$ which means $ed = k(p-1)(q-1)+1$ for some integer $k$. But we know necessarily that $d<(p-1)(q-1)$ because of the modularity, so $ed=k(p-1)(q-1)+1<e(p-1)(q-1)$ which means $k<e$. Also it is trivial that $k>0$, otherwise RSA does nothing. \\\\
+So we have $e-1$ possible values of $k$, which means we have $e-1$ possible values of $\frac{ed-1}k = (p-1)(q-1)$. \\\\
+Notice that $N-(p-1)(q-1)+1 = pq-(pq-p-q+1)+1 = p+q$. If we let $C=p+q$, we can now obtain $e-1$ possible values of $C$. \\\\
+Also notice that $\sqrt{C^2-4N} = \sqrt{p^2+2pq+q^2-4pq} = p-q$. Let $D=p-q$ (assuming $p>q$, but if not then we simply swap $p$ and $q$). We now have $e-1$ possible values of $D$. \\\\
+Finally we can evaluate $\frac{C+D}2 = \frac{p+q+p-q}2 = p$, the greater of the two primes. It follows that $q=\frac Np$. Since the computation of $D$ follows directly from $C$, we can obtain at most $e-1$ possible pairs $(p,q)$. For $e=3$, this gives us only $2$ possible pairs, and checking which pair is correct is as easy as verifying $N=pq$.
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item There are $\logb 3n$ levels of recursion. At each level $i$ there are $2^i$ problems of size $\frac n{3^i}$, each of which takes $1$ (constant) time. The total running time is therefore $$\sum_{i=0}^{\logb 3n} 2^i \cdot 1 = c\cdot 2^{\logb 3n} \in \BigTheta{n^{\logb 32}}$$
+\item There are $\logb 4n$ levels of recursion. At each level $i$ there are $5^i$ problems of size $\frac n{4^i}$, each of which takes $\frac n{4^i}$ time. The total running time is therefore $$\sum_{i=0}^{\logb 4n} 5^i \cdot \frac n{4^i} = c\cdot n(\frac 54)^{\logb 4n} = c\cdot n^{\logb 45} \in \BigTheta{n^{\logb 45}}$$
+\item There are $\logb 7n$ levels of recursion. At each level $i$ there are $7^i$ problems of size $\frac n{7^i}$, each of which takes $\frac n{7^i}$ time. The total running time is therefore $$\sum_{i=0}^{\logb 7n} 7^i \cdot \frac n{7^i} = n\cdot\logb 7n \in \BigTheta{n\cdot\log n}$$
+\item There are $\logb 3n$ levels of recursion. At each level $i$ there are $9^i$ problems of size $\frac n{3^i}$, each of which takes $(\frac n{3^i})^2$ time. The total running time is therefore $$\sum_{i=0}^{\logb 3n} 9^i (\frac n{3^i})^2 = n^2\cdot\logb 3n \in \BigTheta{n^2\cdot\log n}$$
+\item There are $\logb 2n$ levels of recursion. At each level $i$ there are $8^i$ problems of size $\frac n{2^i}$, each of which takes $(\frac n{2^i})^3$ time. The total running time is therefore $$\sum_{i=0}^{\logb 2n} 8^i (\frac n{2^i})^3 = n^3\cdot\logb 2n \in \BigTheta{n^3\cdot\log n}$$
+\newpage
+\item There are $\logb{25}n$ levels of recursion. At each level $i$ there are $49^i$ problems of size $\frac n{25^i}$, each of which takes $(\frac n{25^i})^{3/2}\log{\frac n{25^i}}$ time. The running time upper-bounded by
+\begin{align*}
+\sum_{i=0}^{\logb{25}n} 49^i (\frac n{25^i})^{3/2}\log{\frac n{25^i}} &= \sum_{i=0}^{\logb{25}n} (\frac{49}{125})^i n^{3/2}\log{\frac n{25^i}} \\
+&\leq \sum_{i=0}^{\logb{25}n} (\frac{49}{125})^i n^{3/2}\log n \\
+&= n^{3/2}\log n \sum_{i=0}^{\logb{25}n} (\frac{49}{125})^i \\
+&\in \BigOh{n^{3/2}\cdot\log n}
+\end{align*}
+We also know that the running time is lower-bounded by $n^{3/2}\cdot \log n$ because that is the running time of just the first level. So the total running time is in $\BigTheta{n^{3/2}\cdot\log n}$.
+\item There are $n$ levels of recursion. At each level $i$ there is $1$ problem of size $n-i$ which takes $2$ (constant) time. The total running time is therefore $$\sum_{i=0}^n 1\cdot 2 = 2n \in \BigTheta{n}$$
+\item There are $n$ levels of recursion. At each level $i$ there is $1$ problem of size $n-i$ which takes $(n-i)^c$ time, where $c\geq 1$. The total running time is therefore $$\sum_{i=0}^n (n-i)^c = \sum_{i=0}^n i^c \in \BigTheta{n^{c+1}} \qquad \text{(proved in HW1)}$$
+\item There are $n$ levels of recursion. At each level $i$ there is $1$ problem of size $n-i$ which takes $c^{n-i}$ time, where $c>1$. The total running time is therefore $$\sum_{i=0}^n c^{n-i} = \sum_{i=0}^n c^i \in \BigTheta{c^n} \qquad \text{(proved in HW1)}$$
+\item There are $n$ levels of recursion. At each level $i$ there are $2^i$ problems of size $n-i$, each of which takes $1$ (constant) time. The total running time is therefore $$\sum_{i=0}^n 2^i\cdot 1 \in \BigTheta{2^n} \qquad \text{(proved in HW1)}$$
+\item Let's start at the bottom of the recursion tree and work our way up. At the leaves of the tree, we have recursed down to problems of constant size $c$. The second level up contains problems of size $c^2$, and the next levels up after that contain problems of size $c^{2^2}$, $c^{2^3}$, $c^{2^4}$ and so on until we reach the first level where the problem size is $n=c^{2^k}$. Solving for $k$ tells us there are $k=\log{\log n}$ levels of recursion. At each level $i$ there is $1$ problem which takes $1$ (constant) time. The total running time is therefore $$\sum_{i=0}^{\log{\log n}} 1\cdot 1 = \log{\log n} \in \BigTheta{\log{\log n}}$$
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Let $A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$. Then $A^2 = \begin{bmatrix} a&b\\c&d \end{bmatrix} \cdot \begin{bmatrix} a&b\\c&d \end{bmatrix} = \begin{bmatrix} a^2+bc & ab+bd \\ ca+dc & cb+d^2 \end{bmatrix} = \begin{bmatrix} a^2+bc & b(a+d) \\ c(a+d) & bc+d^2 \end{bmatrix}$. \\\\
+There are only five distinct multiplications necessary here (and one distinct addition): $P_1 = a\cdot a$, $P_2 = b\cdot c$, $P_3 = b\cdot (a+d)$, $P_4 = c\cdot (a+d)$ and $P_5 = d\cdot d$.
+\item The analysis above only applies if each element in the $2\times2$ matrix is a number. If each element is a matrix, then commutative multiplication does not hold (for example, $bc \neq cb$) and we can't factor elements out of an expression as we did in the above case to reduce the number of multiplications. When dividing an $n\times n$ matrix into a $2\times2$ matrix made of four $\frac n2 \times \frac n2$ matrices, we can't say that multiplication with itself will take only 5 lower-order multiplications unless the four inner matrices are at the base case $1\times1$.
+\item Note that our output's size for squaring or multiplication is $\BigOh{n^2}$, so necessarily $c\geq 2$. Consider the following algorithm to find the product $AB$ of two matrices $A$ and $B$:
+\begin{itemize}
+\item Group the matrices into a $2n\times 2n$ matrix $C$ as follows: $C = \begin{bmatrix} A & B \\ B & B \end{bmatrix}$
+\item Compute $C^2 = \begin{bmatrix} A^2+B^2 & AB+B^2 \\ BA+B^2 & 2B^2 \end{bmatrix}$
+\item Find $AB = (C^2)_{1,2} - B^2$, where $C^2_{i,j}$ is the matrix at the $i^{\text{th}}$ row and $j^{\text{th}}$ column of the $2\times 2$ block matrix $C^2$.
+\end{itemize}
+If squaring a matrix runs in $\BigOh{n^c}$ time, where $c\geq 2$, then squaring the $2\times 2$ matrix $C$ takes $\BigOh{2^cn^c} = \BigOh{n^c}$ time. The grouping and indexing are constant-time operations, and matrix subtraction is $\BigOh{n^2}$. Computing $B^2$ is also $\BigOh{n^c}$ time, so when putting it all together, we can now multiply matrices in $\BigOh{n^c}$ time.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item
+\item We can prove this by induction on $n$. For the base case, it is trivial that the algorithm can return the two points for $n=2$ since they are the closest and only pair. Then we assume the algorithm can correctly find the closest pair of $n$ points. We must prove that this implies the algorithm can find the closest pair of $2n$ points, since $n$ is a power of $2$. \\\\
+Dividing the points into equal halves $L$ and $R$ is easy, and the closest pair in each half (along with their distances) can be computed correctly thanks to our hypothesis. Now we look at only the points that have $x_i \in [x-d,x+d]$ and sort them by y-coordinate. Call this region $M$ \\\\
+Let's say two points in $L$ have distance $d'<d$ away from each other. Then by the inductive hypothesis, the recursive call would have set $d'=d$. Contradiction. Now let's say a point in $L$ and a point in $R$ have distance $d''<d$ away from each other. Then it is easily seen that both must be in $M$, otherwise both would be in $L$ or both in $R$ (a contradiction). This means $d''<d$ can only exist between a point in $L$ and a point in $R$, where both points are in $M$. \\\\
+Starting with the points in $M$ sorted by y-coordinate, we take the first point $(x_0,y_0)$ and calculate its distance to the next seven points. We only need seven because a distance $d''<d$ can only be obtained in the range $[x-d,x+d]\times[y_0,y_0+d]$, which covers at most two $d\times d$ squares which can contain at most $8$ points (including the reference point), as proved in part (a). For each point, we don't need to check distances to points below it since those have already been checked from the perspective of the lower point. Therefore this process will find the minimum distance between two points in $M$. \\\\
+To conclude we see that when the problem size grows to $2n$ our algorithm can find the closest pair each in $L$, in $R$, and between $L$ and $R$. The closest pair overall is just the minimum of the three, and our algorithm is therefore correct.
+\newpage
+\item \begin{verbatim}
+# Returns the 3-tuple (p1, p2, distance)
+algorithm closestPair(points):
+    numPoints = size(points)
+    if numPoints == 2:
+        return (points[0], points[1], distance(points[0], points[1]))
+    sortByX(points)
+    x = (points[numPoints/2 - 1].x + points[numPoints/2].x)/2
+    pL, qL, dL = closestPair(points[0 to (numPoints/2 - 1)])
+    pR, qR, dR = closestPair(points[numPoints/2 to numPoints])
+    for point in points:
+        if point.x < (x - min(dL, dR)) or point.x > (x + min(dL, dR)):
+            remove point from points
+    sortByY(points)
+    pM, qM, dM = null, null, infinity
+    for i=0 to size(points):
+        for j=1 to 7:
+            d = distance(points[i], points[i+j]) // if element exists
+            if d < dM:
+                pM, qM, dM = points[i], points[i+j], d
+    if min(dL, dR, dM) == dL:
+        return (pL, qL, dL)
+    else if min(dL, dR, dM) == dR:
+        return (pR, qR, dR)
+    else:
+        return (pM, qM, dM)
+\end{verbatim}
+We are making $2$ recursive calls to \verb|closestPair()| each with a list of size $\frac n2$. The rest of the code runs in at most $\BigOh{n\cdot\log n}$ time due to the two sorting steps which we can run in such time. Computing the size of a list takes $\BigOh{n}$ time and the two nested \verb|for| loops are bounded by $7n \in \BigOh{n}$ iterations, so the running time is dominated by the sorting. The recurrence relation is therefore $T(n) = 2T(n/2)+\BigOh{n\cdot\log n}$. \\\\
+There are $\logb 2n$ levels of recursion. At each level $i$ there are $2^i$ problems of size $\frac n{2^i}$ which takes $\frac n{2^i}\cdot \log{\frac n{2^i}}$ time. The total running time is therefore $$\sum_{i=0}^{\logb 2n} 2^i\cdot \frac n{2^i}\cdot \log{\frac n{2^i}} = \sum_{i=0}^{\logb 2n} n\log{\frac n{2^i}} \leq \sum_{i=0}^{\logb 2n} n\log n \in \BigOh{n(\log n)^2}$$
+\newpage
+\item We can maintain two copies of the initial coordinate list, one sorted by x-coordinate and the other sorted by y-coordinate. They key idea is we only have to sort the list in the first function call (perhaps an initial starter function that eventually calls the recursive function). We can modify \verb|closestPair()| to take in lists sorted by $x$ and $y$ as arguments and pass slices of those lists to recursive calls. Then we proceed as usual except we must remove elements from both lists if they aren't within $d$ of the $x$-median--still a linear time operation. \\\\
+Notice that slicing the $y$-list for recursive calls is a linear time operation since we can just compare x-coordinates of each point to the $x$-median to see which $y$-sublist it should be pushed into--each sublist would still be sorted by y-coordinate if we push points in like in a queue. \\\\
+Now we have (besides the initial sorting) a recurrence relation of $T(n) = 2T(n/2)+\BigOh{n}$ since the non-recursive code is all in linear time. By the Master Theorem, this works out to $T(n) \in \BigOh{n\cdot\log n}$. This still holds even with the addition of the initial sorting because that is simply $n\cdot\log n$ time, which only changes the constant factor of the runtime.
+\end{enumerate}
+
+\end{document}

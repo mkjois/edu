@@ -1,0 +1,133 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\usepackage{titling}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{10} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\emf}{\mathcal{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item Consider a random walk on the integers where $X_{n+1}=X_n+1$ with probability $p\neq1/2$ and $X_{n+1}=X_n-1$ with probability $1-p$. Clearly this is a Markov chain since $X_{n+1}$ is independent of other variables given $X_n$. However, the following shows it is not a martingale when $p\neq1/2$:
+$$\E[X_{n+1}|X_0,\ldots,X_n]=p(X_n+1)+(1-p)(X_n-1)=X_n+2p-1\neq X_n$$
+\item Consider the sequence $X_{n+1}=X_n+N(0,1)X_{n-1}$ where $X_0,X_1$ are initialized randomly and $N(0,1)$ represents independent draws from the normal distribution with mean $\mu=0$ and variance $\sigma^2=1$. This is not a Markov chain, as $X_{n+1}$ is not independent of $X_{n-1}$ even given $X_n$. However, we show that it is a martingale:
+\begin{align*}
+\E[X_{n+1}|X_0,\ldots,X_n] &= \E[X_n|X_0,\ldots,X_n]+\E[N(0,1)|X_0,\ldots,X_n]\E[X_{n-1}|X_0,\ldots,X_n]\\
+&= X_n + 0\cdot X_{n-1}\\
+&= X_n
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+Construct a Markov chain $\{Y_n\}$ with $k$ states labeled $\{0,1,\ldots,k-1\}$ and let $Y_n=X_n\bmod k$. Consider the $0$-indexed $k\times k$ transition matrix $P$ where row $i$ and column $j$ correspond to the probability that $Y_n=j$, given $Y_{n-1}=i$. We are interested in the steady-state probability $\pi_0$.\asdf
+First note that the sum of a row's entries in this matrix must be $1$, simply because it is the distribution of next states. Next note that the row below is simply the same entries right-rotated by one place, because the same dice rolls that produce the outcomes accounted for by $P_{i,j}$ produce the outcomes of $P_{i+1,j+1}$ (rotations around the end account for the modulus). It naturally follows that in the square matrix $P$, the sum of any column's entries must be $1$, because every entry of a row appears exactly once in that column.\asdf
+Let $v_k$ be the length-$k$ row vector with all entries being $1/k$. We claim that the steady state distribution of this Markov chain is $\pi=v_k$.
+\begin{align*}
+v_kP &= \begin{bmatrix}\sum_{i=0}^{k-1}\frac1kP_{i,0}&\sum_{i=0}^{k-1}\frac1kP_{i,1}&\ldots&\sum_{i=0}^{k-1}\frac1kP_{i,k-1}\end{bmatrix}\\
+&= \begin{bmatrix}\frac1k\sum_{i=0}^{k-1}P_{i,0}&\frac1k\sum_{i=0}^{k-1}P_{i,1}&\ldots&\frac1k\sum_{i=0}^{k-1}P_{i,k-1}\end{bmatrix}\\
+&= \begin{bmatrix}\frac1k\cdot1&\frac1k\cdot1&\ldots&\frac1k\cdot1\end{bmatrix}\\
+&= v_k
+\end{align*}
+This states that as $n\rightarrow\infty$, $\Pr[Y_n=0]\rightarrow\frac1k$, which is an equivalent event to $X_n$ being divisible by $k$.
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item Given $X_n=n$, let $Y_i$ be the number of frogs in generation $n+1$ due to the presence of frog $i$ in generation $n$. That is, $Y_i=2\cdot\mathbb{I}(\text{frog }i\text{ has a child})$. By linearity of expectation, the $\E[X_{n+1}|X_n=n]=2np$. We derive the following Chernoff bound for some $t<0$:
+\begin{align*}
+\Pr[X_{n+1}\leq n|X_n=n] &\leq \frac{\E[e^{tX_{n+1}}|X_n=n]}{e^{tn}}\\
+&= e^{-tn}\prod_{i=1}^n\E[e^{tY_i}]\\
+&= e^{-tn}\prod_{i=1}^npe^{2t}-p+1\\
+&\leq e^{-tn}\prod_{i=1}^ne^{p(e^{2t}-1)}\\
+&= e^{n(p(e^{2t}-1)-t)}
+\end{align*}
+Minimizing over $t<0$, we obtain $t=\frac12\ln{\frac1{2p}}$ which works if $p>1/2$. Our upper bound then becomes $e^{-cn}$ where $c=p+\frac12\ln{\frac1{2p}}-\frac12$.
+\item If $p>1/2$, it can be shown that $p+\frac12\ln{\frac1{2p}}>1/2$ using algebra that boils down to the inequality $e^x>ex\quad\forall x>1$. This is the condition that guarantees the upper bound on the above probability strictly decays exponentially.
+\begin{align*}
+\Pr[\exists n<\infty\text{ s.t. }X_{n+1}=0] &\leq \Pr[\exists n<\infty\text{ s.t. }X_{n+1}< X_n] & \qquad\text{(1)}\\
+&= \Pr[\exists n<\infty\text{ s.t. }X_{n+1}< X_n\cap X_n\geq n] & \qquad\text{(2)}\\
+&\leq \sum_{n=1}^{\infty}\Pr[X_{n+1}< X_n\cap X_n\geq n] & \qquad\text{(3)}\\
+&\leq \sum_{n=1}^{\infty}\Pr[X_{n+1}< X_n| X_n\geq n] & \qquad\text{(4)}\\
+&\leq \sum_{n=1}^{\infty}\Pr[X_{n+1}< n| X_n=n] & \qquad\text{(5)}\\
+&\leq \sum_{n=1}^{\infty}e^{-cn} & \qquad\text{(6)}\\
+&< \sum_{n=1}^{\infty}2^{-n}=1 & \qquad\text{(7)}
+\end{align*}
+\begin{itemize}
+\item (1) Latter must happen for former to happen.
+\item (2) There must have been a first such decrease, prior to which the number of frogs was at least equal to the number of generations.
+\item (3) Union bound over all $n$.
+\item (4) Divide each term by $\Pr[X_n\geq n]$, which is $\leq 1$.
+\item (5) Subset of outcomes of previous step.
+\item (6) Application of part(a).
+\item (7) $\frac12>\frac1e$ and $c>0$ when $p>\frac12$ as established. So every term of the sum is strictly increased (i.e. $2^{-cn}<2^{-n}$).
+\end{itemize}
+\item 
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item A simple application of Bayes' rule shows $P(X_k|X_{k+1})=\frac{P(X_{k+1}|X_k)P(X_k)}{P(X_{k+1})}$. Since the in-order sequence is Markovian, $P(X_k)$ and $P(X_{k+1})$ only depend on the variables that come before it in the in-order sequence. The entire quantity therefore has no dependence on $X_{k+2},X_{k+3},\ldots,X_m$ and the reverse sequence is necessarily Markovian.
+\item Simply plugging in the parameters of the problem into Bayes' rule, we obtain the formula, where $Q_{i,j}=P(X_k|X_{k+1})$, $P_{j,i}=P(X_{k+1}|X_k)$, $\pi_i=P(X_{k+1})$ and $\pi_j=P(X_k)$. The semantics of each term match perfectly.
+\item If the sequence is time-reversible, then we have
+$$Q_{i,j}=\frac{\pi_jP_{j,i}}{\pi_i}=\frac{\pi_iP_{i,j}}{\pi_i}=P_{i,j}$$
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+% PUT PROBLEM 6 SOLUTION HERE
+
+
+\end{document}

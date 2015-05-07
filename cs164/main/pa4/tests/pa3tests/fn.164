@@ -1,0 +1,11 @@
+def f(a,b) {
+    a + b
+}
+
+print f(6)
+
+#print f(1/0)
+
+#print f(6, 7, 4)
+
+#print f(6, 7, 1/0)

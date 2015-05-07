@@ -1,0 +1,7 @@
+def lst = {}
+lst[0] = 1
+lst[2] = 3
+lst['Hello'] = 'world'
+for (i in lst) {
+    print i
+}

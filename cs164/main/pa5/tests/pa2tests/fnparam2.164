@@ -1,0 +1,5 @@
+def foo(bar, x) {
+	bar(x)
+}
+
+print foo(lambda (x) {x * x}, 4)    # should be 16

@@ -1,0 +1,6 @@
+*.pdf
+*.cache
+*.ps
+*.tmp
+*.out
+.hg*

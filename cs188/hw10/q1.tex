@@ -1,0 +1,106 @@
+\q{20}{Decision Trees}
+
+You are given the following data sets
+
+\begin{tabular}{c c c c c c}
+(i)
+&
+\begin{tabular}{|c | c | c |}
+\hline
+$X_1$ & $X_2$ & $Y$\\
+\hline
+1 & 1 & +\\
+\hline
+4 & 5 & +\\
+\hline
+4 & 5 & -\\
+\hline
+5 & 5 & +\\
+\hline
+\end{tabular}
+&
+(ii)
+&
+\begin{tabular}{|c | c | c |}
+\hline
+$X_1$ & $X_2$ & $Y$\\
+\hline
+1 & 1 & +\\
+\hline
+4 & 3 & +\\
+\hline
+4 & 5 & -\\
+\hline
+5 & 5 & +\\
+\hline
+\end{tabular}
+&
+(iii)
+&
+\begin{tabular}{|c | c | c |}
+\hline
+$X_1$ & $X_2$ & $Y$\\
+\hline
+1 & 1 & +\\
+\hline
+4 & 2 & -\\
+\hline
+4 & 5 & -\\
+\hline
+5 & 5 & +\\
+\hline
+\end{tabular}
+\end{tabular}
+
+
+\begin{question}{}
+  [3 pts] Which data sets are linearly separable?
+\end{question}
+\begin{minipage}{\textwidth}
+    \solution{\ \vspace{2cm}} {
+    Data set (ii)
+    }
+\end{minipage}
+
+\begin{question}{}
+  [3 pts] Which data sets have label noise?
+\end{question}
+\begin{minipage}{\textwidth}
+    \solution{\ \vspace{2cm}} {
+    Data set (i)
+    }
+\end{minipage}
+
+\begin{question}{}
+  [3 pts] Which data sets can be fit exactly by a decision tree?
+\end{question}
+\begin{minipage}{\textwidth}
+    \solution{\ \vspace{2cm}} {
+    Data sets (ii) and (iii)
+    }
+\end{minipage}
+
+\begin{question}{}
+  [5 pts] A 1-decision-list is a decision tree in which the "yes" branch of every binary test is a leaf node. For a continuous attribute $X_j$, a test can be either $X_j > c$ or $X_j < c$. Continuous attributes can appear in multiple tests. Pick a data set and show a decision list that fits it exactly.
+\end{question}
+\begin{minipage}{\textwidth}
+    \solution{} { 
+    Data set (iii) in pseudocode: \begin{verbatim}
+         if x1 < 4 : return +
+    else if x2 < 5 : return -
+    else if x1 < 5 : return -
+    else           : return +
+    \end{verbatim}
+    }
+\end{minipage}
+
+\begin{question}{}
+  [6 pts] In the absense of label noise, can any two-class data set in two dimensions be fit exactly by a decision list? Briefly explain why, or give a counterexample.
+\end{question}
+\begin{minipage}{\textwidth}
+    \solution{} {
+    \paragraph{} The data set $\{((-1,-1),+),((-1,1),-),((1,1),+),((1,-1),-)\}$ is a counterexample. No horizontal or vertical line (which are the only tests we can impose) creates a region of exactly one class.
+    }
+\end{minipage}
+
+

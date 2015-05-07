@@ -1,0 +1,41 @@
+##
+# VBox: A box that stacks its children vertically.
+#
+def VBox = Box:new({children={}})
+
+VBox.new = lambda(self, obj) {
+  obj = Object.new(self, obj)
+  obj.children = {}
+  obj
+}
+
+VBox.pass2_ComputePositionSizeOpacity = lambda(self) {
+  # TODO: What should be computed in this pass?
+  # give this pass a more informative name, and complete all necessary
+  # computation
+  def currY = self.y
+  def remaining = self.height
+  for (child in self.children) {
+      def h = self.height * child.weight / self.weight
+      child.height = h
+      child.y = currY
+      currY = currY + h
+      remaining = remaining - h
+
+      child.x = self.x
+      child.width = self.width
+      child.maxOpacityValue = self.maxOpacityValue
+  }
+  def additionalY = 0
+  for (child in self.children) {
+      if (remaining > 0) {
+          child.height = child.height + 1
+          child.y = child.y + additionalY
+          additionalY = additionalY + 1
+          remaining = remaining - 1
+      } else {
+          child.y = child.y + additionalY
+      }
+  }
+}
+

@@ -1,0 +1,12 @@
+Name: Manohar Jois
+SID: 23808180
+Homework 4
+
+Problem 1:
+Simply run 'python p1.py' with Python 2.7 and observe the text output in standard output.
+
+Problem 2:
+Simply run 'python p2.py' with Python 2.7 and observe the text output in standard output. Change the 'OFFSET' variable to False to not use a regression offset. The plot of beta coefficients (without the offset B_0) is in "images/p2.png".
+
+Problem 3:
+Run 'python p3.py' and the figures will be saved in 'images/' as 'p3_*.png' for the three subparts and three preprocessing strategies each.

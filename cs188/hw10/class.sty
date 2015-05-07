@@ -1,0 +1,499 @@
+% 188.sty - style file for class handouts
+\def\coursenumber{CS 188}
+\def\class{Introduction to}
+\def\semester{Fall 2014}
+%allocate a new register for week and lecture number
+\newcount\weekno
+\global\weekno=0
+\newcount\lecturenumber
+\global\lecturenumber=0
+%\week just advances the week and returns the number
+\def\week{\global\advance\weekno by 1 \the\weekno}
+%\newlecture prints a whole heading
+\def\newlecture#1{\par\medskip\noindent 
+\global\advance\lecturenumber by 1 
+{\bf Lecture \the\lecturenumber:\ #1}\\
+\nobreak\ignorespaces}
+\def\ul#1{$\underline{\hbox{{\rm #1}}}$}
+\def\uh#1{$\underline{\hbox{{\it #1}}}$}
+\newskip\saveskip
+\newskip\saveindent
+\saveskip=\baselineskip
+\font\smalltt=cmtt9
+\def\hb{\hfill\break}
+\font\big=cmr10 scaled \magstep2
+
+%macros for use in assignments and exams
+\def\q#1#2{{\bf\item (#1 points)\quad #2}}
+\def\subq#1{{\bf\item (#1 pt)}}
+\def\tf{{\it True/False}: }
+\def\mp{{\it Multiple choice}: }
+
+%define displays
+%\def\leftdisplay#1$${\leftline{\indent\qquad$\displaystyle{#1}$}$$}
+%\everydisplay{\leftdisplay}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\def\lisp{\nobreak\vskip 6pt\parskip=0pt\baselineskip=12truept
+        \begingroup\obeylines\obeyspaces\smalltt\dolisp}
+\def\dolisp#1{#1\endgroup\nobreak\vskip 2pt\parskip=5pt\baselineskip=\saveskip
+\rm\noindent\ignorespaces}
+\def\asis{\obeylines\obeyspaces}
+\def\ttp{.\skip -0.5em\ }
+\def\tab{\hbox{\kern10pt}}
+{\obeyspaces\global\def {\ }}
+
+\textheight=9in
+\textwidth=7in
+\topmargin=-0.35in
+\oddsidemargin=-0.25in
+\evensidemargin=-0.25in
+\parindent=0pt
+\parskip=5pt
+\itemsep=-1pt
+\floatsep 5pt plus 2pt minus 3pt
+\intextsep 5pt plus 2pt minus 3pt
+\textfloatsep=5pt plus 2pt minus 3pt
+\renewcommand{\baselinestretch}{1.0}
+\font\dunhd=cmdunh10 scaled \magstep5
+\font\dunhc=cmdunh10 scaled \magstep4
+\font\dunhb=cmdunh10 scaled \magstep3
+\font\dunha=cmdunh10 scaled \magstep2
+\date{}
+
+\def\preamble#1{\gdef\@preamble{#1}}
+
+\def\sp#1{\underline{\hspace*{#1}}}
+
+
+
+
+\def\maketitle{%
+ \begingroup
+ \def\thefootnote{\fnsymbol{footnote}}
+ \def\@makefnmark{\hbox 
+ to 0pt{$^{\@thefnmark}$\hss}} 
+ \if@twocolumn 
+ \twocolumn[\@maketitle] 
+ \else \newpage
+ \global\@topnum\z@ \@maketitle \fi
+%%%\thispagestyle{plain}
+\@thanks
+ \endgroup
+ \setcounter{footnote}{0}
+ \let\maketitle\relax
+ \let\@maketitle\relax
+ \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\let\thanks\relax}
+\def\@maketitle{\newpage
+\hrule height6pt \vskip .7em
+\makebox[1.6in][l]{\dunhb \coursenumber}
+{\dunhb \class \hfill \ }
+\vskip-0.1in 
+\makebox[1.6in][l]{\dunhb \semester}
+{\dunhb Artificial Intelligence \hfill \dunhd \@title \par} 
+\vskip 0.6em
+\hrule height6pt 
+ \par
+ \vskip .5em} 
+\def\section{\@startsection {section}{1}{\z@}{-3.0ex plus -.6ex minus 
+    -.2ex}{1.3ex plus .1ex}{\dunhb}}
+\def\subsection{\@startsection{subsection}{2}{\z@}{-1.6ex plus -.5ex minus 
+   -.1ex}{0.9ex plus .1ex}{\dunha}}
+
+\long\def\@makecaption#1#2{
+ \vskip 10pt 
+ \setbox\@tempboxa\hbox{{\bf #2}}
+ \ifdim \wd\@tempboxa >\hsize {\bf #2}\par \else \hbox
+to\hsize{\hfil\box\@tempboxa\hfil} 
+ \fi}
+
+
+%%%% problem-set.cls stuff
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{problem-set}
+
+\RequirePackage{amsmath}
+\RequirePackage{mathrsfs}
+\RequirePackage{amsthm}
+\RequirePackage{enumerate}
+\RequirePackage{color}
+\RequirePackage{graphicx}
+\RequirePackage{ifthen}
+\RequirePackage{wrapfig}
+
+\newcommand\truefalsepoints{2}
+
+\newcommand{\assignmentdue}[1]{\def\@assignmentdue{#1}}
+\newcommand{\subtitle}[1]{\def\@subtitle{#1}}
+
+\newcommand{\@DeclareGotDocType}[1]{%
+  \@ifundefined{@problemSetDocType}{%
+    \newcommand{\@problemSetDocType}{#1}%
+  }{%
+    \ClassError{problem-set}{processing option: #1: document type already declared as \@problemSetDocType}%
+  }%
+}
+
+\newcommand{\examInstructions}{
+%    To earn the extra credit, one of the following has to hold true. Please
+%   circle and sign.
+%  % \vspace{0.5cm}
+
+%   \noindent {\bf A}  I spent 2 or more hours on the practice midterm.
+
+% \noindent {\bf B}  I spent fewer than 2 hours on the practice midterm, but I believe
+%     I have solved all the questions.
+
+% {\bf Signature:} \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+%   \vspace{0.5cm}
+%   The normal instructions for the midterm follow on the next page.
+% \newpage
+
+  \begin{itemize}
+  \item You have approximately 2 hours and 50 minutes.
+
+  \item The exam is closed book, closed notes except your one-page crib sheet.
+
+  \item Please use non-programmable calculators only.
+
+  \item Mark your answers ON THE EXAM ITSELF.  If you are not sure of
+    your answer you may wish to provide a {\em brief} explanation.
+    All short answer sections can be successfully answered in a few
+    sentences AT MOST.
+
+%For true/false questions, CIRCLE {\em True} OR {\em False}.
+%For multiple-choice questions, CIRCLE {\em\bf ALL} CORRECT CHOICES (in some cases, there may be more than one).
+
+  \end{itemize}
+}
+
+\DeclareOption{section}{%
+  \@DeclareGotDocType{section}
+  \def\@declareHidePoints{}
+  \AtBeginDocument{%
+    \@ifundefined{showSolutions}{%
+      \@MakeTitle[\@subtitle]{\@title}%
+    }{%
+      \@MakeTitle[\@subtitle]{\@title~Solutions}%
+    }
+  }%
+}
+
+\DeclareOption{written}{%
+  \@DeclareGotDocType{written}
+  \AtBeginDocument{%
+  \@ifundefined{showSolutions}{%
+      \@MakeTitle[\@subtitle]{\@title}%
+      \begin{list}{}{}
+      \item \textbf{Due:} \@assignmentdue
+      \item \textbf{Policy:} Can be solved in groups (acknowledge collaborators) but must be written up individually
+      \end{list}
+      \vskip .5em
+      {\newcommand{\tprompt}[1]{\raisebox{0pt}[2em][1em]{#1}}
+        \begin{center}
+          \begin{tabular}{|l|l@{\hspace{3.5in}}|}
+            \hline
+            \tprompt{First name} & \\
+            \hline
+            \tprompt{Last name} & \\
+            \hline
+            \tprompt{SID} & \\
+            \hline
+            \tprompt{Collaborators} & \\
+            \hline
+          \end{tabular}%
+        \end{center}
+      }
+      \@MakeGradeBox%
+      \newpage%
+    }{%
+      \@MakeTitle[\@subtitle]{\@title~Solutions}%
+    }%
+  }%
+}
+
+\DeclareOption{exam}{%
+  \@DeclareGotDocType{exam}
+  \AtBeginDocument{%
+%Pieter: I commented this if condition out, this way solutions and
+%original exam have the same formatting (rather than saving 2 pages on
+%the solutions, which seems not that important with electronic handouts)
+%    \@ifundefined{showSolutions}{%
+      \@MakeTitle{\@title}%
+      \examInstructions%
+      \vskip .5em
+      {\newcommand{\tprompt}[1]{\raisebox{0pt}[2em][1em]{#1}}
+        \begin{center}
+          \begin{tabular}{|l|l@{\hspace{3.5in}}|}
+            \hline
+            \tprompt{First name} & \\
+            \hline
+            \tprompt{Last name} & \\
+            \hline
+            \tprompt{SID} & \\
+           \hline
+            \tprompt{edX username} & \\
+           \hline
+            \hline
+            \hline
+            \tprompt{First and last name of student to your left} &\\
+           \hline
+            \tprompt{First and last name of student to your right} &\\
+           \hline
+          \end{tabular}%
+        \end{center}
+     }
+      \@MakeGradeBox%
+
+      \newpage%
+%    }{%
+%      \@MakeTitle[Solutions]{\@title}%
+%    }%
+  }%
+}
+
+\AtEndDocument{
+  \@definelabel{NumProblems}{\thesection}
+  \@definelabel{TotalPoints}{\arabic{TotalPoints}}
+}
+
+\ProcessOptions
+
+\newcommand{\@singleOrPlural}[3]{\ifthenelse{\equal{#1}{1}}{#1~#2}{#1~#3}}
+\newcommand{\@definelabel}[2]{%
+\@bsphack
+\protected@write\@auxout{}%
+       {\string\newlabel{#1}{{#2}{\thepage}}}%
+\@esphack%
+}
+
+\@ifundefined{@declareHidePoints}{%
+  \newcommand{\@showPts}[1]{[\@singleOrPlural{#1}{pt}{pts}]~}%
+}{%
+  \newcommand{\@showPts}[1]{}%
+}%
+
+\newcounter{TotalPoints}
+\newcounter{ProblemPoints}[section]
+\newcounter{QuestionPoints}[subsection]
+\newcounter{SubQuestionPoints}[subsubsection]
+
+\font\dunhd=cmdunh10 scaled \magstep5
+\font\dunhc=cmdunh10 scaled \magstep4
+\font\dunhb=cmdunh10 scaled \magstep3
+\font\dunha=cmdunh10 scaled \magstep2
+
+\newcommand{\@MakeStudentInfo}{%
+
+}
+
+\newcommand{\@MakeGradeBox}{%
+  \begin{center}%
+    \xdef\graderows{}%
+    \@ifundefined{r@NumProblems}{}%
+    {%
+      \newcounter{qnumber}%
+      {\loop%
+        \ifnum\theqnumber<\ref{NumProblems}%
+        \addtocounter{qnumber}{1}%
+        \xdef\graderows{%
+          \graderows%
+           Q\arabic{qnumber}.&\ref{ProblemName:\theqnumber}&~~~/\ref{ProblemPoints:\theqnumber}\cr %
+          \noalign{\hrule}%
+        }%
+        \repeat}%
+    }%
+    \vfill
+{\bf For staff use only:}\\
+    %\begin{large}
+      \begin{tabular}{|ll|l|}
+        \hline
+        \graderows
+        & Total &~~~/\ref{TotalPoints}\\
+        \hline
+      \end{tabular}%
+    %\end{large}%
+  \end{center}%
+}
+
+\newcommand{\@MakeTitle}[2][]{%
+  \hrule height6pt \vspace{-0.5em}%
+  \noindent%
+  \parbox[b]{0.22\textwidth}{
+    {\dunhb \coursenumber}\\%
+    {\dunhb \coursesemester}}%
+  \parbox[b]{0.35\textwidth}{%
+    \raggedright
+    {\dunhb \coursename}}%
+  \hfill%
+  \begin{tabular}[b]{l}
+    \ifthenelse{\equal{#1}{}}{%
+      {\dunhd #2}%
+    }{%
+      {\dunhb #2}\\%
+      {\dunhb #1}%
+    }
+  \end{tabular}%
+  \vskip 0.6em
+  \hrule height6pt
+  \par
+  \vskip .5em
+}
+
+\newenvironment{problem}[2][]%
+{%
+  \addtocounter{section}{1}%
+  \ifthenelse{\equal{\arabic{section}}{1}}{}{\newpage}%
+  \setcounter{subsection}{0}%
+  \setcounter{ProblemPoints}{0}%
+  \begin{huge}%
+    \noindent Q\arabic{section}.~\@showPts{\ref{ProblemPoints:\thesection}}#2%
+  \end{huge}%
+  \par
+  \@definelabel{ProblemName:\thesection}{#2}%
+  \def\@atproblemend {%
+    \ifthenelse{\equal{#1}{}}{%
+      \@definelabel{ProblemPoints:\thesection}{\theProblemPoints}%
+      \addtocounter{TotalPoints}{\theProblemPoints}
+    }{%
+      \@definelabel{ProblemPoints:\thesection}{#1}%
+      \addtocounter{TotalPoints}{#1}
+    }%
+  }%
+}%
+{%
+  \@atproblemend%
+}%
+
+\newenvironment{question}[1][]%
+{%
+  \addtocounter{subsection}{1}%
+  \setcounter{subsubsection}{0}%
+  \setcounter{QuestionPoints}{0}%
+  \def\@atquestionend {%
+    \ifthenelse{\equal{#1}{}}{%
+      \@definelabel{QuestionPoints:\thesubsection}{\theQuestionPoints}%
+      \addtocounter{ProblemPoints}{\theQuestionPoints}%
+    }{%
+      \@definelabel{QuestionPoints:\thesubsection}{#1}%
+      \addtocounter{ProblemPoints}{#1}%
+    }%
+  }%
+  \begin{list}%
+    {{\bf (\alph{subsection})}}%
+    {%
+      \setlength{\topsep}{0pt}%
+      \setlength{\partopsep}{0pt}%
+    }%
+    \item\ifthenelse{\equal{#1}{}}{}{\@showPts{\ref{QuestionPoints:\thesubsection}}}%
+      \ignorespaces%
+}%
+{%
+  \end{list}%
+  \@atquestionend%
+}%
+
+\newenvironment{subquestion}[1][]%
+{%
+  \addtocounter{subsubsection}{1}%
+  \setcounter{SubQuestionPoints}{0}%
+  \def\@atsubquestionend {%
+    \ifthenelse{\equal{#1}{}}{%
+      \@definelabel{SubQuestionPoints:\thesubsubsection}{\theSubQuestionPoints}%
+      \addtocounter{QuestionPoints}{\theSubQuestionPoints}%
+    }{%
+      \@definelabel{SubQuestionPoints:\thesubsubsection}{#1}%
+      \addtocounter{QuestionPoints}{#1}%
+    }%
+  }%
+  \begin{list}%
+    {{\bf (\roman{subsubsection})}}%
+    {%
+      \setlength{\topsep}{0pt}%
+      \setlength{\partopsep}{0pt}%
+    }%
+    \item \@showPts{\ref{SubQuestionPoints:\thesubsubsection}}%
+      \ignorespaces%
+}%
+{%
+  \end{list}%
+  \@atsubquestionend%
+}%
+
+
+\newcommand{\tfq}[1]{%
+ \@showPts{\truefalsepoints} [%
+  \ifthenelse{\equal{#1}{true}}{%
+    \textit{\solution{true}{\underline{true}}}~or~\textit{false}%
+  }{%
+    \ifthenelse{\equal{#1}{false}}{%
+      \textit{true}~or~\textit{\solution{false}{\underline{false}}}%
+    }{%
+      \textit{true}~or~\textit{false}%
+    }%
+  }%
+  ]~\ignorespaces
+}
+
+
+\newenvironment{truefalse}[1][]%
+{%
+  \addtocounter{subsubsection}{1}%
+  \setcounter{SubQuestionPoints}{0}%
+  \def\@atsubquestionend {%
+    \@definelabel{SubQuestionPoints:\thesubsubsection}{1}%
+    \addtocounter{QuestionPoints}{\truefalsepoints}%
+  }%
+  \begin{list}%
+    {{\bf (\roman{subsubsection})}}%
+    {%
+      \setlength{\topsep}{0pt}%
+      \setlength{\partopsep}{0pt}%
+    }%
+    \item \tfq{#1}
+}%
+{%
+  \end{list}%
+  \@atsubquestionend%
+}%
+
+
+\newcommand{\pad}{\vspace*{\fill}\par}
+
+\@ifundefined{showSolutions}{
+  \newcommand{\solution}[2]{#1} % excludes
+  \newcommand{\solval}[2][]{}
+  \newcommand{\solutioncircle}[1]{#1} % don't color text but still display it
+  \newcommand{\solc}[1]{#1} % don't color text but still display it
+  \newcommand{\solutionimage}[2]{#1}  % First argument is nonsolution, second is solution
+}{
+  \newcommand{\solution}[2]{{\color{red}{#2}}} % includes
+  \newcommand{\solval}[2][]{{\color{red}{#2}}}
+  \newcommand{\solutioncircle}[1]{\fbox{{\color{red}#1}}}
+  \newcommand{\solc}[1]{\fbox{{\color{red}#1}}}
+  \newcommand{\solutionimage}[2]{\begin{center}\fcolorbox{red}{white}{#2}\end{center}}
+}
+
+\def\indep{\perp\!\!\!\perp}
+
+
+\textwidth = 7.0 in
+\textheight = 9.5 in
+\oddsidemargin = -0.30 in
+\evensidemargin = -0.30 in
+\topmargin = -0.75 in
+\headheight = 0.00 in
+\headsep = 0.25 in
+\parskip = 0.15in
+\parindent = 0.0in
+\itemsep=-1pt
+\floatsep 5pt plus 2pt minus 3pt
+\intextsep 5pt plus 2pt minus 3pt
+\textfloatsep=5pt plus 2pt minus 3pt
+\renewcommand{\baselinestretch}{1.0}
+\font\dunhd=cmdunh10 scaled \magstep5
+\font\dunhc=cmdunh10 scaled \magstep4
+\font\dunhb=cmdunh10 scaled \magstep3
+\font\dunha=cmdunh10 scaled \magstep2
+\date{}

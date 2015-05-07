@@ -1,0 +1,23 @@
+def f() {
+    print "f"
+    "function f"
+}
+def g() {
+    print "g"
+    "function g"
+}
+def h() {
+    print "h"
+    "function h"
+}
+def i() {
+    print "i"
+    "function i"
+}
+
+def func(a, b) {
+    print a
+    print b
+}
+
+func(f(), g(), h(), i())

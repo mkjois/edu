@@ -1,0 +1,131 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\usepackage{titling}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{9} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\emf}{\mathcal{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+\begin{itemize}
+\item Assume we are given the values of $\{Z_0,\ldots,Z_n\}$. From this can we determine if $S+T=n$? For this to be true, both $S,T \leq n$, and we can tell if $S$ or $T$ is equal to $k$ for any $k\in [0,n]$ because we are given the first $n$ $Z_i$'s. If both $S,T\leq n$ then we can just add them to find out if $S+T=n$. If either $S$ or $T$ is not one of the $n+1$ integers in $[0,n]$, then $S+T$ is necessarily greater than $n$ because both are non-negative. So $S+T$ is a stopping time.
+\item Again, given $\{Z_0,\ldots,Z_n\}$, can we determine if $S-T=n$? This event may depend on future $Z_i$'s because this event could still happen even if $S,T>n$, but we can't tell what values they take if only given the first $n$ $Z_i$'s. So $S-T$ is not a stopping time.
+\item Can we determine if $\max\{S,T\}=n$? Given the first $n$ $Z_i$'s we can determine the values of $S,T$ if at most $n$ or whether $S,T>n$. If both $S,T\leq n$, then their max is as well. But if we can't determine the value of either, then their max is necessarily greater than $n$. So $\max\{S,T\}$ is a stopping time.
+\end{itemize}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item $Z_n$ is clearly a function of $\{X_1,\ldots,X_n\}$. Because each $Z_n$ must be between $-n$ and $n^2-n$, $\E[|Z_n|]\leq n^2-n < \infty$. Now we calculate the following:
+\begin{align*}
+\E[Z_n|X_1,\ldots,X_{n-1}] &= \E\left[\left(\sum_{i=1}^nX_i\right)^2-n|X_1,\ldots,X_{n-1}\right]\\
+&= \left(\sum_{i=1}^{n-1}X_i\right)^2 + 2\sum_{i\neq j}^n\E[X_iX_j] + \E[X_n^2] - n\\
+&= \left(\sum_{i=1}^{n-1}X_i\right)^2 + 2\cdot0+1-n\\
+&= \left(\sum_{i=1}^{n-1}X_i\right)^2 - (n-1)\\
+&= Z_{n-1}
+\end{align*}
+The expectations of products of two $X_i$'s are easy to calculate thanks to their independence. The above three conditions show that $\{Z_0,Z_1,\ldots\}$ is a martingale.
+\item For all $i\in[1,T]$ we have the following:
+\begin{align*}
+|Z_i| &= \left|\left(\sum_{j=1}^iX_j\right)^2-i\right|\\
+&\leq \left|\left(\sum_{j=1}^iX_j\right)^2\right| + |i|\\
+&= \left(\sum_{j=1}^iX_j\right)^2 + i\\
+&\leq \max\{\ell_1^2,\ell_2^2\} + i
+\end{align*}
+which is a constant. So $\E[Z_T]=\E[Z_1]=\E[X_1^2]-1=1-1=0$.
+\newpage
+\item We can expand $\E[Z_T]$ as follows, where $p=\frac{\ell_1}{\ell_1+\ell_2}$ is the probability the gambler wins:
+\begin{align*}
+\E[Z_T] &= \E\left[\left(\sum_{i=1}^TX_i\right)^2-T\right]\\
+0 &= \E\left[\left(\sum_{i=1}^TX_i\right)^2\right]-\E[T]\\
+E[T] &= p\ell_2^2 + (1-p)\ell_1^2\\
+&= \frac{\ell_1\ell_2^2}{\ell_1+\ell_2}+\frac{\ell_1^2\ell_2}{\ell_1+\ell_2}\\
+&= \ell_1\ell_2
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+Let $W_n=\E[Z_n|X_0,\ldots,X_{n-1}]-Z_{n-1}+W_{n-1}$ be a recursively defined function, defined as such for $n\geq1$ and $W_0=0$.\asdf
+If we expand the recursion, we get $W_n=\sum_{i=1}^n(\E[Z_i|X_0,\ldots,X_{i-1}]-Z_{i-1})$ because $W_0=0$. Clearly $W_n$ only depends on $X_0,\ldots,X_{n-1}$.\asdf
+Now we rearrange the recursive relationship above:
+\begin{align*}
+W_n &= \E[Z_n|X_0,\ldots,X_{n-1}]-Z_{n-1}+W_{n-1}\\
+Z_{n-1}-W_{n-1} &= \E[Z_n|X_0,\ldots,X_{n-1}]-W_n\\
+Z_{n-1}-W_{n-1} &= \E[Z_n|X_0,\ldots,X_{n-1}]-\E[W_n|X_0,\ldots,X_{n-1}]\qquad (\text{deterministic given these }X_i)\\
+Z_{n-1}-W_{n-1} &= \E[Z_n-W_n|X_0,\ldots,X_{n-1}]
+\end{align*}
+Also, $\E[|W_n|] = \sum_{i=1}^n\E[Z_i]-\E[Z_{i-1}] = \E[Z_n]-\E[Z_0]<\infty$, so $\E[|Z_n-W_n|]<\infty$.\asdf
+We have proved that $Z_n-W_n$ is a martingale with respect to $\{X_0,X_1,\ldots\}$. Call it $Y_n$ and we're done.
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+Notice that $D(x,S)$ is the edge distance along the $n$-dimensional hypercube from $x$ to the closest vertex in $S$. By changing $1$ coordinate we traverse $1$ edge, so our new vertex $x'$ can't be more than one edge closer to any vertex in $S$ than $x$ was.\asdf
+This is captured by the inequality $D(x,S)-D(x',S)\leq 1\quad\forall x$, and because each coordinate $x_i$ is chosen independently with equal probability, $D(x,S)$ satisfies the bounded differences condition with parameter $c=1$. We simply apply the following theorem derived from Azuma-Hoeffding:
+$$\Pr[|D(x,S)-\E[D(x,S)]|> \lambda]\leq 2e^{-\frac{\lambda^2}{2n}}$$
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+% PUT PROBLEM 6 SOLUTION HERE
+Let $X_i$ be the time needed for game $i$ in minutes. Clearly the $X_i$ are i.i.d. with $\E[X_i]=45$. Now let $T$ be the stopping time: number of games played. $T$ is necessarily in $[4,7]$ and its expected value can be calculated by hand:
+\begin{align*}
+\E[T] &= \sum_{i=4}^7 i\cdot\Pr[T=i]\\
+&= \sum_{i=4}^7 i\left(\frac{{i-1 \choose 3}}{2^{i-1}}\right)\left(\frac12\right)(2)\\
+&= \frac{93}{16}
+\end{align*}
+The probability that Alice wins in $i$ games is the probability she wins $3$ of the first $i-1$ games times the probability she wins the $i^{\text{th}}$ game. By symmetry, we multiply by $2$ to get the probability either player wins in $i$ games.\asdf
+Now we can use Wald's equation because we have finite expectations for the number of games played and minutes per game:
+$$\sum_{i=1}^TX_i=\E[T]\E[X_i]=\frac{93\cdot45}{16}\approx 261.5\text{ minutes}$$
+
+\end{document}

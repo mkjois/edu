@@ -1,0 +1,8 @@
+def test() {
+    print "Fail"
+    1
+}
+
+if (1 || test()) {
+    print "Done"
+}

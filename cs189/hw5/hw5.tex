@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate,cancel}
+\usepackage{titling}
+\setlength{\droptitle}{-10em}   % This is your set screw
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{5} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\cov}{\text{Cov}}
+\newcommand{\lhood}{\mathscr{L}}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\title{CS189\ \Session\  --- Homework \Homework}
+\author{\Name}
+\lhead{CS189\ \Session\  Homework \Homework,\ \Name}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}[(a)]
+\item Starting with decision trees, I only used entropy to calculate impurities of splitting with different features and thresholds. As for deciding what threshold to use for a given feature, at first I simply took the "mean of means" of each class. However, I found I could get a slight boost in accuracy by optimizing over this choice along with ten or so equally spaced values between the minimum and maximum value of that feature.\asdf
+I used three different generic stopping criteria:
+\begin{itemize}
+\item When a node is greater than some depth $d$ in the tree.
+\item When the proportion of labels of one class is greater than some $p$.
+\item When the number of training points at a node is less than some number $c$.
+\end{itemize}
+I used an OR-combination of these three, using cross-validation ($k=10$) to tune their parameters. I found my decision tree ran best on my validation sets with $d=9,p=0.95,c=6$.\asdf
+I implemented random forests (as well as bagging, naturally) by allowing for the training of $j$ trees, each with their own $k$ points sampled with replacement and their own $m$ features sampled without replacement.\asdf
+I found that increasing $j$ beyond a few handful of trees didn't have much effect on accuracy as long as $k$ and $m$ were great enough, probably due to the exponential decay of error probability with more trees. More features and more sampled points per tree significantly increased accuracy of the forest. To train my final tree for the Kaggle test set I used $j=100,k=5000,m=20$ in the interest of time. With more time I probably would have bagged all features per tree and sampled as many points as the training set contained.
+\item I did not add any features nor remove any of the given ones.
+\item A single decision tree achieved around $84$ percent accuracy on my validation sets but under $77$ percent on the Kaggle test set. Clearly training on all features of every single point in the training set resulted in some overfitting.\asdf
+However, for random forests, I again achieved around $84$ percent validation accuracy but over $81$ percent on the Kaggle set. Sampling points with replacement to train each tree reduced overfitting. Varying the number of features to sample didn't seem to affect overfitting as much as it did overall accuracy.
+\item For the first random validation point after training the single decision tree, the classifier proceeded as follows:
+\begin{itemize}
+\item feature 28 $<$ 0.9699
+\item feature 19 $<$ 0.3362
+\item feature 29 $<$ 0.7526
+\item feature 16 $<$ 0.6000
+\item feature 31 $<$ 0.1457
+\item feature 0 $<$ 0.3000
+\item feature 25 $<$ 0.2914
+\item feature 30 $<$ 0.4000
+\item feature 6 $<$ 0.3000
+\item feature 13 $<$ 1.5000
+\item Classified as 0
+\end{itemize}
+\item Out of 100 trees, the following were the three most common splits at the root:
+\begin{itemize}
+\item feature 10 split on 11 roots at threshold 0.6638
+\item feature 8 split on 10 roots at threshold 0.6353
+\item feature 11 split on 9 roots at threshold 0.7131
+\end{itemize}
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,22 @@
+Exercise 2.
+
+Part 1.
+
+The given grammar doesn't have a mechanism to specify operator precedence or associativity. This will lead to ambiguous edges in the Earley parse graph from inputs like "a+b+c" or "a+b*c" resulting in the worst case O(n^3) performance for the parser. Multiple complete production edges can be added between the same pair of nodes.
+
+Part 3.
+
+There is no ambiguity in this grammar due to the asymmetry of the productions and the extra non-terminals, so multiple edges between the same two nodes resulting in the same non-terminal don't get considered, resulting in O(n^2) time.
+
+Part 4.
+
+My current grammar runs empirically runs in about O(n^1.3) time but it generates O(n^2) 'S' edges where n is the number of statements. I think a better way to have truly linear grammar would be to require a special character (like a period) at the end of any list of statements. This makes it easy to identify the last expression in the input, so that the following grammar would construct a linear number of 'S' edges.
+
+{
+  'S': ('N', 'E,S')
+  'N': ('E.')
+  'E': ('E+F', 'E-F', 'F')
+  'F': ('F*G', 'G')
+  'G': ('(E)', '-G', 'V')
+  'V': ('a', 'b', 'c')
+}

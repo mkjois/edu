@@ -1,0 +1,18 @@
+def x = 1
+def f(x) {
+    def g(y) {
+        x + y
+    }
+    g
+}
+def inner = f(2)
+print inner(3)
+
+x = 5
+f = lambda(x) {
+    lambda(y) {
+        x * y
+    }
+}
+f = f(7)
+print f(8)

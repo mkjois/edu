@@ -1,0 +1,8 @@
+def l1 = {}
+l1[0] = 0
+l1[1] = 1
+l1[2] = 2
+def l2 = [x + 1 for x in l1] 
+print l2[0]
+print l2[1]
+print l2[2]

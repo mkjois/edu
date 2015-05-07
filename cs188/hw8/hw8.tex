@@ -1,0 +1,280 @@
+%%% Please replace what is within each curly bracket with the correct information below. %%%
+%%% The first field is already filled in for you.  %%%
+\def\ClassName {CS188} % Your course 
+\def\NameLast {Manohar}  % Your last name
+\def\NameFirst {Jois}  % Your first name
+\def\SID{23808180}  % Your SID
+\def\Email{m.k.jois@berkeley.edu} % Your pandagrader email
+\def\Collaborators{Jesus Garcia} % Any collaborators
+
+
+%%% Begin 1a %%%
+\def\OneA {\textbf{Put your answer to 1a here:} 
+\begin{align*}
+P(A=+m|B=+m,C=+m) &= \frac{P(B=+m|A=+m)P(C=+m|A=+m)P(A=+m)}{P(B=+m,C=+m)}\\
+&= \frac{0.9\times 0.9\times 0.5}{P(B=+m,C=+m|A=+m)P(B=+m,C=+m|A=-m)}\\
+&= \frac{0.81 \times 0.5}{0.5\times 0.81 + 0.5 \times 0.01}\\
+&= 81/82
+\end{align*} 
+}
+%%% End 1a %%%
+
+%%% Begin 1b %%%
+\def\OneB {\textbf{Put your answer to 1b here:} 
+\begin{align*}
+P(D=+m|A=+m) &= P(D=+m|B=+m)P(B=+m|A=+m) + P(D=+m|B=-m)P(B=-m|A=+m)\\
+&= 0.9 \times 0.9 + 0.1 \times 0.1\\
+&= 0.82
+\end{align*}
+}
+%%% End 1b %%%
+
+%%% Begin 1c %%%
+\def\OneC {\textbf{Put your answer to 1c here:} 
+\begin{align*}
+P(D=+m) &= 0.5 \text{ (by symmetry)}\\
+EU(march) &= (+1)\times P(A=+m|D=+m) + (-1)\times P(A=-m|D=+m)\\
+&= \frac{0.82\times 0.5}{0.5} - \frac{0.18\times 0.5}{0.5}\\
+&= 0.64\\
+EU(stay) &= (+1)\times P(A=-m|D=+m) + (-1)\times P(A=+m|D=+m)\\
+&= -0.64 \text{ (by symmetry)}\\
+MEU &= 0.64
+\end{align*}
+}
+%%% End 1c %%%
+
+%%% Begin 1d %%%
+\def\OneD {\textbf{Put your answer to 1d here:} 
+\begin{align*}
+EU(\text{march}|A=+m) &= 1\\
+EU(\text{stay}|A=+m) &= -1\\
+EU(\text{march}|A=-m) &= -1\\
+EU(\text{stay}|A=-m) &= 1\\
+MEU(|A) &= (1)P(A=+m) + (1)P(A=-m)\\
+&= 1\\
+VPI(A|D=+m) &= 1-0.64\\
+&= 0.36
+\end{align*}
+}
+%%% End 1d %%%
+
+%%% Begin 1e %%%
+\def\OneE {\textbf{Put your answer to 1e here:} 
+\begin{align*}
+P(A=+m|D=+m,B=-m) &= 0.1 \text{ (by intuition)}\\
+P(A=-m|D=+m,B=-m) &= 0.9 \text{ (by intuition)}\\
+EU(march) &= 0.1 - 0.9\\
+&= -0.8\\
+EU(stay) &= 0.9 - 0.1\\
+&= 0.8\\
+VPI(A|D=+m,B=-m) &= 1-0.8\\
+&= 0.2
+\end{align*}
+}
+%%% End 1e %%%
+
+%%% Begin 2a %%%
+%%% Fill in an optimal policy: \actionNorth \actionSouth \actionEast \actionWest \actionStay . Put within curly brackets below.
+%%% 1st row
+\def\polZeroZero{\actionStay}
+\def\polZeroOne{\actionSouth}
+\def\polZeroTwo{\actionSouth}
+%%% 2nd row
+\def\polOneZero{\actionWest}
+\def\polOneOne{\actionSouth}
+\def\polOneTwo{\actionWest}
+%%% 3rd row
+\def\polTwoZero{\actionWest}
+\def\polTwoOne{\actionSouth}
+\def\polTwoTwo{\actionWest}
+
+%%% Fill in the value function: Fill in the value of each state within the curly brackets below.
+
+%%% 1st column
+\def\vZeroZero{10}
+\def\vZeroOne{9}
+\def\vZeroTwo{8}
+%%% 2nd column
+\def\vOneZero{9}
+\def\vOneOne{8}
+\def\vOneTwo{7}
+%%% 3rd column
+\def\vTwoZero{8}
+\def\vTwoOne{7}
+\def\vTwoTwo{6}
+%%% End 2a %%%
+
+%%% Begin 2b %%%
+\def\TwoBi {9}
+\def\TwoBii {6}
+%%% End 2b %%%
+
+%%% Begin 2c %%%
+\def\TwoCi {false} % type true or false
+\def\TwoCii {5}
+
+%%% End 2c %%%
+
+%%% Begin 2d %%%
+\def\TwoD {10} 
+
+%%% End 2d %%%
+
+%%% Begin 2e %%%
+\def\TwoE {10}
+%%% End 2e %%%
+
+%%% For 3a and 3b, replace \mcqb with \mcqs for the correct answer.
+%%% Begin 3a %%%
+\def\ThreeA{
+  \mcqb $J^*(s) = \min_{a} \sum_{s'} {[C(s,a,s') + \gamma \max_{a'}{T(s,a',s')*J^*(s')}]}$ \\[1mm]
+  \mcqb $J^*(s) = \min_{s'} \sum_{a} {T(s,a,s')[C(s,a,s') + \gamma*J^*(s')]}$ \\[1mm]
+  \mcqb $J^*(s) = \min_{a} \sum_{s'} {T(s,a,s')[C(s,a,s') + \gamma * \max_{s'}{J^*(s')}]}$ \\[1mm]
+  \mcqb $J^*(s) = \min_{s'} \sum_{a} {T(s,a,s')[C(s,a,s') + \gamma * \max_{s'}{J^*(s')}]}$ \\[1mm]
+  \framebox[9cm][l]{\mcqb $J^*(s) = \min_{a} \sum_{s'} {T(s,a,s')[C(s,a,s') + \gamma*J^*(s')]}$} \\[1mm]
+  \mcqb $J^*(s) = \min_{s'} \sum_{a} {[C(s,a,s') + \gamma * {J^*(s')}]}$
+}
+%%% End 3a %%%
+
+%%% Begin 3b %%%
+\def\ThreeB{
+  \mcqb $J^*(s) = \min_{a} \max_{s'} {T(s,a,s')[C(s,a,s') + \gamma*J^*(s')]}$ \\[1mm]
+  \mcqb $J^*(s) = \min_{s'} \sum_{a} {T(s,a,s')[\max_{s'} C(s,a,s') + \gamma*J^*(s')]}$ \\[1mm]
+  \mcqb $J^*(s) = \min_{a} \min_{s'} {[C(s,a,s') + \gamma* \max_{s'}J^*(s')]}$ \\[1mm]
+  \framebox[8cm][l]{\mcqb $J^*(s) = \min_{a} \max_{s'} {[C(s,a,s') + \gamma*J^*(s')]}$} \\[1mm]
+  \mcqb $J^*(s) = \min_{s'} \sum_{a} {T(s,a,s')[\max_{s'} C(s,a,s') + \gamma*\max_{s'}J^*(s')]}$ \\[1mm]
+  \mcqb $J^*(s) = \min_{a} \min_{s'} {T(s,a,s')[C(s,a,s') + \gamma*J^*(s')]}$
+}
+%%% End 3b %%%
+
+%%% Begin 4a %%%
+\def\FourA {\textbf{Put your answer to 4a here:} \\
+M$\leftarrow$------B(action)---\\
+$\mid$\hspace{1.4cm}$\mid$\hspace{1.5cm}$\mid$\\
+$\mid$\hspace{1.4cm}$\mid$\hspace{1.5cm}$\mid$\\
+$\downarrow$\hspace{1.3cm}$\mid$\hspace{1.5cm}$\downarrow$\\
+P$\leftarrow$---------\hspace{1.4cm}U(utility)\\
+$\mid$\hspace{3cm}$\uparrow$\\
+$\mid$\hspace{3cm}$\mid$\\
+---------------------------
+}
+%%% End 4a %%%
+
+%%% Begin 4b %%%
+\def\FourB {\textbf{Put your answer to 4b here:} 
+\begin{align*}
+P(+p|+b) &= 0.9(1.0) + 0.1(0.5) = 0.95\\
+P(-p|+b) &= 0.9(0.0) + 0.1(0.5) = 0.05\\
+P(+p|-b) &= 0.7(0.7) + 0.3(0.2) = 0.55\\
+P(-p|-b) &= 0.7(0.3) + 0.3(0.8) = 0.45\\
+EU(+b) &= 0.95(2000-100) + 0.05(0-100) = 1800\\
+EU(-b) &= 0.55(2000+0) + 0.45(0+0) = 1100
+\end{align*}
+}
+%%% End 4b %%%
+
+%%% Begin 4c %%%
+\def\FourC {true} % type true or false
+%%% End 4c %%%
+
+%%% Begin 5 %%%
+\def\FiveA {\textbf{Put your answer to 5a here:}
+\begin{align*}
+U_A(s) &= \max_{a: s\rightarrow s'}{(R(s)+\min_{a': s'\rightarrow s''}{(-R(s') + U_A(s''))})}\\
+U_B(s) &= \min_{a: s\rightarrow s'}{(-R(s)+\max_{a': s'\rightarrow s''}{(R(s') + U_B(s''))})}
+\end{align*}
+}
+%%% End 5 %%%
+
+%%%%%%%%%%%%%%%%%%%%%% DO NOT CHANGE ANYTHING BELOW THIS LINE %%%%%%%%%%%%%%%%%%%%%%%%%
+% \def \showSolutions {} 
+\documentclass[twoside]{article}
+
+\usepackage{class}
+%\usepackage{verbatim}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{amsmath,mathrsfs}
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{mathcomp}
+\usepackage{tabularx}
+\usepackage{wasysym}
+\usepackage{pbox}
+\usetikzlibrary{bayesnet}
+
+% Bubbles for multiple choice questions
+\newcommand{\mcqbubble}{\bigcirc}
+\newcommand{\mcqbubblefill}{\Large\newmoon}
+
+% shorthand
+\newcommand{\mcqb}{$\bigcirc$\ \ }
+\newcommand{\mcqs}{\solution{\mcqb}{$\Large\newmoon$\ \ }}
+
+% pruning
+\newcommand{\prune}{\includegraphics[width=0.2in]{figures/red_x}}
+% title is Written HW8
+\title{Written HW8}
+\begin{document}
+\thispagestyle{empty}
+\maketitle
+
+
+\smallskip
+\smallskip
+\textbf{INSTRUCTIONS}
+
+\begin{itemize}
+\item \textbf{Due:} Monday, November 3rd, 2014 11:59 PM
+\item \textbf{Policy:} Can be solved in groups (acknowledge collaborators) but must
+be written up individually. However, we strongly encourage you to first work alone for about 30 minutes total in order to simulate an exam environment.  Late homework will not be accepted.
+\item \textbf{Format:}
+You must solve the questions on this handout (either through a pdf annotator, or by printing, then scanning; we recommend the latter to match exam setting). Alternatively, you can typeset a pdf on your own that has answers appearing in the same space (check edx/piazza for latex templating files and instructions).
+\textbf{Make sure that your answers (typed or handwritten) are within the
+dedicated regions for each question/part.  If you do not follow this format, we may deduct points.}
+
+\item \textbf{How to submit:}  Go to www.pandagrader.com. Log in and click on the
+class CS188 Fall 2014. Click on the submission titled Written HW 8 and upload your pdf containing your answers. If this is your first time using pandagrader, you will have to set your password before logging in the first time.  To do so, click on "Forgot your password" on the login page, and enter your email address on file with the registrar's office (usually your @berkeley.edu email address). You will then receive an email with a link to reset your password.
+
+\end{itemize}
+
+
+\begin{center}
+\begin{tabular}{|r|c|}
+\hline
+\begin{minipage}{3cm}~\\Last Name~\\~\\\end{minipage} & \begin{minipage}[c][1cm][c]{8cm} ~ \NameLast \end{minipage}  \\
+\hline
+\begin{minipage}{3cm}~\\First Name~\\~\\\end{minipage} & \NameFirst \\
+\hline
+\begin{minipage}{3cm}~\\SID~\\~\\\end{minipage} & \SID \\
+\hline
+\begin{minipage}{3cm}~\\Email~\\~\\\end{minipage} & \Email \\
+\hline
+\begin{minipage}{3cm}~\\Collaborators~\\~\\\end{minipage} & \Collaborators \\
+\hline
+
+\end{tabular}
+\end{center}
+
+\newpage
+\input{q1}
+\newpage
+\input{q2}
+\newpage
+\input{q3}
+\newpage
+\input{q4}
+\newpage
+\input{q5}
+\newpage
+
+\end{document}

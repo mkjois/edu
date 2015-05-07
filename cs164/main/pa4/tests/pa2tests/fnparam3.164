@@ -1,0 +1,7 @@
+def myAddOne() {
+	def foo = lambda(x) {x + 1}
+	foo
+}
+
+def addOne = myAddOne()
+print addOne(4)

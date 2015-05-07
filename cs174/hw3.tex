@@ -1,0 +1,158 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{3} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+Let the random variable $X_i$ be $r$ if the price increases on day $i$ and $\frac1r$ if the price decreases. Then the final price of the stock $X$ is the product of all $X_i$. The expected value of the stock after $d$ days is the product of the expected values because the $X_i$ are independent: \begin{align*}
+\E[X] &= \prod_{i=1}^d \E[X_i]\\
+&= \prod_{i=1}^d rp+\frac{1-p}r\\
+&= (\frac{pr^2-p+1}r)^d
+\end{align*}
+Now note that $X^2=(\prod_{i=1}^d X_i)^2=\prod_{i=1}^d X_i^2$, so \begin{align*}
+\E[X^2] &= \prod_{i=1}^d \E[X_i^2]\\
+&= \prod_{i=1}^d r^2p+\frac{1-p}{r^2}\\
+&= (\frac{pr^4-p+1}{r^2})^d\\
+\Var[X] &= \E[X^2]-\E[X]^2\\
+&= (\frac{pr^4-p+1}{r^2})^d - (\frac{pr^2-p+1}r)^d 
+\end{align*}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+Note: statements marked with (*) are cited from the Wikipedia page on the harmonic series.\asdf
+First recall that the p-series $\sum_{i=1}^{\infty} \frac1{i^p}$ converges for $p>1$ (*). The case of $p=2$ converges to $\frac{\pi^2}6$ as mentioned in class. Now consider some $k\geq1$ and the random variable $X$ that is a positive integer $i$ with probability $p_i=C\cdot\frac1{i^{k+2}}$ such that $C\sum_{i=1}^{\infty} \frac1{i^{k+2}}= 1$ as required for probability distributions. \begin{align*}
+\E[X^j] &= \sum_{i=1}^{\infty} i^jp_i\\
+&= C\sum_{i=1}^{\infty} \frac1{i^{k+2-j}}
+\end{align*}
+This series will converge as a p-series for $1\leq j\leq k$ but will diverge for $j>k$. So $X$ has its first unbounded moment at $j=k+1$.
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+\begin{enumerate}[1.]
+\item Let $L=\logb2n+1$ and $X_i$ be the indicator random variable for a streak that starts at position $i$. Clearly $X_i=0$ for the last $L-1$ positions. Also note that $\Pr[X_i=1]=2\cdot(\frac12)^L$ because the streak could be of either heads or tails, so this probability simplifies to $(\frac12)^{\logb2n}=\frac1n$. Now we declare the total number of streaks $X$ to be the sum of all $X_i$ and so by linearity of expectation: \begin{align*}
+\E[X] &= \sum_{i=1}^{n-L+1} \E[X_i]\\
+&= \sum_{i=1}^{n-\logb2n} \frac1n\\
+&= 1-\frac{\logb2n}n\\
+&= 1-o(1)
+\end{align*}
+\item Let $L=\lfloor\logb2n-2\logb2{\logb2n}\rfloor = \lfloor\log{\frac n{(\log n)^2}}\rfloor$. Then the probability of no streaks is bounded by the probability of no $L$-length streak in all blocks of size $L$: \begin{align*}
+\Pr[\text{no }L\text{-streak}] &\leq (1-\frac2{2^L})^{n/L}\\
+&= (1-\frac{2(\logb2n)^2}n)^{n/L}\\
+&\leq e^{\frac{-2(\log n)^2}L}\\
+&\leq 2^{\frac{-2(\log n)^2}L}\\
+&= n^{\frac{-2\log n}L}
+\end{align*}
+To show that the final probability is upper bounded by $\frac1n$, we must simply show that the exponent above is upper bounded by $-1$: \begin{align*}
+\frac{-2\log n}L &= \frac{-2\log n}{\lfloor\log n-2\log{\log n}\rfloor}\\
+&\leq \frac{-2\log n}{\log n}\\
+&= -2
+\end{align*}
+For sufficiently large $n$ such that $2\logb2{\logb2n}>0$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+Let $f(X)=X^k$ for an even integer $k\geq 1$. Then $f''(X)=k(k-1)X^{k-2} = k(k-1)(X^2)^\frac k2$. The restriction on $k$ means that $k(k-1)>0$ and $\frac k2 > 0$. Since $X^2 \geq 0$ for any value of $X$, $f''(X) \geq 0$ for all values of $X$, meaning $f$ is convex. Then by Jensen's inequality, $\E[X^k] \geq \E[X]^k$ for positive even integers $k$.
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+\begin{enumerate}[1.]
+\item Let $f(a)=\E[(X-a)^2]$. Then \begin{align*}
+f(a) &= \sum_i (i-a)^2\cdot \Pr[X=i]\\
+f'(a) &= \sum_i -2p_i(i-a)\\
+f''(a) &= \sum_i 2p_i = 2
+\end{align*}
+Letting $a=\E[X]$ leads to the following: \begin{align*}
+f'(\E[X]) &= \sum_i -2ip_i + \sum_i 2p_i\E[X]\\
+&= -2\sum_i ip_i + 2\E[X]\sum_i p_i\\
+&= -2\E[X] + 2\E[X]\\
+&= 0
+\end{align*}
+This minimizes $f(a)$ because $f'(\E[X])=0$ and $f''(\E[X])>0$.
+\item 
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+% PUT PROBLEM 6 SOLUTION HERE
+First we prove that $\Var[cX]=c^2\Var[X]$: \begin{align*}
+\Var[cX] &= \E[(cX)^2] - \E[cX]^2\\
+&= c^2\E[X^2] - c^2\E[X]^2\\
+&= c^2\Var[X]
+\end{align*}
+Now let the random variable $X=\sum_{i=1}^n \frac1n X_i$.\\
+By linearity of expectation, $\E[X]=\sum_{i=1}^n \frac1n \E[X_i] = \frac{n\mu}n = \mu$.\\
+The $X_i$ are independent, so $\Var[X] = \sum_{i=1}^n \Var[\frac1n X_i] = \sum \frac1{n^2}\Var[X_i] = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}n$.\\
+Therefore, by Chebyshev's inequality: \begin{align*}
+P(|X-\mu| > \epsilon) &\leq \frac{\Var[X]}{\epsilon^2}\\
+&= \frac{\sigma^2}{n\epsilon^2}
+\end{align*}
+The limit of this probability as $n\rightarrow\infty$ is clearly $0$ for a constant $\epsilon > 0$.
+
+
+\newpage
+\section*{Problem 7}
+\stepcounter{problemnumber}
+% PUT PROBLEM 7 SOLUTION HERE
+Recall from homework 2 that the probability of indices $i$ and $j$ being inverted is $\frac12$ and that the number of inversions $X$ is the sum of all indicator variables $X_{ij}$ of an $(i,j)$-inversion. First we compute $\E[X^2] = \E[(\sum_{i=1}^{n-1} \sum_{j=i+1}^n X_{ij})^2] = \E[\sum_{i=1}^{n-1} \sum_{j=i+1}^n \sum_{k=1}^{n-1} \sum_{m=k+1}^n X_{ij}X_{km}]$.\asdf
+Note that $X_{ij}X_{km}=1$ if and only if both pairs $(i,j)$ and $(k,m)$ are inverted. There are eight cases of $X_{ij}X_{km}$ we must consider: \begin{itemize}
+\item $i=k$ and $j=m$: There are ${n \choose 2}$ such pairs, one for each $X_{ij}$, and since they are the same indices, this is equivalent to simply $X_{ij}$ and its expectation is $\frac12$.
+\item $i<j=k<m$: There are ${n \choose 3}$ such pairs. Of the $6$ ways to order the three numbers, only one ordering has both pairs inverted ($A[i] > A[j]=A[k] > A[m]$) so the expectation is $\frac16$.
+\item $k<m=i<j$: By symmetry, this is the same as the previous case.
+\item $i=k<j<m$: There are ${n \choose 3}$ such pairs. Of the $6$ ways to order the numbers, two orderings have both pairs inverted (e.g. $3,1,2$ and $3,2,1$), so the expectation is $\frac13$.
+\item $i=k<m<j$: Symmetrically identical to the previous case.
+\item $i<k<j=m$ and $k<i<j=m$: Symmetrically identical to the previous two cases.
+\item $i,j,k,m$ are all distinct: There are ${n \choose 2}{n-2 \choose 2}$ such pairs and each inversion is independent, so the expectation of both being inverted is $\frac14$.
+\end{itemize}
+By linearity of expectation, $\E[X^2] = \frac12{n\choose2}+\frac53{n\choose3}+\frac14{n\choose2}{n-2\choose2}$.\asdf
+Thus the variance is $\Var[X]=\E[X^2]-\E[X]^2=\frac12{n\choose2}+\frac53{n\choose3}+\frac14{n\choose2}{n-2\choose2} - \frac{n^2(n-1)^2}{16}$.
+
+\end{document}

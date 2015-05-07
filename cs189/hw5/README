@@ -1,0 +1,5 @@
+Name: Manohar Jois
+SID: 23808180
+Homework 5
+
+Run 'python hw5.py' and observe output. Feel free to change the parameters like J, K, M and the stopping conditions. Also you can uncomment the three lines near the bottom that use the random forest instead of the single tree to classify the Kaggle test set.

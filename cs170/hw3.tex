@@ -1,0 +1,160 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\newcounter{problemnumber}
+\def\Name{Manohar Jois}
+\def\Homework{3} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2014}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+
+\title{CS170--Spring 2014 --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS170--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item In the worst case, we will pick $x$ to be either the maximum or minimum element of $A$ at every step of the recursion. If $A$ is of length $n$, then of the sub-arrays $B$ and $C$ one will be of length $n-1$ and the other $0$. This step of creating the sub-arrays takes $\BigTheta{n}$ time because we must compare each element of the list to $x$ and append it to the appropriate sub-array. Thus at each round of recursion, we are only decreasing our problem size by $1$ and our running time is proportional (assuming each comparison takes the same amount of time) to $(n-1)+(n-2)+(n-3)+\cdots+2+1+0 = \frac{n(n-1)}2\in \BigTheta{n^2}$.
+\item The expected running time has to account for the probability of choosing certain pivots $x$. At each step in the recursion, we make $\BigOh{n}$ constant-time comparisons to the pivot $x$. \\\\
+Now let $E(k)$ be the running time of recursively sorting the sub-arrays $B$ and $C$, and let $E(n)$ be the expected value of $E(k)$. Based on the pivot $x$, if $B$ has size $k$, then $C$ has size $n-k$ and so $E(k) = T(k)+T(n-k)$. But $k$ could take on any value in $\{1,2,\ldots,n-1\}$, each with probability $\frac 1n$ because each possibility of $x$ gives a unique number of elements less than $x$. So using linearity of expectation and the setup for the recurrence:
+\begin{align*}
+T(n) &\leq \BigOh{n} + E(n) \\
+&= \BigOh{n} + \sum_{i=1}^{n-1} \Pr[k=i]\cdot E(i) \\
+&= \BigOh{n} + \sum_{i=1}^{n-1} \frac 1n (T(i)+T(n-i)) \\
+&= \BigOh{n} + \frac 1n \sum_{i=1}^{n-1} (T(i)+T(n-i))
+\end{align*}
+Now we prove by induction on $n$ that the number of constant-time comparisons $T(n)$ (to which the running time is directly proportional) is in $\BigOh{n\cdot\log n}$. Assume that $T(n) \leq cn\cdot\log n$ for some constant $c>0$ and some $n\geq 1$, and that the above recurrence relation holds. For the base case we take $T(1) =0 \leq  c\cdot 1\cdot\log 1 = 0$. \\\\
+Assuming the above recurrence relation holds for all $n$,
+\begin{align*}
+T(n+1) &\leq \BigOh{n+1} + \frac 1{n+1} \sum_{i=1}^{n+1-1} (T(i)+T(n+1-i)) \\
+&= \BigOh{n} + \frac 2{n+1} \sum_{i=1}^n T(i) \\
+&\leq \BigOh{n} + \frac{2c}{n+1} \sum_{i=1}^n i\cdot\log i \qquad \text{(by the hypothesis)}\\
+&\leq \BigOh{n} + \frac{2c}{n+1} \sum_{i=1}^n (n+1)\cdot\log n \\
+&= \BigOh{n} + \frac{2c}{n+1} \cdot n(n+1)\cdot\log n \\
+&= \BigOh{n} + 2cn\cdot\log n \\
+&\in \BigOh{n\cdot\log n}
+\end{align*}
+So $T(n) \in \BigOh{n\cdot\log n}$ for all $n\geq 1$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+We can rephrase the definition of a Pareto optimal point as follows: $(x,y)$ is a Pareto optimal point iff $y_i<y$ for all other points with $x_i \geq x$.
+\begin{verbatim}
+algorithm findParetoSet(listOfPoints):
+    R = sort points by decreasing y-coordinate
+    S = stable-sort R by decreasing x-coordinate
+    P = S[1]  // first point in sorted list
+    yMax = S[1].y
+    for i=2 to n:
+        if S[i].y > yMax:
+            append S[i] to P
+            yMax = S[i].y
+    return P
+\end{verbatim}
+This algorithm starts by sorting the points by decreasing $x$, with ties broken by decreasing $y$ thanks to the stable sort. Let the points $S_1,S_2,\ldots,S_n$ be the points in the final sorted list $S$, with coordinates $\{(x_1,y_1),(x_2,y_2),\ldots,(x_n,y_n)\}$. We know $S_1$ is a Pareto point since for all $i>1$ either
+\begin{itemize}
+\item $x_1 > x_i$ by the sort; or \\
+\item $x_1 = x_i$ and $y_1 > y_i$ by the stability of the sort and the distinctness of the points.
+\end{itemize}
+We also set the maximum $y_M$ seen so far to be $y_1$. For each subsequent point $S_k$, we only need check if $y_k > y_M$ and if it is, $S_k$ is a Pareto point and we set $y_M = y_k$. This is because for all $i>k$, either
+\begin{itemize}
+\item $x_k > x_i$ by the sort; or \\
+\item $x_k = x_i$ and $y_k > y_i$ by the stability of the sort and the distinctness of the points.
+\end{itemize}
+If $y_k \leq y_M$, then $S_k$ is not a Pareto point by the converse of the above two possibilities. The processing of the $n$ sorted points takes $\BigOh{n}$ time, while the two sorts take $\BigOh{n\cdot\log n}$ time using a stable sorting algorithm like merge-sort. Therefore the overall running time to find the Pareto optimal points of a set is $\BigOh{n\cdot\log n}$.
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Let $v=\begin{bmatrix}v_1\\v_2\end{bmatrix}$, where $v_1$ and $v_2$ are size $n/2 = 2^{k-1}$ column vectors. Then
+\begin{align*}
+H_k v &= \begin{bmatrix}H_{k-1}&H_{k-1}\\H_{k-1}&-H_{k-1}\end{bmatrix}\begin{bmatrix}v_1\\v_2\end{bmatrix} \\
+&= \begin{bmatrix}H_{k-1}v_1+H_{k-1}v_2\\H_{k-1}v_1-H_{k-1}v_2\end{bmatrix} \\
+&= \begin{bmatrix}P_1+P_2\\P_1-P_2\end{bmatrix}
+\end{align*}
+where $P_1=H_{k-1}v_1$ and $P_2=H_{k-1}v_2$ are the same size as $v_1,v_2$ and can be added or subtracted in $\BigOh{n/2} = \BigOh{n}$ time. So we have reduced a problem of size $n$ into $2$ subproblems of size $n/2$ which can be combined into the solution in $\BigOh{n}$ time. The recurrence relation is therefore $T(n) = 2T(n/2)+\BigOh{n}$, which by the Master Theorem means we can calculate $H_k v$ in $\BigOh{n\cdot\log n}$ time.
+\item We prove the property by induction on $k$. Let $I_k$ be the $2^k\times 2^k$ identity matrix. For the base case, it is true that $2^{-0}H_0H_0 = 1\cdot [1]\cdot [1] = [1] = I_0$. Now assume that $2^{-k}H_kH_k = I_k$ for some $k\geq 0$. We must see if this directly implies the $k+1$ case:
+\begin{align*}
+2^{-(k+1)}H_{k+1}H_{k+1} &= \begin{bmatrix}\frac1{2^{k+1}}H_k&\frac1{2^{k+1}}H_k\\\frac1{2^{k+1}}H_k&-\frac1{2^{k+1}}H_k\end{bmatrix}\begin{bmatrix}H_k&H_k\\H_k&-H_k\end{bmatrix}  \\
+&= \begin{bmatrix}\frac1{2^{k+1}}H_kH_k+\frac1{2^{k+1}}H_kH_k&\frac1{2^{k+1}}H_kH_k-\frac1{2^{k+1}}H_kH_k\\\frac1{2^{k+1}}H_kH_k-\frac1{2^{k+1}}H_kH_k&\frac1{2^{k+1}}H_kH_k+\frac1{2^{k+1}}H_kH_k\end{bmatrix} \\
+&= \begin{bmatrix}\frac1{2^k}H_kH_k&0\\0&\frac1{2^k}H_kH_k\end{bmatrix} \\
+&= \begin{bmatrix}I_k&0\\0&I_k\end{bmatrix} \qquad \qquad \text{(by inductive hypothesis)}\\
+&= I_{k+1}
+\end{align*}
+Because $2^{-k}H_kH_k = I_k$ for all $k\geq 0$, then $H_k^{-1} = 2^{-k}H_k$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item $\omega = 3$ \\ $3+3^2+3^3+3^4+3^5+3^6 = 3+2+6+4+5+1 = 21 \equiv 0 \bmod 7$.
+\item By Fermat's Little Theorem, $3^x \equiv 3^{x \bmod 6} \bmod 7$, and the FT matrix is \\
+$C=\begin{bmatrix}1&1&1&1&1&1\\1&\omega^1&\omega^2&\omega^3&\omega^4&\omega^5\\1&\omega^2&\omega^4&\omega^6&\omega^8&\omega^{10}\\1&\omega^3&\omega^6&\omega^9&\omega^{12}&\omega^{15}\\1&\omega^4&\omega^8&\omega^{12}&\omega^{16}&\omega^{20}\\1&\omega^5&\omega^{10}&\omega^{15}&\omega^{20}&\omega^{25}\end{bmatrix} = \begin{bmatrix}1&1&1&1&1&1\\1&\omega^1&\omega^2&\omega^3&\omega^4&\omega^5\\1&\omega^2&\omega^4&1&\omega^2&\omega^4\\1&\omega^3&1&\omega^3&1&\omega^3\\1&\omega^4&\omega^2&1&\omega^4&\omega^2\\1&\omega^5&\omega^4&\omega^3&\omega^2&\omega^1\end{bmatrix} = \begin{bmatrix}1&1&1&1&1&1\\1&3&2&6&4&5\\1&2&4&1&2&4\\1&6&1&6&1&6\\1&4&2&1&4&2\\1&5&4&6&2&3\end{bmatrix}\bmod 7$ \\
+$Cv=\begin{bmatrix}1&1&1&1&1&1\\1&3&2&6&4&5\\1&2&4&1&2&4\\1&6&1&6&1&6\\1&4&2&1&4&2\\1&5&4&6&2&3\end{bmatrix}\begin{bmatrix}0\\1\\1\\1\\5\\2\end{bmatrix} = \begin{bmatrix}3\\6\\4\\2\\3\\3\end{bmatrix} \bmod 7$
+\item $C^{-1}=n^{-1}\begin{bmatrix}1&1&1&1&1&1\\1&\omega^{-1}&\omega^{-2}&\omega^{-3}&\omega^{-4}&\omega^{-5}\\1&\omega^{-2}&\omega^{-4}&\omega^{-6}&\omega^{-8}&\omega^{-10}\\1&\omega^{-3}&\omega^{-6}&\omega^{-9}&\omega^{-12}&\omega^{-15}\\1&\omega^{-4}&\omega^{-8}&\omega^{-12}&\omega^{-16}&\omega^{-20}\\1&\omega^{-5}&\omega^{-10}&\omega^{-15}&\omega^{-20}&\omega^{-25}\end{bmatrix} = 6^{-1}\begin{bmatrix}1&1&1&1&1&1\\1&\omega^5&\omega^4&\omega^3&\omega^2&\omega^1\\1&\omega^4&\omega^2&1&\omega^4&\omega^2\\1&\omega^3&1&\omega^3&1&\omega^3\\1&\omega^2&\omega^4&1&\omega^2&\omega^4\\1&\omega^1&\omega^2&\omega^3&\omega^4&\omega^5\end{bmatrix} \\ =6\begin{bmatrix}1&1&1&1&1&1\\1&5&4&6&2&3\\1&4&2&1&4&2\\1&6&1&6&1&6\\1&2&4&1&2&4\\1&3&2&6&4&5\end{bmatrix} = \begin{bmatrix}6&6&6&6&6&6\\6&2&3&1&5&4\\6&3&5&6&3&5\\6&1&6&1&6&1\\6&5&3&6&5&3\\6&4&5&1&3&2\end{bmatrix}\bmod 7$ \\
+$C^{-1}v' = 6\begin{bmatrix}1&1&1&1&1&1\\1&5&4&6&2&3\\1&4&2&1&4&2\\1&6&1&6&1&6\\1&2&4&1&2&4\\1&3&2&6&4&5\end{bmatrix}\begin{bmatrix}3\\6\\4\\2\\3\\3\end{bmatrix} = 6\begin{bmatrix}0\\6\\6\\6\\2\\5\end{bmatrix} = \begin{bmatrix}0\\1\\1\\1\\5\\2\end{bmatrix}\bmod 7$
+\newpage
+\item Multiplying a degree-2 and degree-3 polynomial may result in at most a degree-5 polynomial, so we need $n=6$ terms in each vector. Let the $(a_0,a_1,a_2,a_3,a_4,a_5)$ column vectors be $p_1=(1,1,1,0,0,0)$ and $p_2=(-1,2,0,1,0,0)=(6,2,0,1,0,0)\bmod 7$. \\
+$Cp_1 = p_1' = \begin{bmatrix}1&1&1&1&1&1\\1&3&2&6&4&5\\1&2&4&1&2&4\\1&6&1&6&1&6\\1&4&2&1&4&2\\1&5&4&6&2&3\end{bmatrix}\begin{bmatrix}1\\1\\1\\0\\0\\0\end{bmatrix}=\begin{bmatrix}3\\6\\0\\1\\0\\3\end{bmatrix}\bmod 7 \qquad \text{(evaluation)}$ \\
+$Cp_2 = p_2' = \begin{bmatrix}1&1&1&1&1&1\\1&3&2&6&4&5\\1&2&4&1&2&4\\1&6&1&6&1&6\\1&4&2&1&4&2\\1&5&4&6&2&3\end{bmatrix}\begin{bmatrix}6\\2\\0\\1\\0\\0\end{bmatrix}=\begin{bmatrix}2\\4\\4\\3\\1\\1\end{bmatrix}\bmod 7 \qquad \text{(evaluation)}$ \\
+$p_1' \times p_2' = \begin{bmatrix}3\\6\\0\\1\\0\\3\end{bmatrix}\times\begin{bmatrix}2\\4\\4\\3\\1\\1\end{bmatrix} = \begin{bmatrix}6\\3\\0\\3\\0\\3\end{bmatrix}\bmod 7 \qquad \text{(multiplication)}$ \\
+$6\begin{bmatrix}1&1&1&1&1&1\\1&5&4&6&2&3\\1&4&2&1&4&2\\1&6&1&6&1&6\\1&2&4&1&2&4\\1&3&2&6&4&5\end{bmatrix}\begin{bmatrix}6\\3\\0\\3\\0\\3\end{bmatrix} = 6\begin{bmatrix}1\\6\\6\\4\\6\\6\end{bmatrix} = \begin{bmatrix}6\\1\\1\\3\\1\\1\end{bmatrix}\bmod 7 \qquad \text{(interpolation)}$ \\\\
+So the resulting polynomial is $x^5+x^4+3x^3+x^2+x+6 \pmod 7$, which is easily verified by standard coefficient multiplication.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Assume an adjacency list representation of the graph.
+\item
+\item
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 6}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item We prove this by the well-ordering principle on the number of edges $e=|E|$, assuming no self-edges. Let $v_{i,j}$ be the $i^{\text{th}}$ vertex in a graph of $j$ edges. For $e=0$, all vertices have degree $0 = 2(0)$. For $e=1$, there exists a $v_{1,1}$ and a $v_{2,1}$ such that $d(v_{1,1})=d(v_{2,1})=1$ and $d(v_{i,1})=0$ for all $i>2$ since the only edge connects $v_{1,1}$ to $v_{2,1}$. So $\sum_{u_{i,1} \in V} d(u_{i,1}) = d(v_{1,1})+d(v_{2,1}) = 2 = 2(1)$. \\\\
+Now assume some number of edges $e\geq 0$ is the smallest number such that $\sum_{u_{i,e} \in V} d(u_{i,e}) \neq 2e$. We then remove an edge to give us $e-1$ edges. Then for some vertices $v_{1,e}$ and $v_{2,e}$ which were connected by the $e^{\text{th}}$ edge, $d(v_{1,e-1}) = d(v_{1,e})-1$ and $d(v_{2,e-1}) = d(v_{2,e})-1$ while for all other $i$, $d(v_{i,e-1}) = d(v_{i,e})$. \\\\
+This means that $\sum_{u_{i,e-1}} d(u_{i,e-1}) = \sum_{u_{i,e}} d(u_{i,e})-1-1 \neq 2e-2 = 2(e-1)$. This suggests that $e-1$ is the smallest number of edges that violates the property, and since the base case $e=0$ holds, the sum of the degrees of all vertices in an undirected graph must be $2|E|$.
+\item By part (a), it is an invariant that the sum of degrees of vertices in an undirected graph is divisible by 2 (even), because there can only be an integer number of edges. First we prove that an undirected graph with an even number of vertices of odd degree satisfies part (a). \\\\
+The vertex degrees can be expressed as $\{2d_1,2d_2,\ldots,2d_k,2d_{k+1}+1,\ldots,2d_n+1\}$, where all the $d_i$ are integers and $n-k$ is an even number so $n-k=2m$ for some integer $m$. The sum of degrees is then $2(d_1+d_2+\cdots+d_k+d_{k+1}+\cdots+d_n)+n-k = 2(m+\sum d_i)$, which is clearly even and satisfies the invariant of an undirected graph. \\\\
+Now consider a set of vertices where an odd number have odd degree. The vertex degrees can be expressed as $\{2d_1,2d_2,\ldots,2d_k,2d_{k+1}+1,\ldots,2d_n+1\}$, where all the $d_i$ are integers and $n-k$ is an odd number so $n-k=2m+1$ for some integer $m$. The sum of degrees is then $2(d_1+d_2+\cdots+d_k+d_{k+1}+\cdots+d_n)+n-k = 2(m+\sum d_i)+1$, which cannot be divisible by two and thus violates the invariant of an undirected graph.
+\item Consider the set of vertices $\{A,B,C\}$ such that $A\rightarrow B$ is an edge, $B\rightarrow C$ is an edge and $C\rightarrow A$ is an edge. All vertices have in-degree $1$ and out-degree $1$, so there are three vertices with odd in-degree. By this counterexample we disprove the statement that a directed graph must contain an even number of vertices whose in-degree is odd. 
+\end{enumerate}
+
+\end{document}

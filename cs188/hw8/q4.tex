@@ -1,0 +1,47 @@
+\begin{problem}[10]{Buying a textbook}
+
+Consider a student who has the choice to buy or not buy a textbook for a course. We'll model this as a decision problem with one boolean decision node, B, indicating whether the agent chooses to buy the book, and two Boolean chance nodes, M, indicating whether the student has mastered the material in the book, and P, indicating whether the student passes the course. Of course, there is also a utility node, U. A certain student has an additive utility function: 0 for not buying the book and -100 for buying it; and 2000 for passing the course and 0 for not passing. Sam's conditional probability estimates are as follows:
+
+\hspace{4cm}
+\begin{tabular}{ | c | c | c | }
+  \hline
+  $M$ & $B$ & $P(M|B)$ \\ \hline
+  $m$ & $b$ & 0.9 \\ \hline
+  $\lnot m$ & $b$ & 0.1 \\ \hline
+  $m$ & $\lnot b$ & 0.7 \\ \hline
+  $\lnot m$ & $\lnot b$ & 0.3 \\ \hline
+\end{tabular}
+\hspace{1cm}
+\begin{tabular}{ | c | c | c | c | }
+  \hline
+  $P$ & $M$ & $B$ & $P(P|M,B)$ \\ \hline
+  $p$ & $m$ & $b$ & 1.0 \\ \hline
+  $\lnot p$ & $m$ & $b$ & 0.0 \\ \hline
+  $p$ & $\lnot m$ & $b$ & 0.5 \\ \hline
+  $\lnot p$ & $\lnot m$ & $b$ & 0.5 \\ \hline
+  $p$ & $m$ & $\lnot b$ & 0.7 \\ \hline
+  $\lnot p$ & $m$ & $\lnot b$ & 0.3 \\ \hline
+  $p$ & $\lnot m$ & $\lnot b$ & 0.2 \\ \hline
+  $\lnot p$ & $\lnot m$ & $\lnot b$ & 0.8 \\ \hline
+\end{tabular}
+\\
+
+\begin{question}[4] Draw the decision network for this problem. \\
+\fbox{\begin{minipage}[t][5cm][t]{17cm}
+\FourA
+\end{minipage}}
+\end{question}
+
+\begin{question}[4] Compute the expected utility of buying the book and of not buying it. \\
+\fbox{\begin{minipage}[t][7cm][t]{17cm}
+\FourB
+\end{minipage}}
+\end{question}
+
+{
+\renewcommand\truefalsepoints{2}
+\begin{truefalse}[\FourC]
+Sam should buy the book. TRUE
+\end{truefalse}}
+
+\end{problem}

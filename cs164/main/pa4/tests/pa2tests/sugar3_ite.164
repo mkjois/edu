@@ -1,0 +1,14 @@
+def printAndReturn(x) {
+	print x
+	x
+}
+
+# Both 1 and 2 will be printed
+def val = ite(1, printAndReturn(1), printAndReturn(2))
+
+# Only 1 should be printed
+if (val) {
+	printAndReturn(1)
+} else {
+	printAndReturn(2)
+}

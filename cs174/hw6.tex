@@ -1,0 +1,154 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\usepackage{titling}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{6} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2015}
+
+% Extra commands
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\emf}{\mathcal{E}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+\newcommand{\asdf}{\newline\newline}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+\title{CS174--\Session\  --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS174--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+% PUT PROBLEM 1 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item The mgf of a binomial $X\sim\text{Binom}(n,p)$ is $(pe^t+1-p)^n$. We start with the following: $$\Pr[X\geq xn] \leq \frac{\E[e^{tX}]}{e^{txn}} = \left(\frac{pe^t+1-p}{e^{tx}}\right)^n \stackrel{?}{\leq} e^{-F(x,p)\cdot n}$$
+It suffices to show that $$\frac{pe^t+1-p}{e^{tx}} \leq e^{-F(x,p)}=\left(\frac xp\right)^{-x}\left(\frac{1-p}{1-x}\right)^{1-x} \qquad\text{(*)}$$
+We find the optimal $t$ by setting the derivative of the left side to zero: \begin{align*}
+\frac d{dt}\left[\frac{pe^t+1-p}{e^{tx}}\right] &= \frac d{dt}\left[pe^{t(1-x)}+(1-p)e^{-tx}\right]\\
+0 &= p(1-x)e^{t(1-x)}-x(1-p)e^{-tx}\\
+p(1-x)e^t &= x(1-p)\\
+e^t &= \frac{x(1-p)}{p(1-x)}
+\end{align*}
+From here it is easy to derive the following: \begin{align*}
+e^t-1 &= \frac{x-p}{p(1-x)}\\
+p(e^t-1) &= \frac{x-p}{1-x}\\
+pe^t+1-p &= 1+p(e^t-1)\\
+&= \frac{1-p}{1-x}
+\end{align*}
+Now we go back to equation (*) and plug in values: $$\frac{pe^t+1-p}{e^{tx}} = \frac{\frac{1-p}{1-x}}{\left(\frac xp\right)^x\left(\frac{1-p}{1-x}\right)^x} = e^{-F(x,p)}$$
+This is enough to complete the original proof.
+\item For a fixed $p\in(0,1)$, let $f(x)=F(x,p)-2(x-p)^2$. Then, \begin{align*}
+f'(x) &= \log{\frac xp}+x\cdot\frac px\cdot \frac1p - \log{\frac{1-x}{1-p}} + (1-x)\left(\frac{1-p}{1-x}\right)\left(-\frac1{1-p}\right) - 4(x-p)\\
+0 &= \log{\frac xp}-\log{\frac{1-x}{1-p}}-4(x-p)
+\end{align*}
+This equation is satisfied when $x=p$. We can also easily compute $f(p)=0$. But we must also take the second derivative: \begin{align*}
+f''(x) &= \frac px\cdot\frac1p - \left(\frac{1-p}{1-x}\right)\left(-\frac1{1-p}\right) -4\\
+&= \frac1{x(1-x)}-4 \geq 0 \qquad \forall x\in (0,1)
+\end{align*}
+Because the function is convex on $(0,1)$ and has a minimum of $0$ at $x=p$, then whenever $0<x,p<1$ we have $F(x,p)\geq 2(x-p)^2$.
+\item Using parts (a) and (b) we have $$\Pr[X\geq (p+\epsilon)n]\leq e^{-nF(p+\epsilon,p)}\leq e^{-2n(p+\epsilon-p)^2} = e^{-2n\epsilon^2}$$
+\item The binomial distribution is symmetric about its mean, which in this case is $np$, so $$\Pr[X\geq np+\epsilon n]=\Pr[X\leq np-\epsilon n]\leq e^{-2n\epsilon^2}$$
+Therefore, $$\Pr[|X-np|\geq\epsilon n]=\Pr[X-np\geq\epsilon n]+\Pr[X-np\leq -\epsilon n] \leq 2e^{-2n\epsilon^2}$$
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+% PUT PROBLEM 2 SOLUTION HERE
+We have that there are $n=2^m$ elements and that $k\geq m$, meaning that $2^k\geq n$ and $a/2^k\leq a/n$. Following the same proof as the book, the expected time to sort the $n$ buckets using a quadratic algorithm in the second stage of bucket sort is $cn\E[X_1^2]$ for some constant $c$.\asdf
+The variable $X_1$ is again binomial where each Bernoulli trial has success probability at most $a/n$, so the second moment of $X_1$ is $\E[X_1^2]=np(1+(n-1)p)\leq an/n(1+a(n-1)/n)\leq a^2+a$ as derived from the book. Now the entire second stage sort takes expected time at most $c(a^2+a)n\in \BigOh{n}$.
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+% PUT PROBLEM 3 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item Let $X_i$ be the indicator random variable for bin $i$ having exactly $1$ ball after $b$ balls are tossed. Then
+$$\E[X_i]=\Pr[X_i=1]={b\choose1}\left(\frac1n\right)^1\left(1-\frac1n\right)^{b-1}$$
+The expected number of balls served $X$ is the expected number of bins with exactly one ball. Thus the expected number of balls not served is
+$$b-\E[X]=b-\sum_{i=1}^n\E[X_i]=b\left(1-\left(1-\frac1n\right)^{b-1}\right)$$
+\item Let $x_j$ be the expected number of balls not served after $j$ rounds ($x_0=n$). First we prove that for all $j\geq0$, $x_{j+1}\leq x_j^2/n$. To do this we first prove that $(1+x)^b\geq1+bx$. Let $f(x)=(1+x)^b-bx-1$. Then \begin{align*}
+f'(x) &= b(1+x)^{b-1}-b=0\\
+1 &= (1+x)^{b-1}\\
+0 &= x \qquad \forall b\\
+f(0) &= 1-1=0\\
+f''(x) &= b(b-1)(1+x)^{b-2} > 0 \qquad x>-1,b>1
+\end{align*}
+Because the function is convex for $x>-1$ and has a minimum of $0$ at $x=0$, the function $f$ is always positive on this interval and the inequality holds.\asdf
+To prove inequality about successive $x_j$, we need to prove the following: \begin{align*}
+x_j\left(1-\left(1-\frac1n\right)^{x_j-1}\right) &\stackrel{?}{\leq} \frac{x_j^2}n\\
+\left(1-\frac1n\right)^{x_j-1} &\stackrel{?}{\geq} 1-\frac{x_j}n\\
+\left(1-\frac1n\right)^{x_j-1} &\geq \left(1-\frac1n\right)^{x_j}\geq 1-\frac{x_j}n
+\end{align*}
+So the inequality about successive $x_j$ holds. Now suppose we have $x_1=n/d$ for some $d>1$. Then we are guaranteed the following:
+$$x_2\leq n^2/nd^2=n/d^2 \qquad x_3\leq n/d^4 \qquad \ldots \qquad x_k\leq n/d^{2^{k-1}}$$
+The expected number of rounds to serve all balls is within a constant factor of whatever $k$ satisfies $x_k=1$.
+$$x_k=1\leq \frac n{d^{2^{k-1}}}\quad\Rightarrow\quad k-1\leq \logb2{\logb dn}$$
+Clearly the expected number of balls not served after $1$ round is less than $n$, the number we started with. So $d>1$ and all balls are expected to be served in $k\in O(\text{log }\text{log }n)$ rounds.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+% PUT PROBLEM 4 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item Using the Poisson approximation, we model the bins as independent Poisson random variables with mean $\lambda = n/n = 1$. In the Poisson case, the probability that all bins get exactly $k=1$ balls in a product of probabilities:
+$$\prod_{i=1}^ne^{-1}\frac{1^1}{1!}=e^{-n}$$
+By corollary 5.9 of the book, this gives an upper bound on the same event in the exact case of $e^{-n}e\sqrt n$.
+\item The exact probability of the event follows from simple reasoning. We have $n$ possible bins for the first ball, $n-1$ for the second ball and so on until $1$ possibility for the last ball. All choices are out of $n$ bins, so the exact probability is $n!/n^n$.
+\item Let $f(n)$ be the exact probability and let $g(n)$ be the upper bound as derived from the Poisson approximation. Then we can simply take their ratio and show it is constant using an application of Stirling's formula: \begin{align*}
+\frac{f(n)}{g(n)} &= \frac{e^nn!}{e\sqrt nn^n}\\
+&= \frac{n!}{e\sqrt n (\frac ne)^n}\\
+\lim_{n\rightarrow\infty} \frac{f(n)}{g(n)} &= \frac{\sqrt{2\pi}}e\lim_{n\rightarrow\infty}\frac{n!}{\sqrt {2\pi n} (\frac ne)^n}\\
+&= \frac{\sqrt{2\pi}}e
+\end{align*}
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 5}
+\stepcounter{problemnumber}
+% PUT PROBLEM 5 SOLUTION HERE
+\begin{enumerate}[(a)]
+\item The Poisson distribution of $Z$ gives us the following:
+$$\Pr[Z=\mu+h]=e^{-\mu}\frac{\mu^{\mu+h}}{(\mu+h)!}\qquad\qquad \Pr[Z=\mu-h-1]=e^{-\mu}\frac{\mu^{\mu-h-1}}{(\mu-h-1)!}$$
+Notice that the second probability can be expanded into
+$$e^{-\mu}\frac{\mu^{\mu+h}}{(\mu+h)!}\cdot \frac{(\mu+h)(\mu+h-1)\cdots(\mu)\cdots(\mu-h+1)(\mu-h)}{\mu^{2h+1}}$$
+To prove that $\Pr[Z=\mu+h]\geq\Pr[Z=\mu-h-1]$ for $0\leq h\leq \mu-1$, it suffices to show that the last fraction above is upper bounded by $1$. After canceling one $\mu$ term, we can pair up terms on the top and compare them to $\mu^2$:
+$$\frac{\prod_{i=0}^{h-1} (\mu+(h-i))(\mu-(h-i))}{(\mu^2)^h}= \frac{\prod_{i=0}^{h-1} (\mu^2-(h-i)^2)}{(\mu^2)^h}\leq \frac{\prod_{i=0}^{h-1} \mu^2}{(\mu^2)^h}=1$$
+\item First let $X=\sum_{h=0}^{\mu-1}\Pr[Z=\mu+h]$. Then we develop the following two inequalities: \begin{align*}
+\Pr[Z\geq\mu] &= \sum_{h=0}^{\infty}\Pr[Z=\mu+h]\\
+&\geq \sum_{h=0}^{\mu-1}\Pr[Z=\mu+h] = X\\
+\Pr[Z\geq\mu] &= 1-\Pr[Z<\mu]\\
+&= 1-\sum_{h=0}^{\mu-1}\Pr[Z=\mu-h-1]\\
+&\geq 1-\sum_{h=0}^{\mu-1}\Pr[Z=\mu+h] = 1-X
+\end{align*}
+We have that $\Pr[Z\geq\mu]$ must be at least $X$ and at least $1-X$. Since $X$ is a sum of probabilities within the same space, it must be in $[0,1]$ and at least one of the two quantities must be at least $1/2$. If $\Pr[Z\geq\mu]<1/2$, it cannot possibly satisfy both inequalities, so necessarily it must be at least $1/2$.
+\end{enumerate}
+
+
+\end{document}

@@ -1,0 +1,81 @@
+\documentclass[11pt]{article}
+\usepackage{textcomp,geometry,graphicx,verbatim}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,enumerate}
+\pagestyle{fancy}
+\def\Name{Manohar Jois}
+\def\Homework{10} % Homework number - make sure to change for every homework!
+\def\Session{Spring 2014}
+
+% Extra commands
+\let\origleft\left
+\let\origright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\origleft}
+\renewcommand{\right}{\aftergroup\egroup\origright}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\p}[1]{\left(#1\right)}
+\renewcommand{\gcd}[1]{\text{gcd}\p{#1}}
+\renewcommand{\deg}[1]{\text{deg}\p{#1}}
+\renewcommand{\log}[1]{\text{log}\p{#1}}
+\renewcommand{\ln}[1]{\text{ln}\p{#1}}
+\newcommand{\logb}[2]{\text{log}_{#1}\p{#2}}
+\newcommand{\BigOh}[1]{O\p{#1}}
+\newcommand{\BigOmega}[1]{\Omega\p{#1}}
+\newcommand{\BigTheta}[1]{\Theta\p{#1}}
+
+\title{CS170--Spring 2014 --- Solutions to Homework \Homework}
+\author{\Name}
+\lhead{CS170--\Session\  Homework \Homework\ \Name\ Problem \theproblemnumber}
+
+\begin{document}
+\maketitle
+\newcounter{problemnumber}
+\setcounter{problemnumber}{0}
+
+\section*{Problem 1}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Given an instance $I$ of Clique-3 being a graph $G=(V,E)$ and a proposed solution $S$ being a subset of vertices $S \subseteq V$, we can examine all possible pairs of vertices in $S$ and check in constant time if there exists an edge between them. When considering the self-pair, we rule it as an edge valid towards counting as a clique. This is the definition of having a clique, and since there are $\BigOh{|V|^2}$ possible pairs of vertices, checking a solution to Clique-3 takes time polynomial in the size of the graph, and thus is in NP.
+\item If it were true that Clique-3 was NP-complete, then this proof would be a way to prove that Clique was NP-complete. In order to prove a problem is NP-complete, we need to show that another \textit{known} NP-complete problem reduces to it in polynomial time. Reducing Clique-3 to Clique by the identity reduction only shows that Clique-3 is upper-bounded in difficulty by Clique's NP-completeness. It says nothing about its lower bound in difficulty.
+\item Just because there exists a clique set $C\subset V$ in $G$ doesn't mean $V\backslash C$ is a vertex cover. Consider the counterexample where the $C$ is disconnected from the rest of the graph. Clearly the remaining vertices can't cover all the edges in $E$ because of the disconnectivity. And if you were to find a true vertex cover to this graph, you'd need at least one vertex in each component, meaning the vertices that aren't part of the covering set in each component can't possibly connect to each other, and so are not a clique.
+\item Size-1 or size-2 cliques are trivial: the former is true if there exists at least one vertex and the latter is true if there exists at least one edge between two vertices. Notice there can't be size-5 or greater cliques since each vertex can connect to at most three other vertices. This means we only need to do significant computation if we receive the parameter $g=3$ or $g=4$. \\\\
+We iterate through all the possible quartets of vertices $\{(u,v,w,x) | u,v,w,x \in V\}$, remove duplicate elements in constant time and check if the set forms a clique. The checking takes constant time because we only need to check the presence of at most six edges. If the set forms a clique and its size is greater than or equal to $g$, we return true along with the set. Clearly this algorithm explicitly checks all sets of vertices that could possibly form a clique of at most 4, and so will find a clique if one exists and will correctly indicate if one doesn't exist. The runtime is bounded by the number of possible quartets, which is $\BigOh{|V|^4}$.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 2}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item First consider any clause that has both $x_i$ and $\overline{x_i}$: it can also be removed because any assignment to $x_i$ satisfies it. Then consider any variable $x_i$ where either $x_i$ or $\overline{x_i}$ is present but not both. Set $x_i$ to true for the former or to false for the latter and remove the clause with the literal because it is now satisfied. This step may be repeated as necessary until no such variables exist, and satisfiability won't be affected because we only remove clauses for which we can guarantee satisfaction. \\\\
+Now for each variable $x_i$ take the two clauses $(x_i \vee A)$ and $(\overline{x_i} \vee B)$, where $A,B$ are the rest of the clause (could be one or two literals at first), and combine them into one larger clause $(A \vee B)$, because this is implied by the former two. Repeat this until you have only one clause. This process eliminates a variable at every iteration because each literal appears exactly once. Once you have the final clause, make one assignment to render it true and retrace the splitting process to make the appropriate assignments to variables that were eliminated. That is to say if $A$ ended up being true, $x_i$ should be false, and if $B$ was true, $x_i$ is true. Assigning the variables in this way ensures every step is satisfied and so the whole formula is satisfied. \\\\
+The first and second preprocessing steps take time polynomial in the number of clauses (and thus variables). The main loop is polynomial because it eliminates exactly one clause per iteration, which may take linear time to find two clauses to combine. So solving 3-SAT with at most one appearance per literal takes polynomial time.
+\item IS-4 is checked the same way regular IS is checked in polynomial time--check the $\BigOh{|V|^2}$ pairs of vertices and assert that no edges between any exist--putting it in NP. Now we can reduce 3-SAT with at most two appearances per literal to IS-4 in exactly the same way as was done in the textbook. Represent each clause as a triangle of the corresponding 3 literals (or an edge if only 2 literals) and also draw edges between all opposite literals. This way each vertex has degree at most 4 because it is connected to at most two other literals within its clause as well as at most two instances of its opposite literal. Clearly this construction takes polynomial time because it only requires scanning the input clauses linearly. Set the parameter $g$ to be the number of clauses. Now if we extract a size-$g$ independent set, then exactly one vertex comes from each triangle (or pair-edge) because there can't be two independent vertices in each one. This literal is set to true to satisfy the clause. Also the edges between opposing literals enforce variable consistency. And if the original formula has a satisfying assignment, then pick 1 literal per clause to add to the independent set, which is size $g$. It will be independent because opposing literals can't both be true in a satisfying assignment, and exactly 1 vertex per triangle (or pair-edge) is selected. Therefore, IS-4 is NP-complete.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 3}
+\stepcounter{problemnumber}
+\begin{enumerate}[(a)]
+\item Given the mapping of vertices, for each edge in $G$, simply check if the edge between the mapping of those two vertices exists in $H$. This linear time check puts the problem in NP. Now the Clique problem easily reduces to this. Given an instance of the Clique problem, construct a new clique with the parameter $g$ as the number of vertices (all cliques for a given size have exactly the same structure). Input this clique and the original graph as $G$ and $H$, respectively, into the Subgraph Isomorphism problem. The solution mapping function is the identity function. If there is a size $g$ clique in the original graph, then SI will identify it exactly as contained in the original graph. If SI identifies a set of $g$ vertices that are all completely connected then this is exactly a clique in the original graph. Also constructing the clique takes at most $\BigOh{|V|^2}$ time, so the problem is NP-complete just like Clique.
+\item Given a proposed solution path, simply follow the path and see if it covers $g$ vertices and for each vertex see if the previous vertices are distinct. The time to check is quadratic in the number of vertices, putting the problem in NP. Now the Rudrata path problem can be reduced to this by taking a graph and inputting it as is into Longest Path with $g=|V|$. If there is a simple path of length $|V|$, then this is clearly a Rudrata path since no vertices are reused. If there was a Rudrata path in the original graph, then Longest Path will illuminate it given the appropriate parameter (assuming it works correctly), which makes Longest Path NP-complete.
+\item Max-SAT can easily be checked given an assignment and evaluating all the clauses (linear time) to see if at least $g$ are true, putting it in NP. Then just take an instance of SAT and input it as is into Max-SAT with $g$ being the number of clauses in the formula. This is clearly equivalent to using Max-SAT to find an assignment that satisfies "at least all the clauses." We know SAT is NP-complete, so Max-SAT must be as well because that's what it can reduce to.
+\item Given the proposed solution set of vertices, we simply check the existence of the edge between each pair and see if at most $b$ edges exist. We only have to check for the existence of $\BigOh{|V|^2}$ edges so the problem is in NP. We can now reduce Clique to Sparse Subgraph as follows: construct the "complement" graph of $G$ as defined in the textbook (all non-edges become edges, and vice versa) in polynomial time and input this into SS with $a=g$, the Clique parameter, and $b=0$. If SS finds such a set of vertices, then in the original graph these vertices have all possible edges between them and are a clique. If there is a size-$a$ clique in the original graph, then these $a$ vertices will have zero edges between them in the complement graph and will be returned by SS, which therefore is NP-complete.
+\end{enumerate}
+
+
+\newpage
+\section*{Problem 4}
+\stepcounter{problemnumber}
+Given a proposed dominating set solution $S$, iterate through every vertex in $V$ and check if either it is in $S$ or has a neighbor in $S$. Since $S$ is bounded by $V$, this verification clearly takes polynomial time, making the problem NP. \\\\
+Consider a graph $G=(V,E)$ where each vertex $i$ has associated with it a set $V_i$ that contains all of its incident edges. This (as noted in the textbook) easily reduces vertex cover to set cover with the sets being the $V_i$ and the set to be covered being $E$. By the transitive property of reductions, all we need to show now is that set cover reduces to dominating set. \\\\
+Call the set to be covered $A$ and the set of subsets $S$. Start building a graph $G=(V,E)$ where for each subset $S_i \in S$, create a vertex $s_i$, and make all the $s_i$ vertices completely connected (i.e. a clique). Also create a  vertex $a_i$ for each element in $A$ and draw all edges $(a_i,s_i)$ if $a_i \in S_i$. \\\\
+Now to show that these two problems are equivalent. Consider a dominating set $D$ of size $b$ in the new graph. For each element in $D$, if it was an $a_i$ vertex, replace it with any $s_i$ vertex it connects to (if any, otherwise there's clearly no set cover solution of size $b$). This preserves the upper-bound on $D$'s size along with the domination because the $s_i$ vertex now dominates $a_i$ and any other $s_j$ that connected to $a_i$ (because of the clique construction).  For the contrapositive of the converse, if we have a set cover consisting of $b$ sets, then the dominating set in the new graph is the set of $s_i$ corresponding to those $b$ sets. By construction of the graph, these $s_i$ vertices dominate the $a_i$ vertices that they "cover" and also dominate the other $s_i$ vertices because they are in their own clique. \\\\
+Constructing the new graph is clearly polynomial in the size of the input graph, since the number of vertices is linear and the number of edges could be quadratic. So since vertex cover is NP-complete and it reduces to dominating set via set cover, dominating set must be NP-complete (at least as hard as vertex cover).
+
+\end{document}

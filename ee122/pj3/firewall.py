@@ -20,7 +20,7 @@ class Firewall:
         self.timer = timer
         self.iface_int = iface_int
         self.iface_ext = iface_ext
-        
+
         self.rules = RuleSet(config["rule"])
         print("Loaded rules file: %s" % config["rule"])
         self.geodb = GeoDB(Firewall._GEODBPATH)
@@ -88,7 +88,7 @@ class Firewall:
                                             else PKT_DIR_INCOMING)
                 self._send_packet(pkt, pkt_dir)
             elif deny_state == "dns":
-                pkt = self._handle_deny_dns(pkt, toffset, 
+                pkt = self._handle_deny_dns(pkt, toffset,
                                             doffset, dfields["qnamelen"])
                 if pkt:
                     self._send_packet(pkt, PKT_DIR_INCOMING)
